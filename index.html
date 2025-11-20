@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TV App</title>
+
+<link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- TOP BAR (TIME + WEATHER) -->
+<div id="top-bar">
+  <div id="datetime"></div>
+  <div id="weather">⛅ 12°C</div>
+</div>
+
+<!-- HOME CATEGORIES -->
+<div id="categories" class="centered">
+  <div class="cat-btn" tabindex="0" data-cat="live">Live TV</div>
+  <div class="cat-btn" tabindex="0" data-cat="movies">Movies</div>
+  <div class="cat-btn" tabindex="0" data-cat="sports">Sports</div>
+  <div class="cat-btn" tabindex="0" data-cat="kids">Kids</div>
+</div>
+
+<!-- CHANNEL LIST -->
+<div id="channels" class="hidden"></div>
+
+<!-- FULLSCREEN PLAYER -->
+<div id="player-container" class="hidden">
+  <video id="videoPlayer" class="video-js vjs-default-skin"></video>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
