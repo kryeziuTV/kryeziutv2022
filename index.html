@@ -4,7 +4,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TV App</title>
 
+<!-- HLS.js REQUIRED (Video.js removed) -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
 <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -30,7 +32,7 @@
 <!-- PLAYER -->
 <div id="player-container" class="hidden">
   <button id="backBtn">⟵ Back</button>
-  <video id="videoPlayer"></video>
+  <video id="videoPlayer" playsinline></video>
 </div>
 
 <script src="app.js"></script>
