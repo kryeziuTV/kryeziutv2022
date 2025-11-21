@@ -1,13 +1,36 @@
-// ======== CHANNEL LIST (YOUR UPDATED CHANNELS) =========
+// ======== IPTV PROXY URL (YOUR WORKER) =========
+const PROXY = "https://krz.leonmartineyyy.workers.dev/?url=";
+
+// ======== CHANNEL LIST =========
 const liveChannels = [
-  { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-  { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-  { name:"RTV 21", logo:"http://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8" },
-  { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" },
-  { name:"T7", logo:"http://vimg.ipko.tv/logo/color/t7.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v3a1/mono.ts.m3u8" }
+  { 
+    name:"RTK 1",
+    logo:"http://vimg.ipko.tv/logo/color/rtk1.png",
+    url: PROXY + encodeURIComponent("http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8")
+  },
+  { 
+    name:"RTK 3",
+    logo:"http://vimg.ipko.tv/logo/color/rtk3.png",
+    url: PROXY + encodeURIComponent("http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8")
+  },
+  { 
+    name:"RTV 21",
+    logo:"http://vimg.ipko.tv/logo/color/rtv21.png",
+    url: PROXY + encodeURIComponent("http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8")
+  },
+  { 
+    name:"KTV",
+    logo:"http://vimg.ipko.tv/logo/color/ktv.png",
+    url: PROXY + encodeURIComponent("http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8")
+  },
+  { 
+    name:"T7",
+    logo:"http://vimg.ipko.tv/logo/color/t7.png",
+    url: PROXY + encodeURIComponent("http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v3a1/mono.ts.m3u8")
+  }
 ];
 
-// TEMP: categories point to same list
+// Placeholder categories
 const movies = liveChannels;
 const sports = liveChannels;
 const kids = liveChannels;
@@ -21,14 +44,14 @@ const video = document.getElementById("videoPlayer");
 
 let hls = null;
 
-// ======== DATE & TIME =========
+// ======== DATE/TIME =========
 function updateDateTime() {
   document.getElementById("datetime").textContent = new Date().toLocaleString();
 }
 setInterval(updateDateTime, 1000);
 updateDateTime();
 
-// ======== CATEGORY CLICK =========
+// ======== CATEGORY BUTTON CLICK =========
 document.querySelectorAll(".cat-btn").forEach(btn => {
   btn.addEventListener("click", () => openCategory(btn.dataset.cat));
 });
@@ -44,14 +67,22 @@ function openCategory(cat) {
   if (cat === "sports") list = sports;
   if (cat === "kids") list = kids;
 
-  list.forEach(ch => {
+  list.forEach((ch, index) => {
     let c = document.createElement("div");
     c.className = "ch-btn";
     c.tabIndex = 0;
-    c.innerHTML = `<img src="${ch.logo}" class="ch-logo"/><span>${ch.name}</span>`;
+
+    c.innerHTML = `
+      <img src="${ch.logo}" class="ch-logo"/>
+      <span>${ch.name}</span>
+    `;
+
     c.addEventListener("click", () => playChannel(ch.url));
     channelsDiv.appendChild(c);
   });
+
+  focusIndex = 0;
+  updateFocus();
 }
 
 // ======== PLAY CHANNEL (HLS.js) =========
@@ -59,10 +90,8 @@ function playChannel(url) {
   channelsDiv.classList.add("hidden");
   playerContainer.classList.remove("hidden");
 
-  // destroy old player
   if (hls) hls.destroy();
 
-  // HLS.js (best for m3u8)
   if (Hls.isSupported()) {
     hls = new Hls();
     hls.loadSource(url);
@@ -72,9 +101,9 @@ function playChannel(url) {
   }
 
   video.muted = false;
-  video.play();
+  video.play().catch(() => {});
 
-  // fullscreen
+  // Try fullscreen
   if (video.requestFullscreen) video.requestFullscreen();
 }
 
@@ -82,12 +111,11 @@ function playChannel(url) {
 backBtn.addEventListener("click", () => {
   playerContainer.classList.add("hidden");
   categories.classList.remove("hidden");
-
-  if (hls) hls.destroy();
   video.pause();
+  if (hls) hls.destroy();
 });
 
-// ======== TV REMOTE NAVIGATION =========
+// ======== REMOTE / KEYBOARD NAVIGATION =========
 let focusIndex = 0;
 
 function updateFocus() {
@@ -100,7 +128,6 @@ function updateFocus() {
 
 document.addEventListener("keydown", e => {
   const items = [...document.querySelectorAll(".ch-btn, .cat-btn")];
-
   if (!items.length) return;
 
   if (e.key === "ArrowRight") {
