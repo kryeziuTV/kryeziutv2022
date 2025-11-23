@@ -1,291 +1,594 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TV App UI with JWPlayer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <title>TV App — JWPlayer + Channel Overlay</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    body {
-      background: #3f4451;
-      font-family: 'Rubik', sans-serif;
-      color: #fff;
-      margin: 0;
-      padding: 40px;
-      overflow: hidden; /* prevent arrow keys from scrolling page */
+    :root{
+      --overlay-w: 360px;
+      --glass-bg: rgba(80, 60, 160, 0.28); /* purple */
+      --glass-border: rgba(255,255,255,0.06);
+      --accent: rgba(110,90,230,0.85);
+      --focus-outline: 3px solid rgba(255,255,255,0.12);
     }
-    .categories {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 40px;
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:#2f3240;
+      color:#fff;
+      overflow:hidden; /* important for TV remote arrows */
     }
+
+    /* --- main UI (hidden while playing) --- */
+    .app {
+      padding:28px;
+    }
+    .categories { display:flex; gap:16px; margin-bottom:28px; }
     .cat-btn {
-      background: #6246B8;
-      color: #fff;
-      padding: 15px 28px;
-      border-radius: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
-      transition: .2s cubic-bezier(0, -0.5, 0, 3);
+      background:#6246B8; color:#fff; padding:12px 22px; border-radius:10px; cursor:pointer;
+      box-shadow:0 6px 20px rgba(0,0,0,.45); border:0; font-weight:500;
     }
-    .cat-btn:focus,
-    .cat-btn:hover {
-      box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
-      transform: translateY(-2px);
-      outline: none;
-    }
-    .cat-btn:active {
-      transform: translateY(2px);
-    }
+    .grid { display:grid; grid-template-columns:repeat(7,120px); gap:18px; }
+    .channel { width:120px; height:120px; background:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .channel img { width:80%; height:80%; object-fit:contain; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(7, 120px);
-      gap: 20px;
-    }
-    .channel {
-      width: 120px;
-      height: 120px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: .2s cubic-bezier(0, -0.5, 0, 3);
-    }
-    .channel:focus,
-    .channel:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, .55);
-      outline: none;
-    }
-    .channel:active {
-      transform: translateY(2px);
-    }
-    .channel img {
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
-    }
-
-    /* JWPlayer container fullscreen styling */
+    /* --- player container (fullscreen) --- */
     #playerContainer {
       position: fixed;
       inset: 0;
       background: #000;
-      display: none;
-      z-index: 99999;
-      align-items: center;
-      justify-content: center;
+      z-index: 9999;
+      display: none; /* toggled to flex when playing */
+      align-items: stretch;
+      justify-content: stretch;
+      overflow: hidden;
     }
-    #playerContainer #jwplayer {
-      width: 100vw;
-      height: 100vh;
+
+    /* JW player target (fills entire screen) */
+    #jwplayer {
+      width: 100vw !important;
+      height: 100vh !important;
+      min-height: 100vh;
+      min-width: 100vw;
+      background: #000;
+      position: relative;
     }
+
+    /* Channel logo overlay inside player (top-right) */
+    .player-logo {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 2000;
+      width: 120px;
+      height: 60px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+    .player-logo img { max-width:100%; max-height:100%; object-fit:contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); }
+
+    /* Left vertical overlay (glass panel) */
+    .side-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--overlay-w);
+      z-index: 3000;
+      display: none; /* toggled visible when overlay open */
+      padding: 14px;
+      box-sizing: border-box;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(40,30,100,0.26), rgba(30,30,50,0.18));
+      border-right: 1px solid var(--glass-border);
+      box-shadow: 8px 0 30px rgba(0,0,0,0.6);
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .overlay-header {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .overlay-header h3 { margin:0; font-size:18px; letter-spacing:0.4px; }
+    .channels-list { display:flex; flex-direction:column; gap:8px; padding-bottom:28px; }
+
+    .overlay-item {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px;
+      border-radius:8px;
+      cursor:pointer;
+      transition: background .12s ease, transform .08s ease;
+      background: rgba(255,255,255,0.02);
+    }
+    .overlay-item img { width:56px; height:36px; object-fit:contain; border-radius:6px; background:rgba(255,255,255,0.02); padding:4px; }
+    .overlay-item .meta { display:flex; flex-direction:column; }
+    .overlay-item .meta .name { font-weight:600; font-size:14px; }
+    .overlay-item .meta .sub { font-size:12px; color:rgba(255,255,255,0.7); margin-top:2px; }
+
+    /* focused state for TV remote */
+    .overlay-item:focus, .overlay-item.focused {
+      outline: none;
+      background: linear-gradient(90deg, rgba(120,90,240,0.12), rgba(80,130,255,0.06));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 6px 28px rgba(20,20,70,0.6);
+      transform: translateX(4px);
+    }
+
+    /* small hint at bottom */
+    .overlay-hint {
+      margin-top: auto;
+      font-size:12px;
+      color:rgba(255,255,255,0.6);
+      padding:8px 0;
+    }
+
+    /* make sure overlay scrollbars are unobtrusive */
+    .side-overlay::-webkit-scrollbar{ width:10px; }
+    .side-overlay::-webkit-scrollbar-thumb{ background: rgba(255,255,255,0.06); border-radius:6px; }
+
+    /* when overlay visible, add slight dim to rest */
+    .overlay-shade {
+      position:absolute;
+      left:var(--overlay-w);
+      top:0;
+      right:0;
+      bottom:0;
+      z-index: 2500;
+      background: linear-gradient(90deg, rgba(0,0,0,0.0), rgba(0,0,0,0.25));
+      pointer-events:none;
+    }
+
+    /* small accessibility helpers */
+    .visually-hidden { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
   </style>
 
-  <!-- Include JWPlayer library -->
-  <!-- Replace path below with your hosted jwplayer.js -->
+  <!-- ===== JWPlayer include - replace with your path or cloud script =====
+       Example cloud include (if you use jwplayer cloud):
+       <script src="https://cdn.jwplayer.com/libraries/XXXXX.js"></script>
+       OR host locally: <script src="/path/to/jwplayer.js"></script>
+       Add your license key below
+  -->
   <script src="path/to/your/jwplayer.js"></script>
-  <!-- Your JW Player license key -->
   <script>
-    jwplayer.key = "YOUR_JWPLAYER_LICENSE_KEY";
+    /* Replace with your actual JW Player license key */
+    if (window.jwplayer) jwplayer.key = "YOUR_JWPLAYER_LICENSE_KEY";
   </script>
-
 </head>
 <body>
-  <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
-  <div class="grid" id="grid" role="grid"></div>
+  <div class="app" id="appUI">
+    <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
+    <div class="grid" id="grid" role="grid"></div>
+  </div>
 
-  <!-- JWPlayer player container -->
-  <div id="playerContainer">
-    <div id="jwplayer">Loading…</div>
+  <!-- FULLSCREEN player + overlays -->
+  <div id="playerContainer" aria-hidden="true" role="region" aria-label="Video player">
+    <div id="jwplayer" role="application"></div>
+
+    <!-- HTML channel logo overlay (top-right) — updated dynamically -->
+    <div class="player-logo" id="playerLogo" aria-hidden="true" style="display:none;">
+      <img src="" alt="channel logo" id="playerLogoImg"/>
+    </div>
+
+    <!-- Left side overlay (channel list) -->
+    <aside class="side-overlay" id="sideOverlay" aria-hidden="true" role="menu" aria-label="Channel list">
+      <div class="overlay-header">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style="opacity:.95"><rect width="24" height="24" rx="6" fill="rgba(255,255,255,0.06)"/><path d="M7 8h10v2H7zM7 12h10v2H7z" fill="#fff" opacity="0.95"/></svg>
+        <h3>Channels</h3>
+      </div>
+      <div class="channels-list" id="channelsList" role="list"></div>
+      <div class="overlay-hint">ENTER = switch • BACK = close overlay</div>
+    </aside>
+
+    <div class="overlay-shade" id="overlayShade" style="display:none;"></div>
   </div>
 
 <script>
-  // --- data ---
-  const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
-  const channelsByCategory = {
-    "LIVE TV": [
-      { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
-      { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-      { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-      { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
-    ],
-    "FILMA": [ { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" }, { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }, { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" } ],
-    "SPORT": [ { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" }, { name:"Arena", logo:"https://via.placeholder.com/120x120?text=A", url:"" } ],
-    "FEMIJE": [ { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" }, { name:"Kids 2", logo:"https://via.placeholder.com/120x120?text=K2", url:"" } ],
-    "DOKU": [ { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" }, { name:"Doku 2", logo:"https://via.placeholder.com/120x120?text=D2", url:"" } ]
-  };
+/* ============================
+   Data (channels & categories)
+   ============================ */
+const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+const channelsByCategory = {
+  "LIVE TV": [
+    { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+  ],
+  "FILMA": [ { name:"Cinema 1", logo:"https://via.placeholder.com/120x40?text=C1", url:"" }, { name:"Cinema 2", logo:"https://via.placeholder.com/120x40?text=C2", url:"" }, { name:"Cinema 3", logo:"https://via.placeholder.com/120x40?text=C3", url:"" } ],
+  "SPORT": [ { name:"Sport+", logo:"https://via.placeholder.com/120x40?text=S+", url:"" }, { name:"Arena", logo:"https://via.placeholder.com/120x40?text=A", url:"" } ],
+  "FEMIJE": [ { name:"Kids 1", logo:"https://via.placeholder.com/120x40?text=K1", url:"" }, { name:"Kids 2", logo:"https://via.placeholder.com/120x40?text=K2", url:"" } ],
+  "DOKU": [ { name:"Doku 1", logo:"https://via.placeholder.com/120x40?text=D1", url:"" }, { name:"Doku 2", logo:"https://via.placeholder.com/120x40?text=D2", url:"" } ]
+};
 
-  // --- DOM refs ---
-  const catWrap = document.getElementById('categories');
-  const grid = document.getElementById('grid');
-  const playerContainer = document.getElementById('playerContainer');
-  let player = null;
-  let currentCategory = 'LIVE TV';
+/* ============================
+   DOM refs & state
+   ============================ */
+const catWrap = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const playerContainer = document.getElementById('playerContainer');
+const sideOverlay = document.getElementById('sideOverlay');
+const channelsList = document.getElementById('channelsList');
+const overlayShade = document.getElementById('overlayShade');
+const playerLogo = document.getElementById('playerLogo');
+const playerLogoImg = document.getElementById('playerLogoImg');
 
-  // --- render categories UI ---
-  categories.forEach((cat, ci) => {
-    const btn = document.createElement('button');
-    btn.className = 'cat-btn';
-    btn.textContent = cat;
-    btn.setAttribute('data-cat', cat);
-    btn.tabIndex = 0;
-    btn.onclick = () => loadCategory(cat);
-    btn.onfocus = () => { focusedArea = 'cats'; catFocus = ci; };
-    catWrap.appendChild(btn);
+let currentCategory = 'LIVE TV';
+let focusedArea = 'cats'; // 'cats' | 'grid' | 'overlay'
+let catFocus = 0;
+let gridFocus = 0;
+let overlayFocus = 0;
+const GRID_COLS = 7;
+
+let jw = null;            // jwplayer instance
+let playingChannel = null; // currently playing channel obj
+
+/* ============================
+   Render categories & grid
+   ============================ */
+categories.forEach((cat, ci) => {
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn';
+  btn.textContent = cat;
+  btn.setAttribute('data-cat', cat);
+  btn.tabIndex = 0;
+  btn.onclick = () => loadCategory(cat);
+  btn.onfocus = () => { focusedArea = 'cats'; catFocus = ci; };
+  catWrap.appendChild(btn);
+});
+
+function loadCategory(cat){
+  currentCategory = cat;
+  grid.innerHTML = '';
+  const list = channelsByCategory[cat] || [];
+  list.forEach((ch, idx) => {
+    const box = document.createElement('button');
+    box.className = 'channel';
+    box.tabIndex = 0;
+    box.setAttribute('data-idx', idx);
+    box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
+    box.onclick = () => openPlayerForChannel(ch);
+    box.onfocus = () => { focusedArea = 'grid'; gridFocus = idx; };
+    grid.appendChild(box);
   });
+  catFocus = Math.max(0, categories.indexOf(cat));
+  gridFocus = 0;
+  focusedArea = 'cats';
+  focusCurrent();
+}
 
-  // render channels grid
-  function loadCategory(cat) {
-    currentCategory = cat;
-    grid.innerHTML = '';
-    const list = channelsByCategory[cat] || [];
-    list.forEach((ch, idx) => {
-      const box = document.createElement('button');
-      box.className = 'channel';
-      box.tabIndex = 0;
-      box.setAttribute('data-idx', idx);
-      box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
-      box.onclick = () => openPlayerForChannel(ch);
-      box.onfocus = () => { focusedArea = 'grid'; gridFocus = idx; };
-      grid.appendChild(box);
-    });
-    catFocus = categories.indexOf(cat) >= 0 ? categories.indexOf(cat) : 0;
-    gridFocus = 0;
-    focusedArea = 'cats';
-    focusCurrent();
+/* ============================
+   Focus helpers
+   ============================ */
+function focusCurrent(){
+  if (playerContainer.style.display === 'flex' && sideOverlay.style.display === 'flex' && focusedArea === 'overlay') {
+    const items = channelsList.querySelectorAll('.overlay-item');
+    items[overlayFocus]?.classList.add('focused');
+    items[overlayFocus]?.focus?.();
+    // remove focused class from others
+    items.forEach((it,i)=>{ if(i!==overlayFocus) it.classList.remove('focused'); });
+    return;
   }
 
-  // --- navigation / focus ---
-  let focusedArea = 'cats'; // 'cats' or 'grid'
-  let catFocus = 0;
-  let gridFocus = 0;
-  const GRID_COLS = 7;
+  if(focusedArea === 'cats'){
+    const cats = catWrap.querySelectorAll('.cat-btn');
+    cats[catFocus]?.focus();
+  } else if(focusedArea === 'grid'){
+    const items = grid.querySelectorAll('.channel');
+    items[gridFocus]?.focus();
+  }
+}
 
-  function focusCurrent() {
-    if (focusedArea === 'cats') {
-      const cats = catWrap.querySelectorAll('.cat-btn');
-      cats[catFocus]?.focus();
-    } else {
-      const items = grid.querySelectorAll('.channel');
-      items[gridFocus]?.focus();
-    }
+/* ============================
+   Keyboard / Remote handling
+   ============================ */
+document.addEventListener('keydown', (e) => {
+  // If player open:
+  const playerOpen = playerContainer.style.display === 'flex';
+
+  // If overlay open, handle overlay navigation
+  const overlayOpen = sideOverlay.style.display === 'flex';
+
+  // Shortcuts: always allow ESC/BACK to close overlay first
+  if (overlayOpen && (e.key === 'Backspace' || e.key === 'Escape')) {
+    e.preventDefault();
+    closeOverlay();
+    return;
   }
 
-  document.addEventListener('keydown', (e) => {
-    // if JWPlayer is open, only listen for close keys
-    if (playerContainer.style.display === 'flex') {
-      if (e.key === 'Backspace' || e.key === 'Escape') {
-        closePlayer();
-        history.back();
-      }
+  if (playerOpen) {
+    // When video playing: Enter toggles the side overlay (Option C)
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      toggleOverlay();
       return;
     }
-
-    if (e.key === 'ArrowRight') {
-      if (focusedArea === 'cats') catFocus = Math.min(catFocus + 1, categories.length - 1);
-      else gridFocus = gridFocus + 1;
+    // Back closes player (if overlay not open)
+    if (e.key === 'Backspace' || e.key === 'Escape') {
+      e.preventDefault();
+      history.back(); // will trigger popstate -> closePlayer
+      return;
     }
+    // When overlay open, handle up/down/enter within overlay
+    if (overlayOpen) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); overlayFocus = Math.min(overlayFocus + 1, channelsList.children.length - 1); focusCurrent(); scrollOverlayIntoView(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); overlayFocus = Math.max(overlayFocus - 1, 0); focusCurrent(); scrollOverlayIntoView(); }
+      else if (e.key === 'Enter') { e.preventDefault(); const item = channelsList.children[overlayFocus]; item && item.click(); }
+      return;
+    }
+    // when player open & overlay closed: allow left arrow to open overlay too (optional)
     if (e.key === 'ArrowLeft') {
-      if (focusedArea === 'cats') catFocus = Math.max(catFocus - 1, 0);
-      else gridFocus = Math.max(gridFocus - 1, 0);
+      e.preventDefault();
+      openOverlay(); // convenience: left opens overlay
+      return;
     }
-    if (e.key === 'ArrowDown') {
-      if (focusedArea === 'cats') {
-        focusedArea = 'grid';
-        gridFocus = catFocus;
-      } else {
-        gridFocus = gridFocus + GRID_COLS;
-      }
+    // other keys ignored while watching
+    return;
+  }
+
+  // If we're on the main UI (not playing), handle grid/category nav as before
+  if(!playerOpen){
+    if (e.key === 'ArrowRight'){
+      if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
+      else { gridFocus = gridFocus + 1; }
     }
-    if (e.key === 'ArrowUp') {
-      if (focusedArea === 'grid') {
-        if (gridFocus < GRID_COLS) {
-          focusedArea = 'cats';
-          catFocus = Math.min(gridFocus, categories.length - 1);
-        } else {
-          gridFocus = gridFocus - GRID_COLS;
-        }
+    if (e.key === 'ArrowLeft'){
+      if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
+      else { gridFocus = Math.max(gridFocus - 1, 0); }
+    }
+    if (e.key === 'ArrowDown'){
+      if(focusedArea === 'cats'){ focusedArea = 'grid'; gridFocus = catFocus; }
+      else { gridFocus = gridFocus + GRID_COLS; }
+    }
+    if (e.key === 'ArrowUp'){
+      if(focusedArea === 'grid'){
+        if(gridFocus < GRID_COLS){ focusedArea = 'cats'; catFocus = Math.min(gridFocus, categories.length - 1); }
+        else { gridFocus = gridFocus - GRID_COLS; }
       }
     }
 
+    // clamp gridFocus
     const gridItems = grid.querySelectorAll('.channel');
-    if (gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
-    if (gridFocus < 0) gridFocus = 0;
+    if(gridItems.length){
+      if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
+      if(gridFocus < 0) gridFocus = 0;
+    } else gridFocus = 0;
 
-    if (e.key === 'Enter') {
-      if (focusedArea === 'cats') loadCategory(categories[catFocus]);
-      else grid.querySelectorAll('.channel')[gridFocus]?.click();
+    if(e.key === 'Enter'){
+      if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
+      else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
     }
-
     focusCurrent();
+  }
+});
+
+/* ============================
+   Overlay helpers
+   ============================ */
+function openOverlay(){
+  // populate channels list if empty
+  if (!channelsList.children.length) buildChannelsList();
+  sideOverlay.style.display = 'flex';
+  overlayShade.style.display = 'block';
+  sideOverlay.setAttribute('aria-hidden','false');
+  overlayShade.setAttribute('aria-hidden','false');
+  focusedArea = 'overlay';
+  overlayFocus = Math.max(0, overlayFocus);
+  // add focus class for visual
+  focusCurrent();
+  scrollOverlayIntoView();
+}
+function closeOverlay(){
+  sideOverlay.style.display = 'none';
+  overlayShade.style.display = 'none';
+  sideOverlay.setAttribute('aria-hidden','true');
+  overlayShade.setAttribute('aria-hidden','true');
+  // clear focused mark
+  channelsList.querySelectorAll('.overlay-item').forEach(it=>it.classList.remove('focused'));
+  // return focus to player for remote controls
+  focusedArea = 'player';
+}
+function toggleOverlay(){
+  if (sideOverlay.style.display === 'flex') closeOverlay(); else openOverlay();
+}
+function scrollOverlayIntoView(){
+  const items = channelsList.querySelectorAll('.overlay-item');
+  const el = items[overlayFocus];
+  if (el) el.scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+
+/* ============================
+   Build overlay items (channels)
+   ============================ */
+function buildChannelsList(){
+  channelsList.innerHTML = '';
+  // flatten categories to list, you can keep categories separated if you want
+  const all = [];
+  categories.forEach(cat => {
+    const list = channelsByCategory[cat] || [];
+    list.forEach(ch => { all.push({ ...ch, category: cat }); });
   });
 
-  // --- JWPlayer handling ---
-  function openPlayerForChannel(ch) {
-    const url = ch.url;
-    if (!url) return;
+  all.forEach((ch, idx) => {
+    const item = document.createElement('button');
+    item.className = 'overlay-item';
+    item.tabIndex = -1;
+    item.innerHTML = `
+      <img src="${ch.logo}" alt="${ch.name}" loading="lazy" />
+      <div class="meta"><div class="name">${ch.name}</div><div class="sub">${ch.category}</div></div>
+    `;
+    item.onclick = () => {
+      // switch channel live
+      openChannelInPlayer(ch);
+      // keep overlay open (or close overlay if you prefer)
+      // closeOverlay();
+    };
+    // keyboard focus visual when clicked with mouse/remote
+    item.onfocus = () => { channelsList.querySelectorAll('.overlay-item').forEach(it=>it.classList.remove('focused')); item.classList.add('focused'); };
+    channelsList.appendChild(item);
+  });
+}
 
-    // push history so back button returns
-    history.pushState({ player: true }, 'player');
+/* ============================
+   Player: open / close / load channel
+   ============================ */
+function openPlayerForChannel(ch){
+  if(!ch || !ch.url) return;
+  playingChannel = ch;
 
-    // prepare UI
-    playerContainer.style.display = 'flex';
+  // push base history on first open so back button doesn't exit
+  history.pushState({player:true}, 'player');
 
-    // setup jwplayer
-    // If player already exists, we can just load new source
-    if (!player) {
-      player = jwplayer('jwplayer').setup({
-        sources: [
-          { file: url, type: 'hls' }
-        ],
+  // show container
+  playerContainer.style.display = 'flex';
+  playerContainer.setAttribute('aria-hidden','false');
+  document.getElementById('appUI').style.display = 'none'; // hide main UI
+
+  // show HTML logo overlay
+  playerLogoImg.src = ch.logo || '';
+  playerLogo.style.display = ch.logo ? 'flex' : 'none';
+
+  // instantiate jwplayer if not created
+  if (window.jwplayer && !jw) {
+    try {
+      jw = jwplayer('jwplayer').setup({
+        file: ch.url,
         width: "100%",
         height: "100%",
         autostart: true,
-        mute: false,
-        stretching: "uniform", // maintain aspect ratio, fit inside container
-        skin: { name: "seven" }  // or another skin if you like
+        controls: true,
+        stretching: "uniform" // fit inside without cropping
+        // you can add other options (skin, captions, etc.)
       });
-    } else {
-      player.load([{ file: url, type: 'hls' }]);
-      player.play();
+      // optional: handle ready/errors
+      jw.on('error', function(e){ console.warn('JWPlayer error', e); });
+    } catch (err) {
+      console.error('JW init error', err);
     }
-
-    // try fullscreen
+  } else if (jw) {
+    // load new source
     try {
-      const container = document.getElementById('jwplayer');
-      const req = container.requestFullscreen || container.webkitRequestFullscreen || container.msRequestFullscreen;
-      req && req.call(container);
+      jw.load([{ file: ch.url, type: 'hls' }]);
+      jw.play();
     } catch (e) {
-      console.warn("Fullscreen request failed", e);
+      console.warn('JW load/play failed', e);
     }
+  } else {
+    // if jwplayer lib missing, fallback to native video element
+    // create fallback video
+    createFallbackVideo(ch);
   }
+}
 
-  function closePlayer() {
-    if (player) {
-      player.pause();
+// fallback video creation (in case jwplayer not available)
+function createFallbackVideo(ch){
+  const jwDiv = document.getElementById('jwplayer');
+  jwDiv.innerHTML = '';
+  const vid = document.createElement('video');
+  vid.src = ch.url;
+  vid.autoplay = true;
+  vid.playsInline = true;
+  vid.controls = false;
+  vid.style.width = '100vw';
+  vid.style.height = '100vh';
+  vid.style.objectFit = 'contain';
+  jwDiv.appendChild(vid);
+  vid.play().catch(()=>{});
+}
+
+/* open channel in existing player (used when user picks in overlay) */
+function openChannelInPlayer(ch){
+  if(!ch || !ch.url) return;
+  playingChannel = ch;
+  // update HTML logo overlay
+  playerLogoImg.src = ch.logo || '';
+  playerLogo.style.display = ch.logo ? 'flex' : 'none';
+
+  if (jw){
+    try {
+      jw.load([{ file: ch.url, type: 'hls' }]);
+      jw.play();
+    } catch (e) {
+      console.warn('jw load error', e);
+      // fallback: recreate jw or use native video
     }
-    playerContainer.style.display = 'none';
+  } else {
+    // fallback if jw not present
+    createFallbackVideo(ch);
   }
+}
 
-  window.addEventListener('popstate', (e) => {
-    if (playerContainer.style.display === 'flex') {
-      closePlayer();
-    }
-  });
+/* close player (clean up) */
+function closePlayer(){
+  // hide overlays if open
+  closeOverlay();
+  if (jw){
+    try { jw.stop(); } catch(e) {}
+    // JW continues to exist if you want; you can also remove it
+  }
+  playerContainer.style.display = 'none';
+  playerContainer.setAttribute('aria-hidden','true');
+  document.getElementById('appUI').style.display = 'block';
+  playingChannel = null;
+}
 
-  window.addEventListener('keydown', (e) => {
-    if ((e.key === 'Escape' || e.key === 'Backspace') && playerContainer.style.display === 'flex') {
-      history.back();
-    }
-  });
+/* handle back navigation via history */
+window.addEventListener('popstate', (e) => {
+  // if overlay open, close it first
+  if (sideOverlay.style.display === 'flex') {
+    closeOverlay();
+    // prevent further pop
+    // note: we deliberately do not push another state here
+    return;
+  }
+  // if player open, close player
+  if (playerContainer.style.display === 'flex') {
+    closePlayer();
+  } else {
+    // no player: allow default (exit page)
+  }
+});
 
-  // initial load
-  loadCategory(currentCategory);
+/* ============================
+   Initial rendering & helpers
+   ============================ */
+loadCategory(currentCategory);
+
+/* When a user selects an item from the grid, we open the player */
+function openPlayerForChannelFromGrid(index){
+  const list = channelsByCategory[currentCategory] || [];
+  const ch = list[index];
+  openPlayerForChannel(ch);
+}
+
+/* add click handlers for existing grid (grid items were created already) */
+grid.addEventListener('click', function(e){
+  // handle clicks on channel tiles (if any)
+  const btn = e.target.closest('.channel');
+  if (!btn) return;
+  const idx = parseInt(btn.getAttribute('data-idx'),10);
+  if (!isNaN(idx)) {
+    const ch = (channelsByCategory[currentCategory] || [])[idx];
+    if (ch) openPlayerForChannel(ch);
+  }
+});
+
+/* Helpers to prevent page scrolling by remote on some devices */
+window.addEventListener('wheel', e => e.preventDefault(), { passive:false });
+
+/* small safety: press left from player to open overlay (makes discoverable) */
 </script>
 </body>
 </html>
