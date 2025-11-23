@@ -2,190 +2,251 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>TV App UI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  body {
-    background:#3f4451;
-    font-family:'Rubik',sans-serif;
-    color:#fff;
-    margin:0;
-    padding:40px;
-    overflow:hidden;
-  }
-  .top-right-clock {
-    position:fixed;
-    top:15px;
-    right:25px;
-    font-size:22px;
-    font-weight:500;
-    opacity:.9;
-  }
-  .categories {display:flex;gap:20px;margin-bottom:40px;}
-  .cat-btn {
-    background:#6246B8;
-    color:#fff;
-    padding:15px 40px;
-    border-radius:12px;
-    font-weight:500;
-    cursor:pointer;
-    box-shadow:0 6px 20px rgba(0,0,0,.45);
-    transition:.2s cubic-bezier(0,-0.5,0,3);
-  }
-  .cat-btn:focus {
-    outline:4px solid #fff;
-    box-shadow:0 0 25px #bfa4ff;
-  }
-  .cat-btn:hover {transform:translateY(-2px);} 
-  .grid {display:grid;grid-template-columns:repeat(7,120px);gap:20px;}
+  body { background:#3f4451; font-family:'Rubik',sans-serif; color:#fff; margin:0; padding:40px; }
+  .categories { display:flex; gap:20px; margin-bottom:40px; }
+  .cat-btn { background:#6246B8; color:#fff; padding:15px 28px; border-radius:12px; font-weight:500; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.45); transition:.2s cubic-bezier(0,-0.5,0,3); }
+  .cat-btn:focus, .cat-btn:hover { box-shadow:0 12px 40px rgba(0,0,0,.5); transform:translateY(-2px); outline:none; }
+  .cat-btn:active { transform:translateY(2px); }
 
-  .channel {
-    width:120px;height:120px;
-    background:#fff;border-radius:14px;
-    box-shadow:0 6px 20px rgba(0,0,0,.5);
-    display:flex;justify-content:center;align-items:center;
-    cursor:pointer;
-    transition:.2s cubic-bezier(0,-0.5,0,3);
-  }
-  .channel:focus {
-    outline:4px solid #6246B8;
-    box-shadow:0 0 25px #bfa4ff;
-  }
-  .channel img {width:80%;height:80%;object-fit:contain;}
+  .grid { display:grid; grid-template-columns:repeat(7,120px); gap:20px; }
+  .channel { width:120px; height:120px; background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.5); display:flex; justify-content:center; align-items:center; cursor:pointer; transition:.2s cubic-bezier(0,-0.5,0,3); }
+  .channel:focus, .channel:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,0,0,.55); outline:none; }
+  .channel:active { transform:translateY(2px); }
+  .channel img { width:80%; height:80%; object-fit:contain; }
 
-  #playerWrapper {
-    position:fixed;inset:0;background:black;display:none;z-index:9999;
-  }
-  #playerWrapper video {width:100%;height:100%;object-fit:contain;pointer-events:none;}
+  /* player container that becomes fullscreen */
+  #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; align-items:center; justify-content:center; }
+  #playerContainer.video-landscape video { width:100vw; height:100vh; object-fit:cover; }
+  #playerContainer.video-portrait video { width:100%; height:100%; object-fit:contain; }
+
+  /* ensure no default controls are visible */
+  #playerContainer video { outline:none; border:0; }
 </style>
 </head>
 <body>
-<div class="top-right-clock" id="clock"></div>
-<div class="categories" id="categories"></div>
-<div class="grid" id="grid"></div>
+  <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
+  <div class="grid" id="grid" role="grid"></div>
 
-<div id="playerWrapper"><video id="player"></video></div>
+  <!-- fullscreen player container (custom) -->
+  <div id="playerContainer"></div>
 
+<!-- hls.js for m3u8 playback when needed -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
-const categories=["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
-
-const channelsByCategory={
-  "LIVE TV":[
-    {name:"RTK 1",logo:"http://vimg.ipko.tv/logo/color/rtk1.png",url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8"},
-    {name:"RTK 3",logo:"http://vimg.ipko.tv/logo/color/rtk3.png",url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8"},
-    {name:"KTV",logo:"http://vimg.ipko.tv/logo/color/ktv.png",url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8"}
+// --- data ---
+const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+const channelsByCategory = {
+  "LIVE TV": [
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+    { name:"BBVIP KS 1", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"https://phinemi.online:8443/play/nF-BlBxJteckRUxwo62Q0MIouUues9Jjyg6NdIjvwoo/m3u8" }
   ],
-  "FILMA":[{name:"Cinema 1",logo:"https://via.placeholder.com/120?text=C1",url:""}]
+  "FILMA": [ { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" }, { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }, { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" } ],
+  "SPORT": [ { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" }, { name:"Arena", logo:"https://via.placeholder.com/120x120?text=A", url:"" } ],
+  "FEMIJE": [ { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" }, { name:"Kids 2", logo:"https://via.placeholder.com/120x120?text=K2", url:"" } ],
+  "DOKU": [ { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" }, { name:"Doku 2", logo:"https://via.placeholder.com/120x120?text=D2", url:"" } ]
 };
 
-const catWrap=document.getElementById("categories");
-const grid=document.getElementById("grid");
+// --- DOM refs ---
+const catWrap = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const playerContainer = document.getElementById('playerContainer');
+let hls = null;
+let currentCategory = 'LIVE TV';
 
-let currentCategory="LIVE TV";
-let currentChannelIndex=0;
-
-categories.forEach(cat=>{
-  const b=document.createElement("div");
-  b.className="cat-btn";
-  b.textContent=cat;
-  b.tabIndex=0;
-  b.onclick=()=>loadCategory(cat);
-  catWrap.appendChild(b);
+// --- render UI ---
+categories.forEach((cat,ci)=>{
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn';
+  btn.textContent = cat;
+  btn.setAttribute('data-cat',cat);
+  btn.tabIndex = 0;
+  btn.onclick = ()=> loadCategory(cat);
+  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; }
+  catWrap.appendChild(btn);
 });
 
+// render channels for a category
 function loadCategory(cat){
-  currentCategory=cat;
-  grid.innerHTML="";
-  channelsByCategory[cat].forEach((c,i)=>{
-    const box=document.createElement("div");
-    box.className="channel";
-    box.tabIndex=0;
-    box.innerHTML=`<img src="${c.logo}">`;
-    box.onclick=()=>playChannel(i);
+  currentCategory = cat;
+  grid.innerHTML = '';
+  const list = channelsByCategory[cat] || [];
+  list.forEach((ch,idx)=>{
+    const box = document.createElement('button');
+    box.className = 'channel';
+    box.tabIndex = 0;
+    box.setAttribute('data-idx', idx);
+    box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
+    box.onclick = ()=> openPlayerForChannel(ch);
+    box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; }
     grid.appendChild(box);
   });
-  focusIndex=0;
-  focusItem(0);
+  // reset focus indices
+  catFocus = categories.indexOf(cat) >= 0 ? categories.indexOf(cat) : 0;
+  gridFocus = 0;
+  focusedArea = 'cats';
+  focusCurrent();
 }
 
-const playerWrapper=document.getElementById("playerWrapper");
-const player=document.getElementById("player");
-let hls;
+// --- focus/navigation state ---
+let focusedArea = 'cats'; // 'cats' or 'grid'
+let catFocus = 0;
+let gridFocus = 0;
+const GRID_COLS = 7;
 
-function playChannel(i){
-  currentChannelIndex=i;
-  const obj=channelsByCategory[currentCategory][i];
-  const url=obj.url;
-
-  if(hls){hls.destroy();}
-  if(Hls.isSupported()){
-    hls=new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(player);
+function focusCurrent(){
+  if(focusedArea === 'cats'){
+    const cats = catWrap.querySelectorAll('.cat-btn');
+    cats[catFocus]?.focus();
   } else {
-    player.src=url;
+    const items = grid.querySelectorAll('.channel');
+    items[gridFocus]?.focus();
   }
-  player.muted=false;
-  playerWrapper.style.display="block";
-  player.play();
-  if(player.requestFullscreen) player.requestFullscreen();
-  try{screen.orientation.lock('landscape');}catch(e){}
 }
 
-function channelUp(){
-  const list=channelsByCategory[currentCategory];
-  currentChannelIndex=(currentChannelIndex+1)%list.length;
-  playChannel(currentChannelIndex);
-}
-function channelDown(){
-  const list=channelsByCategory[currentCategory];
-  currentChannelIndex=(currentChannelIndex-1+list.length)%list.length;
-  playChannel(currentChannelIndex);
-}
-
-document.addEventListener("keydown",e=>{
-  if(playerWrapper.style.display==="block"){
-    if(e.key==="ArrowUp") channelUp();
-    if(e.key==="ArrowDown") channelDown();
-    if(e.key==="Backspace"||e.key==="Escape"){playerWrapper.style.display="none";player.pause();}
+// handle remote arrows / enter
+document.addEventListener('keydown', (e)=>{
+  // if player open, handle only player-specific keys
+  if(playerContainer.style.display === 'flex'){
+    if(e.key === 'Backspace' || e.key === 'Escape'){ closePlayer(); history.back(); }
     return;
   }
 
-  const items=[...document.querySelectorAll('.cat-btn'),...document.querySelectorAll('.channel')];
-  const channelStart=categories.length;
+  if(e.key === 'ArrowRight'){
+    if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
+    else { gridFocus = gridFocus + 1; }
+  }
+  if(e.key === 'ArrowLeft'){
+    if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
+    else { gridFocus = Math.max(gridFocus - 1, 0); }
+  }
+  if(e.key === 'ArrowDown'){
+    if(focusedArea === 'cats'){
+      // move from categories to grid column matching catFocus
+      focusedArea = 'grid';
+      gridFocus = catFocus; // same column
+    } else {
+      gridFocus = gridFocus + GRID_COLS;
+    }
+  }
+  if(e.key === 'ArrowUp'){
+    if(focusedArea === 'grid'){
+      if(gridFocus < GRID_COLS){ // go to categories row
+        focusedArea = 'cats';
+        catFocus = Math.min(gridFocus, categories.length - 1);
+      } else {
+        gridFocus = gridFocus - GRID_COLS;
+      }
+    }
+  }
 
-  if(e.key==="ArrowRight") focusItem(focusIndex+1);
-  if(e.key==="ArrowLeft") focusItem(focusIndex-1);
-  if(e.key==="ArrowDown"){
-    if(focusIndex<channelStart) focusItem(channelStart);
-    else focusItem(focusIndex+7);
+  // clamp gridFocus to available items
+  const gridItems = grid.querySelectorAll('.channel');
+  if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
+  if(gridFocus < 0) gridFocus = 0;
+
+  // Enter to activate
+  if(e.key === 'Enter'){
+    if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
+    else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
   }
-  if(e.key==="ArrowUp"){
-    if(focusIndex>=channelStart) focusItem(focusIndex-7);
-    else focusItem(0);
-  }
-  if(e.key==="Enter") items[focusIndex].click();
+
+  focusCurrent();
 });
 
-let focusIndex=0;
-function focusItem(i){
-  const items=[...document.querySelectorAll('.cat-btn'),...document.querySelectorAll('.channel')];
-  if(i<0||i>=items.length) return;
-  items[focusIndex]?.blur();
-  focusIndex=i;
-  items[i].focus();
+// --- player helpers (hls.js fallback) ---
+function openPlayerForChannel(ch){
+  const url = ch.url;
+  if(!url) return;
+  // push history so back button can return to UI
+  history.pushState({player:true}, 'player');
+
+  // prepare container
+  playerContainer.style.display = 'flex';
+  // choose landscape vs portrait depending on device
+  updateOrientationClass();
+
+  // clear previous content / hls
+  playerContainer.innerHTML = '';
+  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
+
+  const video = document.createElement('video');
+  video.id = 'tvplayer';
+  video.autoplay = true;
+  video.controls = false; // user asked: no controls visible
+  video.muted = false;
+  video.setAttribute('playsinline','');
+  // prevent touch controls interfering; remote will use keys
+  video.style.pointerEvents = 'none';
+
+  playerContainer.appendChild(video);
+
+  // play with hls.js if needed
+  if(Hls && Hls.isSupported()){
+    hls = new Hls({
+      // minimal config, you can tune buffer settings later
+      maxBufferLength: 30
+    });
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(()=>{}); });
+  } else {
+    // native playback (Safari, some Android WebViews)
+    video.src = url;
+    video.play().catch(()=>{});
+  }
+
+  // try to lock orientation to landscape on supported devices
+  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){}
+
+  // request fullscreen where available
+  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
+  try{ req && req.call(video).catch(()=>{}); }catch(e){}
 }
 
-function updateClock(){
-  const el=document.getElementById("clock");
-  const d=new Date();
-  el.textContent=d.toLocaleDateString()+" | "+d.toLocaleTimeString();
+function closePlayer(){
+  // stop hls and remove video
+  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
+  playerContainer.style.display = 'none';
+  playerContainer.innerHTML = '';
+  // unlock orientation if possible
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
 }
-setInterval(updateClock,1000);
-updateClock();
 
-loadCategory("LIVE TV");
+// handle history/back
+window.addEventListener('popstate', (e)=>{
+  // if player open, close it and prevent app exit
+  if(playerContainer.style.display === 'flex'){
+    closePlayer();
+    // do not push additional history here
+  }
+});
+
+// also map Escape/Backspace to close
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' || e.key === 'Backspace'){
+    if(playerContainer.style.display === 'flex'){
+      history.back(); // triggers popstate -> closePlayer
+    }
+  }
+});
+
+// auto-orientation helper for phones
+function updateOrientationClass(){
+  const w = window.innerWidth, h = window.innerHeight;
+  if(w>h) { playerContainer.classList.add('video-landscape'); playerContainer.classList.remove('video-portrait'); }
+  else { playerContainer.classList.add('video-portrait'); playerContainer.classList.remove('video-landscape'); }
+}
+window.addEventListener('resize', updateOrientationClass);
+window.addEventListener('orientationchange', updateOrientationClass);
+
+// initial load
+loadCategory(currentCategory);
+
 </script>
 </body>
 </html>
