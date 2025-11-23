@@ -178,6 +178,14 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowUp") focusItem(focusIndex-cols);
   if(e.key==="Enter") document.querySelectorAll('.channel')[focusIndex]?.click();
 });
+// Custom back behavior
+window.addEventListener('popstate', function(){
+  // return from fullscreen player to categories
+  if(document.fullscreenElement){
+    document.exitFullscreen();
+  }
+});
+
 </script>
 </body>
 </html>
