@@ -21,6 +21,119 @@ const channelsByCategory = {
     { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
     { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
     { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+  ]
+};
+
+const catWrap = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const playerContainer = document.getElementById('playerContainer');
+let hls = null;
+let focusedArea = 'cats';
+let catFocus = 0;
+let gridFocus = 0;
+let currentCategory = 'LIVE TV';
+let playingIndex = 0;
+
+categories.forEach((cat,ci)=>{
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn';
+  btn.textContent = cat;
+  btn.onclick = ()=> loadCategory(cat);
+  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; };
+  catWrap.appendChild(btn);
+});
+
+function loadCategory(cat){
+  currentCategory = cat;
+  grid.innerHTML = '';
+  const list = channelsByCategory[cat] || [];
+  list.forEach((ch,idx)=>{
+    const box = document.createElement('button');
+    box.className = 'channel';
+    box.innerHTML = `<img src="${ch.logo}">`;
+    box.onclick = ()=> openPlayer(idx);
+    box.onfocus = ()=> { focusedArea='grid'; gridFocus=idx; };
+    grid.appendChild(box);
+  });
+  catFocus = categories.indexOf(cat);
+  gridFocus = 0;
+  focusCurrent();
+}
+
+function focusCurrent(){
+  if(focusedArea==='cats') catWrap.children[catFocus]?.focus();
+  else grid.children[gridFocus]?.focus();
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(playerContainer.style.display==='flex'){
+    if(e.key==='ArrowDown'){ changeChannel(1); }
+    if(e.key==='ArrowUp'){ changeChannel(-1); }
+    if(e.key==='Escape' || e.key==='Backspace'){ history.back(); }
+    return;
+  }
+
+  if(e.key==='ArrowRight') catFocus=Math.min(catFocus+1,categories.length-1);
+  if(e.key==='ArrowLeft') catFocus=Math.max(catFocus-1,0);
+  if(e.key==='ArrowDown'){ focusedArea='grid'; }
+  if(e.key==='Enter'){ loadCategory(categories[catFocus]); }
+  focusCurrent();
+});
+
+function openPlayer(index){
+  const list = channelsByCategory[currentCategory];
+  const channel = list[index];
+  if(!channel.url) return;
+  playingIndex = index;
+
+  history.pushState({player:true}, "player");
+
+  playerContainer.style.display='flex';
+  playerContainer.innerHTML='';
+
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.controls = false;
+  video.muted = false;
+  video.setAttribute('playsinline','');
+  playerContainer.appendChild(video);
+
+  if(hls){ hls.destroy(); hls = null; }
+
+  hls = new Hls();
+  hls.loadSource(channel.url);
+  hls.attachMedia(video);
+
+  const fs = video.requestFullscreen || video.webkitRequestFullscreen;
+  fs && fs.call(video);
+}
+
+function changeChannel(step){
+  const list = channelsByCategory[currentCategory];
+  playingIndex = (playingIndex + step + list.length) % list.length;
+  openPlayer(playingIndex);
+}
+
+function closePlayer(){
+  if(hls) hls.destroy();
+  hls=null;
+  playerContainer.style.display='none';
+  playerContainer.innerHTML='';
+}
+
+window.addEventListener('popstate', ()=>{
+  if(playerContainer.style.display==='flex') closePlayer();
+});
+
+loadCategory(currentCategory);
+</script><script>
+const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+const channelsByCategory = {
+  "LIVE TV": [
+    { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
   ],
   "FILMA": [ { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" } ],
   "SPORT": [ { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" } ],
