@@ -33,6 +33,7 @@
   .cat-btn:active {
     transform:translateY(2px);
   }
+
   .grid {
     display:grid;
     grid-template-columns:repeat(7,120px);
@@ -50,11 +51,29 @@
     cursor:pointer;
     transition:.2s cubic-bezier(0,-0.5,0,3);
   }
+  .channel:hover {
+    transform:translateY(-2px);
+    box-shadow:0 12px 40px rgba(0,0,0,.55);
+  }
+  .channel:active {
+    transform:translateY(2px);
+  }
   .channel:focus {
     outline:4px solid #6246B8;
   }
   .channel img {
     width:80%; height:80%; object-fit:contain;
+  }
+
+  #playerWrapper {
+    position:fixed;
+    inset:0;
+    background:black;
+    display:none;
+    z-index:9999;
+  }
+  #playerWrapper video {
+    width:100%; height:100%; object-fit:contain;
   }
 </style>
 </head>
@@ -62,60 +81,102 @@
   <div class="categories" id="categories"></div>
   <div class="grid" id="grid"></div>
 
+  <div id="playerWrapper">
+    <video id="player" autoplay controls></video>
+  </div>
+
 <script>
-// Categories
-const categories = [
-  "LIVE TV", "FILMA", "SPORT", "FEMIJE", "DOKU"
-];
+const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
 
-// Channels
-const channels = [
-  { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-  { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-  { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
-];
+const channelsByCategory = {
+  "LIVE TV": [
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+  ],
+  "FILMA": [
+    { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" },
+    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
+    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" }
+  ],
+  "SPORT": [
+    { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
+    { name:"Arena", logo:"https://via.placeholder.com/120x120?text=A", url:"" }
+  ],
+  "FEMIJE": [
+    { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" },
+    { name:"Kids 2", logo:"https://via.placeholder.com/120x120?text=K2", url:"" }
+  ],
+  "DOKU": [
+    { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" },
+    { name:"Doku 2", logo:"https://via.placeholder.com/120x120?text=D2", url:"" }
+  ]
+};
 
-// Render categories
-const catWrap = document.getElementById("categories");
-categories.forEach(c => {
-  const btn = document.createElement("div");
-  btn.className = "cat-btn";
-  btn.textContent = c;
-  catWrap.appendChild(btn);
+const catWrap=document.getElementById("categories");
+const grid=document.getElementById("grid");
+
+categories.forEach(cat=>{
+  const b=document.createElement("div");
+  b.className="cat-btn";
+  b.textContent=cat;
+  b.onclick=()=>loadCategory(cat);
+  catWrap.appendChild(b);
 });
 
-// Render channels
-theGrid = document.getElementById("grid");
-channels.forEach((c,i)=>{
-  const box=document.createElement("div");
-  box.className="channel";
-  box.tabIndex=0;
-  box.innerHTML=`<img src="${c.logo}" />`;
-  box.onclick=()=>{
-    // open video stream
-    window.location.href = c.url;
-  };
-  theGrid.appendChild(box);
+function loadCategory(cat){
+  grid.innerHTML="";
+  const arr=channelsByCategory[cat];
+  arr.forEach((c,i)=>{
+    const box=document.createElement("div");
+    box.className="channel";
+    box.tabIndex=0;
+    box.innerHTML=`<img src="${c.logo}" />`;
+    box.onclick=()=>playChannel(c.url);
+    grid.appendChild(box);
+  });
+  focusIndex=0;
+  focusItem(0);
+}
+
+const playerWrapper=document.getElementById("playerWrapper");
+const player=document.getElementById("player");
+
+function playChannel(url){
+  if(!url) return;
+  player.src=url;
+  player.muted=false;
+  playerWrapper.style.display="block";
+  player.play();
+  player.requestFullscreen?.();
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    player.pause();
+    playerWrapper.style.display="none";
+  }
 });
 
-// Remote navigation
-let focusIndex = 0;
-function focusItem(idx){
-  const items = document.querySelectorAll('.channel');
-  if(idx<0||idx>=items.length) return;
+let focusIndex=0;
+function focusItem(i){
+  const items=document.querySelectorAll('.channel');
+  if(i<0||i>=items.length) return;
   items[focusIndex]?.blur();
-  focusIndex = idx;
+  focusIndex=i;
   items[focusIndex].focus();
 }
-focusItem(0);
 
-document.addEventListener("keydown", e=>{
-  const cols = 7;
-  if(e.key === "ArrowRight") focusItem(focusIndex+1);
-  if(e.key === "ArrowLeft") focusItem(focusIndex-1);
-  if(e.key === "ArrowDown") focusItem(focusIndex+cols);
-  if(e.key === "ArrowUp") focusItem(focusIndex-cols);
-  if(e.key === "Enter") document.querySelectorAll('.channel')[focusIndex].click();
+loadCategory("LIVE TV");
+
+document.addEventListener("keydown",e=>{
+  if(playerWrapper.style.display==="block") return;
+  const cols=7;
+  if(e.key==="ArrowRight") focusItem(focusIndex+1);
+  if(e.key==="ArrowLeft") focusItem(focusIndex-1);
+  if(e.key==="ArrowDown") focusItem(focusIndex+cols);
+  if(e.key==="ArrowUp") focusItem(focusIndex-cols);
+  if(e.key==="Enter") document.querySelectorAll('.channel')[focusIndex]?.click();
 });
 </script>
 </body>
