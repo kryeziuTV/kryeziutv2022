@@ -20,14 +20,14 @@
   /* player container that becomes fullscreen */
   #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; align-items:center; justify-content:center; }
 
-  /* video styling: full width, 16:9 aspect ratio, object-fit cover */
+  /* video styling: cover full viewport (removes black bars on most TVs) */
   #playerContainer video {
     width: 100vw;
-    height: calc(100vw * 9 / 16);
-    max-height: 100vh;
+    height: 100vh;
     object-fit: cover;
     outline:none;
     border:0;
+    background: black;
   }
 </style>
 </head>
@@ -61,6 +61,7 @@ const grid = document.getElementById('grid');
 const playerContainer = document.getElementById('playerContainer');
 let hls = null;
 let currentCategory = 'LIVE TV';
+let currentChannelIndex = 0; // track currently playing channel index
 
 // --- render UI ---
 categories.forEach((cat,ci)=>{
@@ -85,7 +86,10 @@ function loadCategory(cat){
     box.tabIndex = 0;
     box.setAttribute('data-idx', idx);
     box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
-    box.onclick = ()=> openPlayerForChannel(ch);
+
+    // set currentChannelIndex when user opens this channel
+    box.onclick = ()=> { currentChannelIndex = idx; openPlayerForChannel(ch); };
+
     box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; }
     grid.appendChild(box);
   });
@@ -111,13 +115,41 @@ function focusCurrent(){
   }
 }
 
+// helper to open channel by index in currentCategory
+function openPlayerForIndex(index){
+  const list = channelsByCategory[currentCategory] || [];
+  if(!list[index]) return;
+  currentChannelIndex = index;
+  openPlayerForChannel(list[index]);
+}
+
 // handle remote arrows / enter
 document.addEventListener('keydown', (e)=>{
+  // If player open: handle UP/DOWN for channel change, ESC/BACK for close
   if(playerContainer.style.display === 'flex'){
-    if(e.key === 'Backspace' || e.key === 'Escape'){ closePlayer(); history.back(); }
+    if(e.key === 'ArrowUp'){
+      const list = channelsByCategory[currentCategory] || [];
+      if(list.length > 0){
+        currentChannelIndex = (currentChannelIndex - 1 + list.length) % list.length;
+        openPlayerForIndex(currentChannelIndex);
+      }
+      return;
+    }
+    if(e.key === 'ArrowDown'){
+      const list = channelsByCategory[currentCategory] || [];
+      if(list.length > 0){
+        currentChannelIndex = (currentChannelIndex + 1) % list.length;
+        openPlayerForIndex(currentChannelIndex);
+      }
+      return;
+    }
+    if(e.key === 'Backspace' || e.key === 'Escape'){
+      closePlayer(); history.back();
+    }
     return;
   }
 
+  // If player not open: regular UI navigation
   if(e.key === 'ArrowRight'){
     if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
     else { gridFocus = gridFocus + 1; }
