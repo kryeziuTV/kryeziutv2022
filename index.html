@@ -3,249 +3,257 @@
 <head>
 <meta charset="UTF-8" />
 <title>TV App UI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
 <style>
   body {
     background:#3f4451;
-    font-family:'Rubik', sans-serif;
+    font-family:'Rubik',sans-serif;
     color:#fff;
     margin:0;
     padding:40px;
+    overflow:hidden;
   }
 
-  .categories {
-    display:flex;
-    gap:20px;
-    margin-bottom:40px;
+  /* when video is open: UI hidden, padding removed */
+  body.player-active {
+    padding:0 !important;
+    overflow:hidden !important;
   }
 
+  /* CATEGORIES */
+  .categories { display:flex; gap:20px; margin-bottom:40px; }
   .cat-btn {
-    background:#6246B8;
-    color:#fff;
-    padding:15px 28px;
-    border-radius:12px;
-    font-weight:500;
-    cursor:pointer;
+    background:#6246B8; padding:15px 28px;
+    border-radius:12px; color:white; cursor:pointer;
     box-shadow:0 6px 20px rgba(0,0,0,.45);
-    transition:.2s cubic-bezier(0,-0.5,0,3);
+    transition:.15s; font-weight:500;
   }
-
-  .cat-btn:hover,
-  .cat-btn:focus {
-    transform:translateY(-2px);
-    box-shadow:0 12px 40px rgba(0,0,0,.5);
+  .cat-btn:hover, .cat-btn:focus {
+    box-shadow:0 12px 30px rgba(0,0,0,.5);
+    transform:translateY(-3px);
     outline:none;
   }
 
+  /* CHANNEL GRID */
   .grid {
     display:grid;
     grid-template-columns:repeat(7,120px);
     gap:20px;
   }
-
   .channel {
-    width:120px;
-    height:120px;
-    background:#fff;
+    width:120px; height:120px; background:white;
     border-radius:14px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.45);
     cursor:pointer;
-    box-shadow:0 6px 20px rgba(0,0,0,.5);
-    transition:.2s cubic-bezier(0,-0.5,0,3);
   }
-
-  .channel:hover,
-  .channel:focus {
-    transform:translateY(-2px);
-    box-shadow:0 12px 40px rgba(0,0,0,.55);
+  .channel:hover, .channel:focus {
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(0,0,0,.55);
     outline:none;
   }
+  .channel img { width:80%; height:80%; object-fit:contain; }
 
-  .channel img {
-    width:80%;
-    height:80%;
-    object-fit:contain;
-  }
-
-  /* ------------------------- */
-  /* FULLSCREEN VIDEO PLAYER   */
-  /* ------------------------- */
+  /* FULLSCREEN VIDEO PLAYER */
   #playerContainer {
     position:fixed;
     inset:0;
-    width:100vw;
-    height:100vh;
-    background:black;
     display:none;
+    background:black;
     z-index:999999;
     align-items:center;
     justify-content:center;
   }
 
+  /* forced 16:9 landscape fullscreen */
   #playerContainer video {
-    width:100vw;
+    width:100vw; 
     height:100vh;
-    object-fit:fill; /* FULL screen NO black bars */
+    object-fit:cover;      /* Fills screen like TV */
     background:black;
+  }
+
+  /* channel info overlay */
+  #channelInfo {
+    position:fixed;
+    top:30px;
+    left:30px;
+    z-index:1000000;
+    color:white;
+    font-size:28px;
+    background:rgba(0,0,0,0.45);
+    padding:12px 20px;
+    border-radius:12px;
+    display:none;
   }
 </style>
 </head>
 
 <body>
-  <div class="categories" id="categories"></div>
-  <div class="grid" id="grid"></div>
 
-  <div id="playerContainer"></div>
+<div class="categories" id="categories"></div>
+<div class="grid" id="grid"></div>
+
+<!-- FULLSCREEN PLAYER -->
+<div id="playerContainer"></div>
+
+<!-- CHANNEL NAME OVERLAY -->
+<div id="channelInfo"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script>
 
-// Categories + channel list
+<script>
+/* ------------------------------
+   DATA
+------------------------------ */
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+
 const channelsByCategory = {
   "LIVE TV": [
-    { name:"RTK 1*", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", 
-      url:"https://viamotionhsi.netplus.ch/live/eds/rtk1/browser-HLS8/rtk1.m3u8" },
-
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png",
-      url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png",
-      url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-
-    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png",
-      url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+    { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
   ],
-
   "FILMA": [
     { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" },
-    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
-    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" }
+    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }
   ],
-
   "SPORT": [
-    { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Arena", logo:"https://via.placeholder.com/120x120?text=A", url:"" }
+    { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" }
   ],
-
   "FEMIJE": [
-    { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" },
-    { name:"Kids 2", logo:"https://via.placeholder.com/120x120?text=K2", url:"" }
+    { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" }
   ],
-
   "DOKU": [
-    { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" },
-    { name:"Doku 2", logo:"https://via.placeholder.com/120x120?text=D2", url:"" }
+    { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" }
   ]
 };
 
-const categoriesWrap = document.getElementById("categories");
-const grid = document.getElementById("grid");
+/* ------------------------------
+   DOM ELEMENTS
+------------------------------ */
+const categoriesEl = document.getElementById("categories");
+const gridEl = document.getElementById("grid");
 const playerContainer = document.getElementById("playerContainer");
-let currentCategory = "LIVE TV";
-let hls = null;
+const channelInfo = document.getElementById("channelInfo");
 
-/* --------------------
-   RENDER CATEGORIES
--------------------- */
+let hls = null;
+let currentCategory = "LIVE TV";
+let currentIndex = 0; // index inside category list
+let video = null;
+
+/* ------------------------------
+   RENDER UI
+------------------------------ */
 categories.forEach(cat => {
   const btn = document.createElement("button");
   btn.className = "cat-btn";
   btn.textContent = cat;
   btn.onclick = () => loadCategory(cat);
-  categoriesWrap.appendChild(btn);
+  categoriesEl.appendChild(btn);
 });
 
-/* --------------------
-   LOAD CHANNEL GRID
--------------------- */
 function loadCategory(cat) {
   currentCategory = cat;
-  grid.innerHTML = "";
+  currentIndex = 0;
 
-  channelsByCategory[cat].forEach(ch => {
-    const box = document.createElement("button");
-    box.className = "channel";
-    box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
-    box.onclick = () => openPlayerForChannel(ch);
-    grid.appendChild(box);
+  gridEl.innerHTML = "";
+  channelsByCategory[cat].forEach((ch,idx)=>{
+    const div = document.createElement("button");
+    div.className = "channel";
+    div.innerHTML = `<img src="${ch.logo}" alt="${ch.name}"/>`;
+    div.onclick = () => openPlayer(idx);
+    gridEl.appendChild(div);
   });
 }
 
 loadCategory(currentCategory);
 
-/* -------------------------
-   OPEN FULLSCREEN PLAYER
--------------------------- */
-function openPlayerForChannel(ch) {
-  const url = ch.url;
-  if (!url) return;
+/* ------------------------------
+   PLAYER FUNCTIONS
+------------------------------ */
+function openPlayer(index){
+  const channel = channelsByCategory[currentCategory][index];
+  if(!channel) return;
 
-  // hide UI
+  currentIndex = index;
+  document.body.classList.add("player-active");
+
   playerContainer.style.display = "flex";
+  channelInfo.style.display = "block";
+  channelInfo.textContent = channel.name;
+
   playerContainer.innerHTML = "";
-
-  // cleanup previous stream
-  if (hls) {
-    try { hls.destroy(); } catch(e){}
-    hls = null;
-  }
-
-  // create video element
-  const video = document.createElement("video");
+  video = document.createElement("video");
   video.autoplay = true;
   video.controls = false;
-  video.muted = false;
-  video.setAttribute("playsinline", "");
-
+  video.setAttribute("playsinline","");
   playerContainer.appendChild(video);
 
-  // hls support
-  if (Hls.isSupported()) {
+  // HLS HANDLING
+  if(Hls.isSupported()){
     hls = new Hls();
-    hls.loadSource(url);
+    hls.loadSource(channel.url);
     hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+    hls.on(Hls.Events.MANIFEST_PARSED, ()=> video.play());
   } else {
-    video.src = url;
-    video.play().catch(()=>{});
+    video.src = channel.url;
+    video.play();
   }
 
-  // FULLSCREEN THE ENTIRE PLAYER CONTAINER
-  const fs = playerContainer.requestFullscreen
-           || playerContainer.webkitRequestFullscreen
-           || playerContainer.msRequestFullscreen;
+  // Enter fullscreen (Failsafe)
+  try {
+    const fs = playerContainer.requestFullscreen || playerContainer.webkitRequestFullscreen;
+    if(fs) fs.call(playerContainer);
+  } catch(e){}
 
-  if (fs) fs.call(playerContainer);
+  // Orientation lock
+  try { screen.orientation.lock("landscape"); } catch(e){}
+}
+
+function closePlayer(){
+  document.body.classList.remove("player-active");
+
+  channelInfo.style.display="none";
+  playerContainer.style.display="none";
+  playerContainer.innerHTML="";
+
+  if(hls){ hls.destroy(); hls = null; }
+
+  // leave fullscreen
+  if(document.fullscreenElement){
+    try{ document.exitFullscreen(); }catch(e){}
+  }
 }
 
 /* ------------------------------
-   EXIT PLAYER (Back / Escape)
+   CHANGE CHANNELS WHILE PLAYING
 ------------------------------ */
-window.addEventListener("keydown", e => {
-  if ((e.key === "Escape" || e.key === "Backspace") &&
-      playerContainer.style.display === "flex") {
-    closePlayer();
-  }
-});
-
-window.addEventListener("popstate", () => {
-  if (playerContainer.style.display === "flex") {
-    closePlayer();
-  }
-});
-
-function closePlayer() {
-  if (hls) {
-    try { hls.destroy(); } catch(e){}
-    hls = null;
-  }
-  playerContainer.style.display = "none";
-  playerContainer.innerHTML = "";
+function playNext(){
+  const list = channelsByCategory[currentCategory];
+  currentIndex = (currentIndex + 1) % list.length;
+  openPlayer(currentIndex);
+}
+function playPrev(){
+  const list = channelsByCategory[currentCategory];
+  currentIndex = (currentIndex - 1 + list.length) % list.length;
+  openPlayer(currentIndex);
 }
 
+/* ------------------------------
+   KEY EVENTS
+------------------------------ */
+document.addEventListener("keydown", (e)=>{
+
+  if(playerContainer.style.display==="flex"){
+    if(e.key === "ArrowUp"){ playPrev(); }
+    if(e.key === "ArrowDown"){ playNext(); }
+    if(e.key === "Escape" || e.key === "Backspace"){ closePlayer(); }
+  }
+
+});
 </script>
 </body>
 </html>
