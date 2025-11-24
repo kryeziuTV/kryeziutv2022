@@ -17,23 +17,31 @@
   .channel:active { transform:translateY(2px); }
   .channel img { width:80%; height:80%; object-fit:contain; }
 
-  /* player container that becomes fullscreen */
-  #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; align-items:center; justify-content:center; }
-  #playerContainer.video-landscape video { width:100vw; height:100vh; object-fit:cover; }
-  #playerContainer.video-portrait video { width:100%; height:100%; object-fit:contain; }
+  /* FULLSCREEN player – always fits screen with NO black bars */
+  #playerContainer {
+    position:fixed;
+    inset:0;
+    background:black;
+    display:none;
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+  }
 
-  /* ensure no default controls are visible */
-  #playerContainer video { outline:none; border:0; }
+  #playerContainer video {
+    width:100vw;
+    height:100vh;
+    object-fit:cover; /* full screen — no black bars */
+    background:black;
+  }
 </style>
 </head>
 <body>
   <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
   <div class="grid" id="grid" role="grid"></div>
 
-  <!-- fullscreen player container (custom) -->
   <div id="playerContainer"></div>
 
-<!-- hls.js for m3u8 playback when needed -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 // --- data ---
@@ -63,10 +71,7 @@ categories.forEach((cat,ci)=>{
   const btn = document.createElement('button');
   btn.className = 'cat-btn';
   btn.textContent = cat;
-  btn.setAttribute('data-cat',cat);
-  btn.tabIndex = 0;
   btn.onclick = ()=> loadCategory(cat);
-  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; }
   catWrap.appendChild(btn);
 });
 
@@ -78,175 +83,63 @@ function loadCategory(cat){
   list.forEach((ch,idx)=>{
     const box = document.createElement('button');
     box.className = 'channel';
-    box.tabIndex = 0;
-    box.setAttribute('data-idx', idx);
     box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
     box.onclick = ()=> openPlayerForChannel(ch);
-    box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; }
     grid.appendChild(box);
   });
-  // reset focus indices
-  catFocus = categories.indexOf(cat) >= 0 ? categories.indexOf(cat) : 0;
-  gridFocus = 0;
-  focusedArea = 'cats';
-  focusCurrent();
 }
+loadCategory(currentCategory);
 
-// --- focus/navigation state ---
-let focusedArea = 'cats'; // 'cats' or 'grid'
-let catFocus = 0;
-let gridFocus = 0;
-const GRID_COLS = 7;
-
-function focusCurrent(){
-  if(focusedArea === 'cats'){
-    const cats = catWrap.querySelectorAll('.cat-btn');
-    cats[catFocus]?.focus();
-  } else {
-    const items = grid.querySelectorAll('.channel');
-    items[gridFocus]?.focus();
-  }
-}
-
-// handle remote arrows / enter
-document.addEventListener('keydown', (e)=>{
-  // if player open, handle only player-specific keys
-  if(playerContainer.style.display === 'flex'){
-    if(e.key === 'Backspace' || e.key === 'Escape'){ closePlayer(); history.back(); }
-    return;
-  }
-
-  if(e.key === 'ArrowRight'){
-    if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
-    else { gridFocus = gridFocus + 1; }
-  }
-  if(e.key === 'ArrowLeft'){
-    if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
-    else { gridFocus = Math.max(gridFocus - 1, 0); }
-  }
-  if(e.key === 'ArrowDown'){
-    if(focusedArea === 'cats'){
-      // move from categories to grid column matching catFocus
-      focusedArea = 'grid';
-      gridFocus = catFocus; // same column
-    } else {
-      gridFocus = gridFocus + GRID_COLS;
-    }
-  }
-  if(e.key === 'ArrowUp'){
-    if(focusedArea === 'grid'){
-      if(gridFocus < GRID_COLS){ // go to categories row
-        focusedArea = 'cats';
-        catFocus = Math.min(gridFocus, categories.length - 1);
-      } else {
-        gridFocus = gridFocus - GRID_COLS;
-      }
-    }
-  }
-
-  // clamp gridFocus to available items
-  const gridItems = grid.querySelectorAll('.channel');
-  if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
-  if(gridFocus < 0) gridFocus = 0;
-
-  // Enter to activate
-  if(e.key === 'Enter'){
-    if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
-    else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
-  }
-
-  focusCurrent();
-});
-
-// --- player helpers (hls.js fallback) ---
+// --- PLAYER ---
 function openPlayerForChannel(ch){
   const url = ch.url;
   if(!url) return;
-  // push history so back button can return to UI
+
   history.pushState({player:true}, 'player');
 
-  // prepare container
   playerContainer.style.display = 'flex';
-  // choose landscape vs portrait depending on device
-  updateOrientationClass();
-
-  // clear previous content / hls
   playerContainer.innerHTML = '';
+
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
 
   const video = document.createElement('video');
-  video.id = 'tvplayer';
   video.autoplay = true;
-  video.controls = false; // user asked: no controls visible
+  video.controls = false;
   video.muted = false;
   video.setAttribute('playsinline','');
-  // prevent touch controls interfering; remote will use keys
-  video.style.pointerEvents = 'none';
 
   playerContainer.appendChild(video);
 
-  // play with hls.js if needed
   if(Hls && Hls.isSupported()){
-    hls = new Hls({
-      // minimal config, you can tune buffer settings later
-      maxBufferLength: 30
-    });
+    hls = new Hls();
     hls.loadSource(url);
     hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(()=>{}); });
+    hls.on(Hls.Events.MANIFEST_PARSED, ()=> video.play().catch(()=>{}));
   } else {
-    // native playback (Safari, some Android WebViews)
     video.src = url;
     video.play().catch(()=>{});
   }
 
-  // try to lock orientation to landscape on supported devices
-  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){}
-
-  // request fullscreen where available
-  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
-  try{ req && req.call(video).catch(()=>{}); }catch(e){}
+  // fullscreen request
+  const req = video.requestFullscreen || video.webkitRequestFullscreen;
+  if(req) req.call(video).catch(()=>{});
 }
 
 function closePlayer(){
-  // stop hls and remove video
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
   playerContainer.style.display = 'none';
   playerContainer.innerHTML = '';
-  // unlock orientation if possible
-  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
 }
 
-// handle history/back
-window.addEventListener('popstate', (e)=>{
-  // if player open, close it and prevent app exit
-  if(playerContainer.style.display === 'flex'){
-    closePlayer();
-    // do not push additional history here
-  }
+window.addEventListener('popstate', ()=>{
+  if(playerContainer.style.display === 'flex'){ closePlayer(); }
 });
 
-// also map Escape/Backspace to close
 window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' || e.key === 'Backspace'){
-    if(playerContainer.style.display === 'flex'){
-      history.back(); // triggers popstate -> closePlayer
-    }
+  if((e.key === 'Escape' || e.key === 'Backspace') && playerContainer.style.display === 'flex'){
+    history.back();
   }
 });
-
-// auto-orientation helper for phones
-function updateOrientationClass(){
-  const w = window.innerWidth, h = window.innerHeight;
-  if(w>h) { playerContainer.classList.add('video-landscape'); playerContainer.classList.remove('video-portrait'); }
-  else { playerContainer.classList.add('video-portrait'); playerContainer.classList.remove('video-landscape'); }
-}
-window.addEventListener('resize', updateOrientationClass);
-window.addEventListener('orientationchange', updateOrientationClass);
-
-// initial load
-loadCategory(currentCategory);
-
 </script>
 </body>
 </html>
