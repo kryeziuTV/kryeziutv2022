@@ -81,10 +81,15 @@
   }
 
   #playerContainer video {
-    width:100vw;
-    height:100vh;
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:110vw;     /* Zmadhuar pak që të mos dalin shirita në TV */
+    height:110vh;    /* Po zmadhuar pak */
+    transform:translate(-50%, -50%);
     object-fit:cover;
-  }
+    background:black;
+}
 </style>
 </head>
 <body>
