@@ -18,15 +18,16 @@
   .channel img { width:80%; height:80%; object-fit:contain; }
 
   /* player container that becomes fullscreen */
-  #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; align-items:center; justify-content:center; }
+  #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; flex-direction:column; }
   
-  /* video fills entire screen without bars */
+  /* video fills entire screen */
   #playerContainer video { 
     width:100%; 
     height:100%; 
     object-fit:cover; 
     outline:none; 
     border:0; 
+    flex:1;
   }
 
   /* info bar at bottom with glass blur effect */
