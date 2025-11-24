@@ -16,96 +16,12 @@
   .channel:focus, .channel:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,0,0,.55); outline:none; }
   .channel:active { transform:translateY(2px); }
   .channel img { width:80%; height:80%; object-fit:contain; }
-
-  /* player container that becomes fullscreen */
-  #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; flex-direction:column; }
-  
-  /* video fills entire screen */
-  #playerContainer video { 
-    width:100%; 
-    height:100%; 
-    object-fit:cover; 
-    outline:none; 
-    border:0; 
-    flex:1;
-  }
-
-  /* info bar at bottom with glass blur effect */
-  .player-info-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 20px 30px;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 500;
-    display: none;
-    z-index: 100;
-    animation: slideUp 0.3s ease-out;
-  }
-
-  .player-info-bar.show {
-    display: flex;
-    align-items: center;
-  }
-
-  .player-info-bar.fade-out {
-    animation: fadeOut 0.3s ease-out forwards;
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-
-  .player-info-bar .channel-logo {
-    width: 40px;
-    height: 40px;
-    margin-right: 15px;
-    object-fit: contain;
-  }
-
-  .player-info-bar .channel-name {
-    display: flex;
-    align-items: center;
-  }
 </style>
 </head>
 <body>
   <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
   <div class="grid" id="grid" role="grid"></div>
-
-  <!-- fullscreen player container (custom) -->
-  <div id="playerContainer">
-    <div class="player-info-bar" id="infoBar">
-      <img class="channel-logo" id="infoChanLogo" src="" alt="">
-      <div class="channel-name" id="infoChanName"></div>
-    </div>
-  </div>
-
-<!-- hls.js for m3u8 playback when needed -->
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
-// --- data ---
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
 const channelsByCategory = {
   "LIVE TV": [
@@ -114,38 +30,38 @@ const channelsByCategory = {
     { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
     { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
   ],
-  "FILMA": [ { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" }, { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }, { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" } ],
-  "SPORT": [ { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" }, { name:"Arena", logo:"https://via.placeholder.com/120x120?text=A", url:"" } ],
-  "FEMIJE": [ { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" }, { name:"Kids 2", logo:"https://via.placeholder.com/120x120?text=K2", url:"" } ],
-  "DOKU": [ { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" }, { name:"Doku 2", logo:"https://via.placeholder.com/120x120?text=D2", url:"" } ]
+  "FILMA": [ 
+    { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" }, 
+    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }, 
+    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" }
+  ],
+  "SPORT": [ 
+    { name:"Sport+", logo:"https://via.placeholder.com/120x120?text=S+", url:"" }, 
+    { name:"Arena", logo:"https://via.placeholder.com/120x120?text=A", url:"" }
+  ],
+  "FEMIJE": [ 
+    { name:"Kids 1", logo:"https://via.placeholder.com/120x120?text=K1", url:"" }, 
+    { name:"Kids 2", logo:"https://via.placeholder.com/120x120?text=K2", url:"" }
+  ],
+  "DOKU": [ 
+    { name:"Doku 1", logo:"https://via.placeholder.com/120x120?text=D1", url:"" }, 
+    { name:"Doku 2", logo:"https://via.placeholder.com/120x120?text=D2", url:"" }
+  ]
 };
-
-// --- DOM refs ---
 const catWrap = document.getElementById('categories');
 const grid = document.getElementById('grid');
-const playerContainer = document.getElementById('playerContainer');
-const infoBar = document.getElementById('infoBar');
-const infoChanLogo = document.getElementById('infoChanLogo');
-const infoChanName = document.getElementById('infoChanName');
-
-let hls = null;
 let currentCategory = 'LIVE TV';
-let currentChannelIndex = 0;
-let infoBarTimeout = null;
 
-// --- render UI ---
-categories.forEach((cat,ci)=>{
+categories.forEach((cat)=>{
   const btn = document.createElement('button');
   btn.className = 'cat-btn';
   btn.textContent = cat;
   btn.setAttribute('data-cat',cat);
   btn.tabIndex = 0;
   btn.onclick = ()=> loadCategory(cat);
-  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; }
   catWrap.appendChild(btn);
 });
 
-// render channels for a category
 function loadCategory(cat){
   currentCategory = cat;
   grid.innerHTML = '';
@@ -156,224 +72,16 @@ function loadCategory(cat){
     box.tabIndex = 0;
     box.setAttribute('data-idx', idx);
     box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
-    box.onclick = ()=> openPlayerForChannel(ch, idx);
-    box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; }
+    box.onclick = ()=> {
+      if (ch.url) {
+        // Open in new page, pass url & name as params
+        window.open(`player.html?url=${encodeURIComponent(ch.url)}&name=${encodeURIComponent(ch.name)}&logo=${encodeURIComponent(ch.logo)}`, '_blank');
+      }
+    };
     grid.appendChild(box);
   });
-  // reset focus indices
-  catFocus = categories.indexOf(cat) >= 0 ? categories.indexOf(cat) : 0;
-  gridFocus = 0;
-  focusedArea = 'cats';
-  focusCurrent();
 }
-
-// --- focus/navigation state ---
-let focusedArea = 'cats'; // 'cats' or 'grid'
-let catFocus = 0;
-let gridFocus = 0;
-const GRID_COLS = 7;
-
-function focusCurrent(){
-  if(focusedArea === 'cats'){
-    const cats = catWrap.querySelectorAll('.cat-btn');
-    cats[catFocus]?.focus();
-  } else {
-    const items = grid.querySelectorAll('.channel');
-    items[gridFocus]?.focus();
-  }
-}
-
-// Show info bar with channel info
-function showChannelInfo(channelName, channelLogo){
-  clearTimeout(infoBarTimeout);
-  infoBar.classList.remove('fade-out');
-  infoChanLogo.src = channelLogo;
-  infoChanName.textContent = channelName;
-  infoBar.classList.add('show');
-  
-  // auto-hide after 3 seconds
-  infoBarTimeout = setTimeout(() => {
-    infoBar.classList.add('fade-out');
-    setTimeout(() => {
-      infoBar.classList.remove('show');
-      infoBar.classList.remove('fade-out');
-    }, 300);
-  }, 3000);
-}
-
-// handle remote arrows / enter
-document.addEventListener('keydown', (e)=>{
-  // if player open, handle player-specific keys
-  if(playerContainer.style.display === 'flex'){
-    const channelList = channelsByCategory[currentCategory] || [];
-    
-    // Up arrow - previous channel
-    if(e.key === 'ArrowUp'){
-      e.preventDefault();
-      currentChannelIndex = Math.max(currentChannelIndex - 1, 0);
-      const ch = channelList[currentChannelIndex];
-      if(ch) {
-        openPlayerForChannel(ch, currentChannelIndex);
-        showChannelInfo(ch.name, ch.logo);
-      }
-      return;
-    }
-    
-    // Down arrow - next channel
-    if(e.key === 'ArrowDown'){
-      e.preventDefault();
-      currentChannelIndex = Math.min(currentChannelIndex + 1, channelList.length - 1);
-      const ch = channelList[currentChannelIndex];
-      if(ch) {
-        openPlayerForChannel(ch, currentChannelIndex);
-        showChannelInfo(ch.name, ch.logo);
-      }
-      return;
-    }
-    
-    // Backspace or Escape to close player
-    if(e.key === 'Backspace' || e.key === 'Escape'){ 
-      closePlayer(); 
-      history.back(); 
-    }
-    return;
-  }
-
-  if(e.key === 'ArrowRight'){
-    if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
-    else { gridFocus = gridFocus + 1; }
-  }
-  if(e.key === 'ArrowLeft'){
-    if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
-    else { gridFocus = Math.max(gridFocus - 1, 0); }
-  }
-  if(e.key === 'ArrowDown'){
-    if(focusedArea === 'cats'){
-      // move from categories to grid column matching catFocus
-      focusedArea = 'grid';
-      gridFocus = catFocus; // same column
-    } else {
-      gridFocus = gridFocus + GRID_COLS;
-    }
-  }
-  if(e.key === 'ArrowUp'){
-    if(focusedArea === 'grid'){
-      if(gridFocus < GRID_COLS){ // go to categories row
-        focusedArea = 'cats';
-        catFocus = Math.min(gridFocus, categories.length - 1);
-      } else {
-        gridFocus = gridFocus - GRID_COLS;
-      }
-    }
-  }
-
-  // clamp gridFocus to available items
-  const gridItems = grid.querySelectorAll('.channel');
-  if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
-  if(gridFocus < 0) gridFocus = 0;
-
-  // Enter to activate
-  if(e.key === 'Enter'){
-    if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
-    else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
-  }
-
-  focusCurrent();
-});
-
-// --- player helpers (hls.js fallback) ---
-function openPlayerForChannel(ch, idx){
-  const url = ch.url;
-  if(!url) return;
-  
-  currentChannelIndex = idx;
-  
-  // push history so back button can return to UI
-  history.pushState({player:true}, 'player');
-
-  // prepare container
-  playerContainer.style.display = 'flex';
-
-  // clear previous content / hls
-  const videoContainer = playerContainer.querySelector('video');
-  if(videoContainer) videoContainer.remove();
-  
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
-
-  const video = document.createElement('video');
-  video.id = 'tvplayer';
-  video.autoplay = true;
-  video.controls = false;
-  video.muted = false;
-  video.setAttribute('playsinline','');
-  video.style.pointerEvents = 'none';
-
-  // insert video before info bar
-  playerContainer.insertBefore(video, infoBar);
-
-  // play with hls.js if needed
-  if(Hls && Hls.isSupported()){
-    hls = new Hls({
-      maxBufferLength: 30
-    });
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(()=>{}); });
-  } else {
-    // native playback (Safari, some Android WebViews)
-    video.src = url;
-    video.play().catch(()=>{});
-  }
-
-  // try to lock orientation to landscape on supported devices
-  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){}
-
-  // request fullscreen on the container
-  const req = playerContainer.requestFullscreen || playerContainer.webkitRequestFullscreen || playerContainer.msRequestFullscreen;
-  try{ req && req.call(playerContainer).catch(()=>{}); }catch(e){}
-}
-
-function closePlayer(){
-  clearTimeout(infoBarTimeout);
-  // stop hls and remove video
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
-  playerContainer.style.display = 'none';
-  const videoContainer = playerContainer.querySelector('video');
-  if(videoContainer) videoContainer.remove();
-  infoBar.classList.remove('show');
-  infoBar.classList.remove('fade-out');
-  
-  // unlock orientation if possible
-  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
-  // exit fullscreen
-  try{ 
-    if(document.fullscreenElement || document.webkitFullscreenElement){
-      const exit = document.exitFullscreen || document.webkitExitFullscreen;
-      exit && exit.call(document).catch(()=>{});
-    }
-  }catch(e){}
-}
-
-// handle history/back
-window.addEventListener('popstate', (e)=>{
-  // if player open, close it and prevent app exit
-  if(playerContainer.style.display === 'flex'){
-    closePlayer();
-  }
-});
-
-// also map Escape/Backspace to close
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' || e.key === 'Backspace'){
-    if(playerContainer.style.display === 'flex'){
-      history.back(); // triggers popstate -> closePlayer
-    }
-  }
-});
-
-// initial load
 loadCategory(currentCategory);
-
 </script>
 </body>
 </html>
