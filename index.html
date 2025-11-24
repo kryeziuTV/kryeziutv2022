@@ -28,6 +28,65 @@
     outline:none; 
     border:0; 
   }
+
+  /* info bar at bottom with glass blur effect */
+  .player-info-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 20px 30px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    display: none;
+    z-index: 100;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .player-info-bar.show {
+    display: flex;
+    align-items: center;
+  }
+
+  .player-info-bar.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .player-info-bar .channel-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    object-fit: contain;
+  }
+
+  .player-info-bar .channel-name {
+    display: flex;
+    align-items: center;
+  }
 </style>
 </head>
 <body>
@@ -35,7 +94,12 @@
   <div class="grid" id="grid" role="grid"></div>
 
   <!-- fullscreen player container (custom) -->
-  <div id="playerContainer"></div>
+  <div id="playerContainer">
+    <div class="player-info-bar" id="infoBar">
+      <img class="channel-logo" id="infoChanLogo" src="" alt="">
+      <div class="channel-name" id="infoChanName"></div>
+    </div>
+  </div>
 
 <!-- hls.js for m3u8 playback when needed -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -59,8 +123,14 @@ const channelsByCategory = {
 const catWrap = document.getElementById('categories');
 const grid = document.getElementById('grid');
 const playerContainer = document.getElementById('playerContainer');
+const infoBar = document.getElementById('infoBar');
+const infoChanLogo = document.getElementById('infoChanLogo');
+const infoChanName = document.getElementById('infoChanName');
+
 let hls = null;
 let currentCategory = 'LIVE TV';
+let currentChannelIndex = 0;
+let infoBarTimeout = null;
 
 // --- render UI ---
 categories.forEach((cat,ci)=>{
@@ -85,7 +155,7 @@ function loadCategory(cat){
     box.tabIndex = 0;
     box.setAttribute('data-idx', idx);
     box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
-    box.onclick = ()=> openPlayerForChannel(ch);
+    box.onclick = ()=> openPlayerForChannel(ch, idx);
     box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; }
     grid.appendChild(box);
   });
@@ -112,11 +182,59 @@ function focusCurrent(){
   }
 }
 
+// Show info bar with channel info
+function showChannelInfo(channelName, channelLogo){
+  clearTimeout(infoBarTimeout);
+  infoBar.classList.remove('fade-out');
+  infoChanLogo.src = channelLogo;
+  infoChanName.textContent = channelName;
+  infoBar.classList.add('show');
+  
+  // auto-hide after 3 seconds
+  infoBarTimeout = setTimeout(() => {
+    infoBar.classList.add('fade-out');
+    setTimeout(() => {
+      infoBar.classList.remove('show');
+      infoBar.classList.remove('fade-out');
+    }, 300);
+  }, 3000);
+}
+
 // handle remote arrows / enter
 document.addEventListener('keydown', (e)=>{
-  // if player open, handle only player-specific keys
+  // if player open, handle player-specific keys
   if(playerContainer.style.display === 'flex'){
-    if(e.key === 'Backspace' || e.key === 'Escape'){ closePlayer(); history.back(); }
+    const channelList = channelsByCategory[currentCategory] || [];
+    
+    // Up arrow - previous channel
+    if(e.key === 'ArrowUp'){
+      e.preventDefault();
+      currentChannelIndex = Math.max(currentChannelIndex - 1, 0);
+      const ch = channelList[currentChannelIndex];
+      if(ch) {
+        openPlayerForChannel(ch, currentChannelIndex);
+        showChannelInfo(ch.name, ch.logo);
+      }
+      return;
+    }
+    
+    // Down arrow - next channel
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      currentChannelIndex = Math.min(currentChannelIndex + 1, channelList.length - 1);
+      const ch = channelList[currentChannelIndex];
+      if(ch) {
+        openPlayerForChannel(ch, currentChannelIndex);
+        showChannelInfo(ch.name, ch.logo);
+      }
+      return;
+    }
+    
+    // Backspace or Escape to close player
+    if(e.key === 'Backspace' || e.key === 'Escape'){ 
+      closePlayer(); 
+      history.back(); 
+    }
     return;
   }
 
@@ -163,9 +281,12 @@ document.addEventListener('keydown', (e)=>{
 });
 
 // --- player helpers (hls.js fallback) ---
-function openPlayerForChannel(ch){
+function openPlayerForChannel(ch, idx){
   const url = ch.url;
   if(!url) return;
+  
+  currentChannelIndex = idx;
+  
   // push history so back button can return to UI
   history.pushState({player:true}, 'player');
 
@@ -173,19 +294,21 @@ function openPlayerForChannel(ch){
   playerContainer.style.display = 'flex';
 
   // clear previous content / hls
-  playerContainer.innerHTML = '';
+  const videoContainer = playerContainer.querySelector('video');
+  if(videoContainer) videoContainer.remove();
+  
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
 
   const video = document.createElement('video');
   video.id = 'tvplayer';
   video.autoplay = true;
-  video.controls = false; // user asked: no controls visible
+  video.controls = false;
   video.muted = false;
   video.setAttribute('playsinline','');
-  // prevent touch controls interfering; remote will use keys
   video.style.pointerEvents = 'none';
 
-  playerContainer.appendChild(video);
+  // insert video before info bar
+  playerContainer.insertBefore(video, infoBar);
 
   // play with hls.js if needed
   if(Hls && Hls.isSupported()){
@@ -204,16 +327,21 @@ function openPlayerForChannel(ch){
   // try to lock orientation to landscape on supported devices
   try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){}
 
-  // request fullscreen on the container (not just video element)
+  // request fullscreen on the container
   const req = playerContainer.requestFullscreen || playerContainer.webkitRequestFullscreen || playerContainer.msRequestFullscreen;
   try{ req && req.call(playerContainer).catch(()=>{}); }catch(e){}
 }
 
 function closePlayer(){
+  clearTimeout(infoBarTimeout);
   // stop hls and remove video
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
   playerContainer.style.display = 'none';
-  playerContainer.innerHTML = '';
+  const videoContainer = playerContainer.querySelector('video');
+  if(videoContainer) videoContainer.remove();
+  infoBar.classList.remove('show');
+  infoBar.classList.remove('fade-out');
+  
   // unlock orientation if possible
   try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
   // exit fullscreen
@@ -230,7 +358,6 @@ window.addEventListener('popstate', (e)=>{
   // if player open, close it and prevent app exit
   if(playerContainer.style.display === 'flex'){
     closePlayer();
-    // do not push additional history here
   }
 });
 
