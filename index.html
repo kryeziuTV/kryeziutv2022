@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar me Numra</title>
+<title>TV App UI - Përditësuar (UX Rregullime)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   /* STILIMET KRYESORE */
@@ -301,12 +301,12 @@ const GRID_COLS = 7;
 // NDIHMËS PËR MENY & NAVIGIM
 let isMenuVisible = false;
 let menuFocusIndex = 0;
-let currentChannelIndex = 0; 
+let currentChannelIndex = 0; // indeksi i kanalit aktual që po luhet në listën e plotë (flat)
 let infoBarTimer = null; 
 let digitBuffer = ''; 
 let digitTimer = null; 
 
-// SHTESA E RE: Krijojmë listën e rreshtuar (flat) të të gjitha kanaleve, duke ruajtur numrin unik
+// Krijojmë listën e rreshtuar (flat) të të gjitha kanaleve, duke ruajtur numrin unik
 const allChannelsList = [];
 let channelNumberCounter = 0;
 categories.forEach(categoryName => {
@@ -322,7 +322,7 @@ categories.forEach(categoryName => {
 const MAX_CHANNEL_INDEX = allChannelsList.length - 1;
 
 
-// --- render UI (loadCategory/focusCurrent mbeten të njëjtë) ---
+// --- render UI (loadCategory/focusCurrent mbeten të njëjta) ---
 categories.forEach((cat,ci)=>{
   const btn = document.createElement('button');
   btn.className = 'cat-btn';
@@ -382,7 +382,6 @@ function showInfoBar(ch) {
     
     if (!infoBar || !title) return;
 
-    // Numri vjen nga objekti i kanalit
     title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
     infoBar.classList.add('visible');
 
@@ -428,8 +427,9 @@ function toggleChannelMenu(){
         const items = channelMenu.querySelectorAll('.menu-channel-item');
         if(items.length > 0) {
             items.forEach(i => i.classList.remove('focused')); 
-            menuFocusIndex = Math.min(Math.max(0, menuFocusIndex), items.length - 1);
+            menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); // Fokusohu tek kanali aktual
             items[menuFocusIndex].classList.add('focused');
+            // Sigurohemi që kanali i fokusuar të jetë i dukshëm
             items[menuFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
@@ -438,11 +438,19 @@ function toggleChannelMenu(){
 function switchChannel(ch){
     if(!ch.url) return;
     
+    // RREGULLIMI I PERFORMANCES: Kontrollo nëse kanali i ri është i njëjti me atë aktual
+    if (ch.fullIndex === currentChannelIndex && isMenuVisible) {
+        // Kanali është i njëjti, vetëm fshih menunë dhe kthehu
+        toggleChannelMenu(); 
+        return; 
+    }
+    
+    // Fshih menunë nëse ishte e dukshme
     if (isMenuVisible) {
         toggleChannelMenu(); 
     }
     
-    // Përditëso currentChannelIndex bazuar në indeksin e plotë
+    // Përditëso indeksin aktual (currentChannelIndex)
     currentChannelIndex = ch.fullIndex; 
     menuFocusIndex = ch.fullIndex;
 
@@ -458,17 +466,17 @@ document.addEventListener('keydown', (e)=>{
     const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
     const maxIndex = allChannelsList.length - 1; 
 
-    // LOGJIKA E NDËRRIMIT ME NUMRA (SHTESA E RE)
+    // LOGJIKA E NDËRRIMIT ME NUMRA
     if (e.key >= '0' && e.key <= '9') {
         e.preventDefault();
         digitBuffer += e.key;
         
-        // Shfaq numrin aktual në Info Bar
         const infoBar = document.getElementById('infoBar');
         const title = infoBar.querySelector('.channel-title');
         title.textContent = `Kanali: ${digitBuffer}`;
         infoBar.classList.add('visible'); 
 
+        if (infoBarTimer) clearTimeout(infoBarTimer);
         if (digitTimer) clearTimeout(digitTimer);
         
         digitTimer = setTimeout(() => {
@@ -476,18 +484,15 @@ document.addEventListener('keydown', (e)=>{
             
             if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
                 const targetChannel = allChannelsList[targetNumber - 1];
-                currentChannelIndex = targetNumber - 1; 
-                openPlayerForChannel(targetChannel, true);
+                switchChannel(targetChannel); // Përdor funksionin switchChannel
             }
             
             digitBuffer = '';
-            // Rishfaq Info Bar me emrin e kanalit të sapolëshuar
+            
             if (allChannelsList[currentChannelIndex]) {
                  showInfoBar(allChannelsList[currentChannelIndex]); 
-            } else {
-                 infoBar.classList.remove('visible');
             }
-        }, 1500); // 1.5 sekonda kohë
+        }, 1500); 
         
         return; 
     }
@@ -498,11 +503,13 @@ document.addEventListener('keydown', (e)=>{
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.max(0, menuFocusIndex - 1);
             menuItems[menuFocusIndex]?.classList.add('focused');
+            // RREGULLIMI I SCROLLIT PËR FOKUS
             menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if(e.key === 'ArrowDown'){
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
             menuItems[menuFocusIndex]?.classList.add('focused');
+            // RREGULLIMI I SCROLLIT PËR FOKUS
             menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if(e.key === 'Enter'){
             const channel = allChannelsList[menuFocusIndex];
@@ -511,7 +518,7 @@ document.addEventListener('keydown', (e)=>{
         return; 
     }
 
-    // RREGULLIMI I NDËRRIMIT SEKUENCIAL ME UP/DOWN
+    // NDËRRIMI SEKUENCIAL ME UP/DOWN
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         let newIndex = currentChannelIndex;
         
@@ -544,7 +551,7 @@ document.addEventListener('keydown', (e)=>{
     return; 
   } 
 
-  // KONTROLLAT E NAVIGIMIT TË UI-SË (mbeten të njëjta)
+  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjta)
   if(e.key === 'ArrowRight'){
     if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
     else { gridFocus = gridFocus + 1; }
@@ -589,17 +596,14 @@ function openPlayerForChannel(ch, isSwitching = false){
   const url = ch.url;
   if(!url) return;
   
-  // 1. Shfaq Loading dhe Info Bar (me emrin e ri)
+  // 1. Shfaq Loading dhe Info Bar
   updateLoadingState('loading');
   showInfoBar(ch);
   
-  // Gjej indeksin e kanalit aktual
-  // Kjo tashmë duhet të jetë vendosur nga logjika e digit/up/down ose switchChannel
   if (ch.fullIndex !== undefined) {
       currentChannelIndex = ch.fullIndex;
       menuFocusIndex = ch.fullIndex; 
   } else {
-     // Gjej indeksin në listën e plotë nëse thirret nga grid (vetëm hapja e parë)
      const foundIndex = allChannelsList.findIndex(channel => channel.url === url);
      if (foundIndex !== -1) {
          currentChannelIndex = foundIndex;
@@ -641,14 +645,13 @@ function openPlayerForChannel(ch, isSwitching = false){
   }
 
 
-  // POPULLO DHE FSHEH MENYNË ANËSORE (Përdor ALL Channels)
+  // POPULLO DHE FSHEH MENYNË ANËSORE
   if (!channelMenu) channelMenu = document.getElementById('channelMenu');
   channelMenu.innerHTML = ''; 
   allChannelsList.forEach((channelData, index) => {
     const item = document.createElement('div');
     item.className = 'menu-channel-item';
     
-    // Numri i kanalit (Numri rendor global)
     const channelNumber = document.createElement('span');
     channelNumber.className = 'menu-channel-number';
     channelNumber.textContent = channelData.number; 
@@ -726,7 +729,7 @@ function closePlayer(){
       clearTimeout(infoBarTimer); 
       document.getElementById('infoBar').classList.remove('visible');
   }
-  if (digitTimer) clearTimeout(digitTimer); // Pastro timerin e numrave
+  if (digitTimer) clearTimeout(digitTimer); 
   digitBuffer = '';
   
   playerContainer.style.display = 'none';
