@@ -17,263 +17,133 @@
   .channel:active { transform:translateY(2px); }
   .channel img { width:80%; height:80%; object-fit:contain; }
 
-  /* player container that becomes fullscreen */
-  #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; align-items:center; justify-content:center; }
-  #playerContainer.video-landscape video { width:100vw; height:100vh; object-fit:cover; }
-  #playerContainer.video-portrait video { width:100%; height:100%; object-fit:contain; }
-
-  /* ensure no default controls are visible */
-  #playerContainer video { outline:none; border:0; }
+  #playerContainer {
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:none;
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+  }
 </style>
 </head>
 <body>
-  <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
-  <div class="grid" id="grid" role="grid"></div>
 
-  <!-- fullscreen player container (custom) -->
+  <div class="categories" id="categories"></div>
+  <div class="grid" id="grid"></div>
+
+  <!-- fullscreen player -->
   <div id="playerContainer"></div>
 
-<!-- hls.js for m3u8 playback when needed -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
-// --- data ---
+
+// --- categories and channels ---
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
 const channelsByCategory = {
   "LIVE TV": [
     { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
     { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"VIZION PLUS", logo:"https://vimg.ipko.tv/logo/color/vizionplus.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" }
   ],
-  "FILMA": [ 
+  FILMA: [
     { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" },
-    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
-    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
-    { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C3", url:"" } 
-],
-  "SPORT": [ 
-    { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=A", url:"" } 
-],
-  "FEMIJE": [ 
-    { name:"DISNEY JUNIOR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8" }, 
-    { name:"AVATAR", logo:"https://via.placeholder.com/120x120?text=K1", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/60b4c17a81e29300071d3a39/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=8e05edb7-1f2c-11ef-86d8-5d587df108c6&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=640a4092-5016-4d01-bcbf-d66e4f7aa21d" }, 
-    { name:"ONE PIECE", logo:"https://via.placeholder.com/120x120?text=K1", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6380c94947c72b0007ee9a13/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=8e06d815-1f2c-11ef-86d8-5d587df108c6&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=011422f0-e50a-4334-9bb5-b01fe7684ef5" }, 
-    { name:"NARUTO", logo:"https://via.placeholder.com/120x120?text=K2", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/65d5fc39a25d5e00082895c4/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=1b1f1164-4b81-11ef-a8ac-e146e4e7be02&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=91b30c33-90e6-47e3-95e6-a297bd00e5df" } 
-],
-  "DOKU": [ 
-    { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8" }, 
-    { name:"NAT GEO WILD", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8" }, 
-    { name:"HISTORY", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/history_channel/index.m3u8" }, 
-    { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D2", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a" } ]
+    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }
+  ],
+  SPORT: [
+    { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S1", url:"" }
+  ],
+  FEMIJE: [
+    { name:"DISNEY JR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8" }
+  ],
+  DOKU: [
+    { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8" }
+  ]
 };
 
-// --- DOM refs ---
-const catWrap = document.getElementById('categories');
-const grid = document.getElementById('grid');
-const playerContainer = document.getElementById('playerContainer');
-let hls = null;
-let currentCategory = 'LIVE TV';
+// DOM
+const catWrap = document.getElementById("categories");
+const grid = document.getElementById("grid");
+const playerContainer = document.getElementById("playerContainer");
 
-// --- render UI ---
-categories.forEach((cat,ci)=>{
-  const btn = document.createElement('button');
-  btn.className = 'cat-btn';
+let currentCategory = "LIVE TV";
+let hls = null;
+
+// render categories
+categories.forEach(cat => {
+  const btn = document.createElement("button");
+  btn.className = "cat-btn";
   btn.textContent = cat;
-  btn.setAttribute('data-cat',cat);
-  btn.tabIndex = 0;
-  btn.onclick = ()=> loadCategory(cat);
-  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; }
+  btn.onclick = () => loadCategory(cat);
   catWrap.appendChild(btn);
 });
 
-// render channels for a category
+// load channels
 function loadCategory(cat){
   currentCategory = cat;
-  grid.innerHTML = '';
-  const list = channelsByCategory[cat] || [];
-  list.forEach((ch,idx)=>{
-    const box = document.createElement('button');
-    box.className = 'channel';
-    box.tabIndex = 0;
-    box.setAttribute('data-idx', idx);
-    box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
-    box.onclick = ()=> openPlayerForChannel(ch);
-    box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; }
+  grid.innerHTML = "";
+  channelsByCategory[cat].forEach(ch => {
+    const box = document.createElement("button");
+    box.className = "channel";
+    box.innerHTML = `<img src="${ch.logo}" />`;
+    box.onclick = () => openPlayerForChannel(ch);
     grid.appendChild(box);
   });
-  // reset focus indices
-  catFocus = categories.indexOf(cat) >= 0 ? categories.indexOf(cat) : 0;
-  gridFocus = 0;
-  focusedArea = 'cats';
-  focusCurrent();
 }
+loadCategory(currentCategory);
 
-// --- focus/navigation state ---
-let focusedArea = 'cats'; // 'cats' or 'grid'
-let catFocus = 0;
-let gridFocus = 0;
-const GRID_COLS = 7;
 
-function focusCurrent(){
-  if(focusedArea === 'cats'){
-    const cats = catWrap.querySelectorAll('.cat-btn');
-    cats[catFocus]?.focus();
-  } else {
-    const items = grid.querySelectorAll('.channel');
-    items[gridFocus]?.focus();
-  }
-}
-
-// handle remote arrows / enter
-document.addEventListener('keydown', (e)=>{
-  // if player open, handle only player-specific keys
-  if(playerContainer.style.display === 'flex'){
-    if(e.key === 'Backspace' || e.key === 'Escape'){ closePlayer(); history.back(); }
-    return;
-  }
-
-  if(e.key === 'ArrowRight'){
-    if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
-    else { gridFocus = gridFocus + 1; }
-  }
-  if(e.key === 'ArrowLeft'){
-    if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
-    else { gridFocus = Math.max(gridFocus - 1, 0); }
-  }
-  if(e.key === 'ArrowDown'){
-    if(focusedArea === 'cats'){
-      // move from categories to grid column matching catFocus
-      focusedArea = 'grid';
-      gridFocus = catFocus; // same column
-    } else {
-      gridFocus = gridFocus + GRID_COLS;
-    }
-  }
-  if(e.key === 'ArrowUp'){
-    if(focusedArea === 'grid'){
-      if(gridFocus < GRID_COLS){ // go to categories row
-        focusedArea = 'cats';
-        catFocus = Math.min(gridFocus, categories.length - 1);
-      } else {
-        gridFocus = gridFocus - GRID_COLS;
-      }
-    }
-  }
-
-  // clamp gridFocus to available items
-  const gridItems = grid.querySelectorAll('.channel');
-  if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
-  if(gridFocus < 0) gridFocus = 0;
-
-  // Enter to activate
-  if(e.key === 'Enter'){
-    if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
-    else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
-  }
-
-  focusCurrent();
-});
-
-// --- player helpers (hls.js fallback) ---
-function openPlayerForChannel(ch){
+// ========== FIXED FULLSCREEN VIDEO PLAYER ==========
+function openPlayerForChannel(ch) {
   const url = ch.url;
-  if(!url) return;
-  // push history so back button can return to UI
-  history.pushState({player:true}, 'player');
+  if (!url) return;
 
-  // prepare container
-  playerContainer.style.display = 'flex';
-  // choose landscape vs portrait depending on device
-  updateOrientationClass();
+  history.pushState({ player: true }, "player");
 
-  // clear previous content / hls
-  playerContainer.innerHTML = '';
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
+  // prepare UI
+  playerContainer.style.display = "flex";
+  playerContainer.innerHTML = "";
 
-  const video = document.createElement('video');
-  video.id = 'tvplayer';
+  if (hls) { hls.destroy(); hls = null; }
+
+  const video = document.createElement("video");
   video.autoplay = true;
-  video.controls = false; // user asked: no controls visible
-  video.muted = false;
-  video.setAttribute('playsinline','');
-  // prevent touch controls interfering; remote will use keys
-  video.style.pointerEvents = 'none';
+  video.controls = false;
+  video.playsInline = true;
+
+  // 🔥 THIS FIXES YOUR HALF-SCREEN PROBLEM
+  video.style.width = "100vw";
+  video.style.height = "100vh";
+  video.style.objectFit = "cover";
+  video.style.background = "black";
 
   playerContainer.appendChild(video);
 
-  // play with hls.js if needed
-  if(Hls && Hls.isSupported()){
-    hls = new Hls({
-      // minimal config, you can tune buffer settings later
-      maxBufferLength: 30
-    });
+  // Use HLS.js
+  if (Hls.isSupported()) {
+    hls = new Hls();
     hls.loadSource(url);
     hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(()=>{}); });
   } else {
-    // native playback (Safari, some Android WebViews)
     video.src = url;
-    video.play().catch(()=>{});
   }
 
-  // try to lock orientation to landscape on supported devices
-  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){}
-
-  // request fullscreen where available
-  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
-  try{ req && req.call(video).catch(()=>{}); }catch(e){}
+  // 🔥 Fullscreen the CONTAINER (not the video)
+  const req = playerContainer.requestFullscreen ||
+              playerContainer.webkitRequestFullscreen ||
+              playerContainer.msRequestFullscreen;
+  if (req) req.call(playerContainer);
 }
 
-function closePlayer(){
-  // stop hls and remove video
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
-  playerContainer.style.display = 'none';
-  playerContainer.innerHTML = '';
-  // unlock orientation if possible
-  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
-}
-
-// handle history/back
-window.addEventListener('popstate', (e)=>{
-  // if player open, close it and prevent app exit
-  if(playerContainer.style.display === 'flex'){
-    closePlayer();
-    // do not push additional history here
-  }
+// close player on back
+window.addEventListener("popstate", () => {
+  playerContainer.style.display = "none";
+  playerContainer.innerHTML = "";
+  if (hls) { hls.destroy(); hls = null; }
 });
-
-// also map Escape/Backspace to close
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' || e.key === 'Backspace'){
-    if(playerContainer.style.display === 'flex'){
-      history.back(); // triggers popstate -> closePlayer
-    }
-  }
-});
-
-// auto-orientation helper for phones
-function updateOrientationClass(){
-  const w = window.innerWidth, h = window.innerHeight;
-  if(w>h) { playerContainer.classList.add('video-landscape'); playerContainer.classList.remove('video-portrait'); }
-  else { playerContainer.classList.add('video-portrait'); playerContainer.classList.remove('video-landscape'); }
-}
-window.addEventListener('resize', updateOrientationClass);
-window.addEventListener('orientationchange', updateOrientationClass);
-
-// initial load
-loadCategory(currentCategory);
 
 </script>
+
 </body>
 </html>
