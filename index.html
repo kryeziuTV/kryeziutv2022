@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar (UX Rregullime)</title>
+<title>TV App UI - Përditësuar (Scroll Fix)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   /* STILIMET KRYESORE */
@@ -181,13 +181,13 @@
     position: absolute;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 100vh; 
     width: 300px; 
     padding: 20px 0;
     background: rgba(0, 0, 0, 0.7); 
     backdrop-filter: blur(10px); 
     border-right: 1px solid rgba(255, 255, 255, 0.1); 
-    overflow-y: auto;
+    overflow-y: auto; 
     display: none; 
     z-index: 100001; 
   } 
@@ -429,8 +429,8 @@ function toggleChannelMenu(){
             items.forEach(i => i.classList.remove('focused')); 
             menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); // Fokusohu tek kanali aktual
             items[menuFocusIndex].classList.add('focused');
-            // Sigurohemi që kanali i fokusuar të jetë i dukshëm
-            items[menuFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // RREGULLIMI I SCROLLIT PËR FOKUSIN FILLISTAR
+            items[menuFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' }); 
         }
     }
 } 
@@ -438,19 +438,16 @@ function toggleChannelMenu(){
 function switchChannel(ch){
     if(!ch.url) return;
     
-    // RREGULLIMI I PERFORMANCES: Kontrollo nëse kanali i ri është i njëjti me atë aktual
+    // Kontrollo nëse kanali i ri është i njëjti me atë aktual
     if (ch.fullIndex === currentChannelIndex && isMenuVisible) {
-        // Kanali është i njëjti, vetëm fshih menunë dhe kthehu
         toggleChannelMenu(); 
         return; 
     }
     
-    // Fshih menunë nëse ishte e dukshme
     if (isMenuVisible) {
         toggleChannelMenu(); 
     }
     
-    // Përditëso indeksin aktual (currentChannelIndex)
     currentChannelIndex = ch.fullIndex; 
     menuFocusIndex = ch.fullIndex;
 
@@ -484,7 +481,7 @@ document.addEventListener('keydown', (e)=>{
             
             if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
                 const targetChannel = allChannelsList[targetNumber - 1];
-                switchChannel(targetChannel); // Përdor funksionin switchChannel
+                switchChannel(targetChannel); 
             }
             
             digitBuffer = '';
@@ -503,13 +500,13 @@ document.addEventListener('keydown', (e)=>{
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.max(0, menuFocusIndex - 1);
             menuItems[menuFocusIndex]?.classList.add('focused');
-            // RREGULLIMI I SCROLLIT PËR FOKUS
+            // SIGUROHU QË TË BËSH SCROLL
             menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if(e.key === 'ArrowDown'){
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
             menuItems[menuFocusIndex]?.classList.add('focused');
-            // RREGULLIMI I SCROLLIT PËR FOKUS
+            // SIGUROHU QË TË BËSH SCROLL
             menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if(e.key === 'Enter'){
             const channel = allChannelsList[menuFocusIndex];
