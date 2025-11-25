@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar (Scroll Fix)</title>
+<title>TV App UI - Përditësuar (Centering Focus Menu Fix)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   /* STILIMET KRYESORE */
@@ -83,8 +83,8 @@
   .channel:active { transform:scale(0.98); }
 
   .channel img { 
-    width:100%; 
-    height:100%; 
+    max-width: 90%; 
+    max-height: 90%; 
     object-fit: contain; 
   } 
 
@@ -190,6 +190,8 @@
     overflow-y: auto; 
     display: none; 
     z-index: 100001; 
+    /* Për scroll të butë */
+    scroll-behavior: smooth;
   } 
 
   .menu-channel-item {
@@ -198,7 +200,7 @@
     font-size: 1.1em; 
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: background-color 0.2s; /* Heqim transform për të mos ndryshuar lartësinë */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -216,7 +218,7 @@
   .menu-channel-item.focused {
     background-color: rgba(65, 105, 225, 0.7); 
     color: #fff;
-    transform: scale(1.03);
+    /* HEQUR: transform: scale(1.03); Për centering scroll më të saktë */
   } 
 
   .menu-channel-item:focus {
@@ -247,18 +249,19 @@
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
 const channelsByCategory = {
   "LIVE TV": [
+    // RREGULLUAR: URL-të e logove kthyer në https ose lënë ato që punojnë (për të rregulluar logot)
     { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
     { name:"VIZION PLUS", logo:"https://vimg.ipko.tv/logo/color/vizionplus.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
+    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
   ],
   "FILMA": [ 
     { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" },
@@ -322,7 +325,7 @@ categories.forEach(categoryName => {
 const MAX_CHANNEL_INDEX = allChannelsList.length - 1;
 
 
-// --- render UI (loadCategory/focusCurrent mbeten të njëjta) ---
+// --- render UI (loadCategory/focusCurrent mbeten të njëjtat) ---
 categories.forEach((cat,ci)=>{
   const btn = document.createElement('button');
   btn.className = 'cat-btn';
@@ -414,6 +417,26 @@ function updateLoadingState(state, channelName = null) {
     }
 }
 
+// FUNKSIONI PËR PËRQENDRIMIN E FOKUSIT TË MENYSË (Centering Scroll)
+function centerMenuFocus(menuItems, index) {
+    const channelMenu = document.getElementById('channelMenu');
+    const focusedItem = menuItems[index];
+
+    if (!focusedItem || !channelMenu) return;
+
+    const itemHeight = focusedItem.offsetHeight; 
+    const menuHeight = channelMenu.clientHeight; 
+
+    // Kalkulojmë pozicionin e scrollit: Pozicioni i elementit - (Lartësia e menysë / 2) + (Lartësia e elementit / 2)
+    const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2);
+
+    // Vendos scroll-in e ri me efekt të butë
+    channelMenu.scrollTo({ 
+        top: targetScrollTop, 
+        behavior: 'smooth' 
+    });
+}
+
 
 // --- player menu logic ---
 function toggleChannelMenu(){
@@ -427,10 +450,10 @@ function toggleChannelMenu(){
         const items = channelMenu.querySelectorAll('.menu-channel-item');
         if(items.length > 0) {
             items.forEach(i => i.classList.remove('focused')); 
-            menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); // Fokusohu tek kanali aktual
+            menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); 
             items[menuFocusIndex].classList.add('focused');
-            // RREGULLIMI I SCROLLIT PËR FOKUSIN FILLISTAR
-            items[menuFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+            // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
+            centerMenuFocus(items, menuFocusIndex); 
         }
     }
 } 
@@ -457,13 +480,13 @@ function switchChannel(ch){
 
 // handle remote arrows / enter / digits
 document.addEventListener('keydown', (e)=>{
-  
-  if(playerContainer.style.display === 'flex'){
-    const channelMenu = document.getElementById('channelMenu');
-    const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
-    const maxIndex = allChannelsList.length - 1; 
+  
+  if(playerContainer.style.display === 'flex'){
+    const channelMenu = document.getElementById('channelMenu');
+    const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
+    const maxIndex = allChannelsList.length - 1; 
 
-    // LOGJIKA E NDËRRIMIT ME NUMRA
+    // LOGJIKA E NDËRRIMIT ME NUMRA
     if (e.key >= '0' && e.key <= '9') {
         e.preventDefault();
         digitBuffer += e.key;
@@ -494,26 +517,26 @@ document.addEventListener('keydown', (e)=>{
         return; 
     }
     
-    // KONTROLLA E MENYSË (Kur menuja është hapur)
-    if(isMenuVisible){
-        if(e.key === 'ArrowUp'){
-            menuItems[menuFocusIndex]?.classList.remove('focused');
-            menuFocusIndex = Math.max(0, menuFocusIndex - 1);
-            menuItems[menuFocusIndex]?.classList.add('focused');
-            // SIGUROHU QË TË BËSH SCROLL
-            menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else if(e.key === 'ArrowDown'){
-            menuItems[menuFocusIndex]?.classList.remove('focused');
-            menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
-            menuItems[menuFocusIndex]?.classList.add('focused');
-            // SIGUROHU QË TË BËSH SCROLL
-            menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else if(e.key === 'Enter'){
-            const channel = allChannelsList[menuFocusIndex];
-            switchChannel(channel);
-        }
-        return; 
-    }
+    // KONTROLLA E MENYSË (Kur menuja është hapur)
+    if(isMenuVisible){
+        if(e.key === 'ArrowUp'){
+            menuItems[menuFocusIndex]?.classList.remove('focused');
+            menuFocusIndex = Math.max(0, menuFocusIndex - 1);
+            menuItems[menuFocusIndex]?.classList.add('focused');
+            // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
+            centerMenuFocus(menuItems, menuFocusIndex); 
+        } else if(e.key === 'ArrowDown'){
+            menuItems[menuFocusIndex]?.classList.remove('focused');
+            menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
+            menuItems[menuFocusIndex]?.classList.add('focused');
+            // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
+            centerMenuFocus(menuItems, menuFocusIndex); 
+        } else if(e.key === 'Enter'){
+            const channel = allChannelsList[menuFocusIndex];
+            switchChannel(channel);
+        }
+        return; 
+    }
 
     // NDËRRIMI SEKUENCIAL ME UP/DOWN
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
@@ -532,75 +555,75 @@ document.addEventListener('keydown', (e)=>{
     }
 
 
-    // OK/ENTER: HAP MENUNË E KANALIT dhe shfaq Info Bar
-    if(e.key === 'Enter'){
+    // OK/ENTER: HAP MENUNË E KANALIT dhe shfaq Info Bar
+    if(e.key === 'Enter'){
         const currentChannel = allChannelsList[currentChannelIndex];
         showInfoBar(currentChannel);
-        toggleChannelMenu();
-    } 
+        toggleChannelMenu();
+    } 
 
-    // BACKSPACE/ESCAPE: Mbyll player-in
-    if(e.key === 'Backspace' || e.key === 'Escape'){ 
-        closePlayer(); 
-        history.back(); 
-    }
-    
-    return; 
-  } 
+    // BACKSPACE/ESCAPE: Mbyll player-in
+    if(e.key === 'Backspace' || e.key === 'Escape'){ 
+        closePlayer(); 
+        history.back(); 
+    }
+    
+    return; 
+  } 
 
-  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjta)
-  if(e.key === 'ArrowRight'){
-    if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
-    else { gridFocus = gridFocus + 1; }
-  }
-  if(e.key === 'ArrowLeft'){
-    if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
-    else { gridFocus = Math.max(gridFocus - 1, 0); }
-  }
-  if(e.key === 'ArrowDown'){
-    if(focusedArea === 'cats'){
-      focusedArea = 'grid';
-      gridFocus = catFocus; 
-    } else {
-      gridFocus = gridFocus + GRID_COLS;
-    }
-  }
-  if(e.key === 'ArrowUp'){
-    if(focusedArea === 'grid'){
-      if(gridFocus < GRID_COLS){ 
-        focusedArea = 'cats';
-        catFocus = Math.min(gridFocus, categories.length - 1);
-      } else {
-        gridFocus = gridFocus - GRID_COLS;
-      }
-    }
-  } 
+  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjta)
+  if(e.key === 'ArrowRight'){
+    if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
+    else { gridFocus = gridFocus + 1; }
+  }
+  if(e.key === 'ArrowLeft'){
+    if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
+    else { gridFocus = Math.max(gridFocus - 1, 0); }
+  }
+  if(e.key === 'ArrowDown'){
+    if(focusedArea === 'cats'){
+      focusedArea = 'grid';
+      gridFocus = catFocus; 
+    } else {
+      gridFocus = gridFocus + GRID_COLS;
+    }
+  }
+  if(e.key === 'ArrowUp'){
+    if(focusedArea === 'grid'){
+      if(gridFocus < GRID_COLS){ 
+        focusedArea = 'cats';
+        catFocus = Math.min(gridFocus, categories.length - 1);
+      } else {
+        gridFocus = gridFocus - GRID_COLS;
+      }
+    }
+  } 
 
-  const gridItems = grid.querySelectorAll('.channel');
-  if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
-  if(gridFocus < 0) gridFocus = 0; 
+  const gridItems = grid.querySelectorAll('.channel');
+  if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
+  if(gridFocus < 0) gridFocus = 0; 
 
-  if(e.key === 'Enter'){
-    if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
-    else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
-  } 
+  if(e.key === 'Enter'){
+    if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
+    else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
+  } 
 
-  focusCurrent();
+  focusCurrent();
 }); 
 
 // --- player helpers (hls.js fallback) ---
 function openPlayerForChannel(ch, isSwitching = false){
-  const url = ch.url;
-  if(!url) return;
-  
+  const url = ch.url;
+  if(!url) return;
+  
   // 1. Shfaq Loading dhe Info Bar
   updateLoadingState('loading');
   showInfoBar(ch);
   
-  if (ch.fullIndex !== undefined) {
-      currentChannelIndex = ch.fullIndex;
-      menuFocusIndex = ch.fullIndex; 
-  } else {
+  if (ch.fullIndex !== undefined) {
+      currentChannelIndex = ch.fullIndex;
+      menuFocusIndex = ch.fullIndex; 
+  } else {
      const foundIndex = allChannelsList.findIndex(channel => channel.url === url);
      if (foundIndex !== -1) {
          currentChannelIndex = foundIndex;
@@ -609,15 +632,15 @@ function openPlayerForChannel(ch, isSwitching = false){
   }
 
 
-  if (!isSwitching) {
-      document.body.style.padding = '0';
-      document.body.style.overflow = 'hidden';
-      document.getElementById('mainContent').style.display = 'none'; 
-      history.pushState({player:true}, 'player');
-      playerContainer.style.display = 'flex';
-  }
-  
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; } 
+  if (!isSwitching) {
+      document.body.style.padding = '0';
+      document.body.style.overflow = 'hidden';
+      document.getElementById('mainContent').style.display = 'none'; 
+      history.pushState({player:true}, 'player');
+      playerContainer.style.display = 'flex';
+  }
+  
+  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; } 
 
   let video = document.getElementById('tvplayer');
   let channelMenu = document.getElementById('channelMenu');
@@ -642,12 +665,12 @@ function openPlayerForChannel(ch, isSwitching = false){
   }
 
 
-  // POPULLO DHE FSHEH MENYNË ANËSORE
-  if (!channelMenu) channelMenu = document.getElementById('channelMenu');
-  channelMenu.innerHTML = ''; 
-  allChannelsList.forEach((channelData, index) => {
-    const item = document.createElement('div');
-    item.className = 'menu-channel-item';
+  // POPULLO DHE FSHEH MENYNË ANËSORE
+  if (!channelMenu) channelMenu = document.getElementById('channelMenu');
+  channelMenu.innerHTML = ''; 
+  allChannelsList.forEach((channelData, index) => {
+    const item = document.createElement('div');
+    item.className = 'menu-channel-item';
     
     const channelNumber = document.createElement('span');
     channelNumber.className = 'menu-channel-number';
@@ -658,28 +681,28 @@ function openPlayerForChannel(ch, isSwitching = false){
     
     item.appendChild(channelNumber);
     item.appendChild(channelName);
-    
-    item.setAttribute('data-url', channelData.url);
-    item.setAttribute('data-index', index);
-    item.tabIndex = 0; 
-    
-    if (index === currentChannelIndex) {
-        item.classList.add('focused');
-    }
-    
-    item.onclick = () => switchChannel(channelData); 
-    channelMenu.appendChild(item);
-  });
-  isMenuVisible = false;
-  channelMenu.style.display = 'none';
+    
+    item.setAttribute('data-url', channelData.url);
+    item.setAttribute('data-index', index);
+    item.tabIndex = 0; 
+    
+    if (index === currentChannelIndex) {
+        item.classList.add('focused');
+    }
+    
+    item.onclick = () => switchChannel(channelData); 
+    channelMenu.appendChild(item);
+  });
+  isMenuVisible = false;
+  channelMenu.style.display = 'none';
 
 
-  // Luaj me hls.js
-  if(Hls && Hls.isSupported()){
-    hls = new Hls({ maxBufferLength: 30 });
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
+  // Luaj me hls.js
+  if(Hls && Hls.isSupported()){
+    hls = new Hls({ maxBufferLength: 30 });
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
         video.play().catch(()=>{}); 
     });
     
@@ -689,10 +712,10 @@ function openPlayerForChannel(ch, isSwitching = false){
             console.error('HLS Fatal Error:', data.details);
         }
     });
-  } else {
-    video.src = url;
-    video.play().catch(()=>{});
-  } 
+  } else {
+    video.src = url;
+    video.play().catch(()=>{});
+  } 
 
   // Eventi i fillimit të luajtjes (fsheh loading)
   video.onplaying = () => {
@@ -703,18 +726,18 @@ function openPlayerForChannel(ch, isSwitching = false){
     updateLoadingState('error', ch.name);
   }
 
-  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){} 
-  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
-  try{ req && req.call(video).catch(()=>{}); }catch(e){}
+  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){} 
+  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
+  try{ req && req.call(video).catch(()=>{}); }catch(e){}
 } 
 
 function closePlayer(){
-  document.body.style.padding = '40px';
-  document.body.style.overflow = 'auto'; 
-  document.getElementById('mainContent').style.display = 'flex'; 
-  isMenuVisible = false; 
+  document.body.style.padding = '40px';
+  document.body.style.overflow = 'auto'; 
+  document.getElementById('mainContent').style.display = 'flex'; 
+  isMenuVisible = false; 
 
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
+  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
   const video = document.getElementById('tvplayer');
   if (video) video.remove(); 
   
@@ -729,32 +752,32 @@ function closePlayer(){
   if (digitTimer) clearTimeout(digitTimer); 
   digitBuffer = '';
   
-  playerContainer.style.display = 'none';
-  
-  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
-  
-  focusCurrent();
+  playerContainer.style.display = 'none';
+  
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+  
+  focusCurrent();
 } 
 
 // handle history/back
 window.addEventListener('popstate', (e)=>{
-  if(playerContainer.style.display === 'flex'){
-    closePlayer();
-  }
+  if(playerContainer.style.display === 'flex'){
+    closePlayer();
+  }
 }); 
 
 window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' || e.key === 'Backspace'){
-    if(playerContainer.style.display === 'flex' && !isMenuVisible){
-      history.back(); 
-    }
-  }
+  if(e.key === 'Escape' || e.key === 'Backspace'){
+    if(playerContainer.style.display === 'flex' && !isMenuVisible){
+      history.back(); 
+    }
+  }
 }); 
 
 function updateOrientationClass(){
-  const w = window.innerWidth, h = window.innerHeight;
-  if(w>h) { playerContainer.classList.add('video-landscape'); playerContainer.classList.remove('video-portrait'); }
-  else { playerContainer.classList.add('video-portrait'); playerContainer.classList.remove('video-landscape'); }
+  const w = window.innerWidth, h = window.innerHeight;
+  if(w>h) { playerContainer.classList.add('video-landscape'); playerContainer.classList.remove('video-portrait'); }
+  else { playerContainer.classList.add('video-portrait'); playerContainer.classList.remove('video-landscape'); }
 }
 window.addEventListener('resize', updateOrientationClass);
 window.addEventListener('orientationchange', updateOrientationClass); 
