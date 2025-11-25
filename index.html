@@ -22,7 +22,7 @@
     inset:0;
     background:#000;
     display:none;
-    z-index:99999;
+    z-index:999999;
     align-items:center;
     justify-content:center;
   }
@@ -33,44 +33,83 @@
   <div class="categories" id="categories"></div>
   <div class="grid" id="grid"></div>
 
-  <!-- fullscreen player -->
   <div id="playerContainer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 
-// --- categories and channels ---
+// FULL CHANNEL DATABASE ----------------------------------------
+
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+
 const channelsByCategory = {
+
   "LIVE TV": [
     { name:"TOP CHANNEL", logo:"https://vimg.ipko.tv/logo/color/topchanel.png", url:"https://cf.business-cdn.me/live/FrancescoFili/e76dc66304/1221574.m3u8" },
     { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" }
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"VIZION PLUS", logo:"https://vimg.ipko.tv/logo/color/vizionplus.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8" },
+
+    { name:"RTK 3", logo:"http://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
+    { name:"RTK 1", logo:"http://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
+    { name:"KTV", logo:"http://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.ts.m3u8" }
   ],
-  FILMA: [
+
+  "FILMA": [
     { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" },
-    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" }
+    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
+    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"" },
+    { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C4", url:"" }
   ],
-  SPORT: [
-    { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S1", url:"" }
+
+  "SPORT": [
+    { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S1", url:"" },
+    { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S2", url:"" },
+    { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S3", url:"" },
+    { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=S4", url:"" }
   ],
-  FEMIJE: [
-    { name:"DISNEY JR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8" }
+
+  "FEMIJE": [
+    { name:"DISNEY JUNIOR", logo:"https://via.placeholder.com/120x120?text=DJ", 
+      url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8" },
+
+    { name:"AVATAR", logo:"https://via.placeholder.com/120x120?text=AV", 
+      url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/60b4c17a81e29300071d3a39/master.m3u8" },
+
+    { name:"ONE PIECE", logo:"https://via.placeholder.com/120x120?text=OP", 
+      url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6380c94947c72b0007ee9a13/master.m3u8" },
+
+    { name:"NARUTO", logo:"https://via.placeholder.com/120x120?text=N", 
+      url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/65d5fc39a25d5e00082895c4/master.m3u8" }
   ],
-  DOKU: [
-    { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8" }
+
+  "DOKU": [
+    { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=NG",
+      url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8" },
+
+    { name:"NAT GEO WILD", logo:"https://via.placeholder.com/120x120?text=NGW", 
+      url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8" },
+
+    { name:"HISTORY", logo:"https://via.placeholder.com/120x120?text=HIS",
+      url:"https://fl1.moveonjoy.com/history_channel/index.m3u8" },
+
+    { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=CARS",
+      url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8" }
   ]
+
 };
 
-// DOM
+// RENDER UI -----------------------------------------------------
+
 const catWrap = document.getElementById("categories");
 const grid = document.getElementById("grid");
 const playerContainer = document.getElementById("playerContainer");
-
-let currentCategory = "LIVE TV";
 let hls = null;
 
-// render categories
+let currentCategory = "LIVE TV";
+
 categories.forEach(cat => {
   const btn = document.createElement("button");
   btn.className = "cat-btn";
@@ -79,49 +118,46 @@ categories.forEach(cat => {
   catWrap.appendChild(btn);
 });
 
-// load channels
 function loadCategory(cat){
-  currentCategory = cat;
   grid.innerHTML = "";
   channelsByCategory[cat].forEach(ch => {
     const box = document.createElement("button");
     box.className = "channel";
-    box.innerHTML = `<img src="${ch.logo}" />`;
-    box.onclick = () => openPlayerForChannel(ch);
+    box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}">`;
+    box.onclick = () => openPlayer(ch);
     grid.appendChild(box);
   });
 }
 loadCategory(currentCategory);
 
 
-// ========== FIXED FULLSCREEN VIDEO PLAYER ==========
-function openPlayerForChannel(ch) {
+// FIXED FULLSCREEN VIDEO ENGINE --------------------------------
+
+function openPlayer(ch){
   const url = ch.url;
-  if (!url) return;
+  if(!url) return;
 
-  history.pushState({ player: true }, "player");
+  history.pushState({player:true}, "");
 
-  // prepare UI
   playerContainer.style.display = "flex";
   playerContainer.innerHTML = "";
 
-  if (hls) { hls.destroy(); hls = null; }
+  if(hls){ hls.destroy(); hls = null; }
 
   const video = document.createElement("video");
   video.autoplay = true;
   video.controls = false;
   video.playsInline = true;
 
-  // 🔥 THIS FIXES YOUR HALF-SCREEN PROBLEM
+  // FULLSCREEN FIX
   video.style.width = "100vw";
   video.style.height = "100vh";
   video.style.objectFit = "cover";
-  video.style.background = "black";
+  video.style.background = "#000";
 
   playerContainer.appendChild(video);
 
-  // Use HLS.js
-  if (Hls.isSupported()) {
+  if(Hls.isSupported()){
     hls = new Hls();
     hls.loadSource(url);
     hls.attachMedia(video);
@@ -129,18 +165,15 @@ function openPlayerForChannel(ch) {
     video.src = url;
   }
 
-  // 🔥 Fullscreen the CONTAINER (not the video)
-  const req = playerContainer.requestFullscreen ||
-              playerContainer.webkitRequestFullscreen ||
-              playerContainer.msRequestFullscreen;
-  if (req) req.call(playerContainer);
+  const fs = playerContainer.requestFullscreen
+         || playerContainer.webkitRequestFullscreen;
+  if(fs) fs.call(playerContainer);
 }
 
-// close player on back
 window.addEventListener("popstate", () => {
   playerContainer.style.display = "none";
   playerContainer.innerHTML = "";
-  if (hls) { hls.destroy(); hls = null; }
+  if(hls){ hls.destroy(); hls = null; }
 });
 
 </script>
