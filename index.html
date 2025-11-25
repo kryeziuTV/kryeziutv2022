@@ -43,7 +43,7 @@
     border: 3px solid transparent; 
   }
   .cat-btn:focus, .cat-btn.focused { 
-    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.5); /* Glow i bardhë */
+    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.5); 
     transform:scale(1.05); 
     outline:none; 
     border: 3px solid white; 
@@ -57,7 +57,7 @@
     gap:20px; 
   }
 
-  /* STILI I FOKUSIT (GLOW/BORDER) PËR KANALET */
+  /* RREGULLIMI I LOGOS DHE STILI I FOKUSIT PËR KANALET */
   .channel { 
     width:120px; 
     height:120px; 
@@ -70,14 +70,23 @@
     cursor:pointer; 
     transition:.2s cubic-bezier(0,-0.5,0,3); 
     border: 3px solid transparent; 
+    overflow: hidden; /* NDRYSHIM I RI */
+    padding: 10px; /* NDRYSHIM I RI */
+    box-sizing: border-box; /* NDRYSHIM I RI */
   }
   .channel:focus, .channel.focused { 
     transform:scale(1.05); 
-    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.55); /* Glow i bardhë */
+    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.55); 
     outline:none; 
     border: 3px solid white; 
   }
   .channel:active { transform:scale(0.98); }
+
+  .channel img { 
+    width:100%; /* NDRYSHIM I RI */
+    height:100%; 
+    object-fit: contain; 
+  } 
 
   /* PLAYER CONTAINER */
   #playerContainer { 
@@ -98,15 +107,15 @@
     pointer-events:none; 
   } 
 
-  /* MENUJA ANËSORE (Glassmorphism) */
+  /* MENUJA ANËSORE (E errët dhe transparente) */
   #channelMenu {
     position: absolute;
     top: 0;
     left: 0;
     height: 100vh;
-    width: 250px; 
+    width: 300px; /* Zmadhuar për numrin e kanalit */
     padding: 20px 0;
-    background: rgba(173, 216, 230, 0.1); 
+    background: rgba(0, 0, 0, 0.7); /* NDRYSHIM: Më e errët */
     backdrop-filter: blur(10px); 
     border-right: 1px solid rgba(255, 255, 255, 0.1); 
     overflow-y: auto;
@@ -116,15 +125,25 @@
 
   .menu-channel-item {
     padding: 15px 20px;
-    color: #fff; /* NDRYSHIM: U kthye në të bardhë për lexim më të mirë në menunë transparente */
-    font-size: 1.1em; /* Për ta bërë tekstin më të madh */
+    color: #fff; 
+    font-size: 1.1em; 
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    /* NDRYSHIM I RI: Organizimi i numrit dhe emrit */
+    display: flex;
+    gap: 15px; 
   } 
+
+  .menu-channel-number {
+      font-weight: bold;
+      color: #6246B8; 
+      width: 40px; /* Siguron që të jetë e rreshtuar */
+      text-align: right;
+  }
 
   .menu-channel-item.focused {
     background-color: rgba(65, 105, 225, 0.7); 
@@ -206,7 +225,7 @@ const GRID_COLS = 7;
 // NDIHMËS PËR MENY & NAVIGIM
 let isMenuVisible = false;
 let menuFocusIndex = 0;
-let currentChannelIndex = 0; // NDRYSHIM: Ruajmë indeksin e kanalit aktual
+let currentChannelIndex = 0; 
 const allChannelsList = channelsByCategory["LIVE TV"]; 
 
 // --- render UI ---
@@ -217,7 +236,7 @@ categories.forEach((cat,ci)=>{
   btn.setAttribute('data-cat',cat);
   btn.tabIndex = 0;
   btn.onclick = ()=> loadCategory(cat);
-  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; } // fokusimi ruhet për saktësi
+  btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; } 
   catWrap.appendChild(btn);
 }); 
 
@@ -233,7 +252,7 @@ function loadCategory(cat){
     box.setAttribute('data-idx', idx);
     box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
     box.onclick = ()=> openPlayerForChannel(ch);
-    box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } // fokusimi ruhet për saktësi
+    box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } 
     grid.appendChild(box);
   });
   
@@ -252,13 +271,13 @@ function focusCurrent(){
     const cats = catWrap.querySelectorAll('.cat-btn');
     if (cats[catFocus]) {
         cats[catFocus].classList.add('focused');
-        cats[catFocus].focus(); // Për saktësi keyboard-i
+        cats[catFocus].focus(); 
     }
   } else {
     const items = grid.querySelectorAll('.channel');
     if (items[gridFocus]) {
         items[gridFocus].classList.add('focused');
-        items[gridFocus].focus(); // Për saktësi keyboard-i
+        items[gridFocus].focus(); 
     }
   }
 } 
@@ -300,7 +319,6 @@ document.addEventListener('keydown', (e)=>{
   
   if(playerContainer.style.display === 'flex'){
     const channelMenu = document.getElementById('channelMenu');
-    // Duhet të kontrolloni për ekzistencën e menysë, pasi ajo rindërtohet
     const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
     const maxIndex = allChannelsList.length - 1; 
 
@@ -409,7 +427,6 @@ function openPlayerForChannel(ch, isSwitching = false){
   if (!isSwitching) {
       document.body.style.padding = '0';
       document.body.style.overflow = 'hidden';
-      // Fsheh Konteinerin Kryesor
       document.getElementById('mainContent').style.display = 'none'; 
       history.pushState({player:true}, 'player');
       playerContainer.style.display = 'flex';
@@ -419,7 +436,6 @@ function openPlayerForChannel(ch, isSwitching = false){
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; } 
 
   let video = document.getElementById('tvplayer');
-  // Duhet të rindërtojmë playerin dhe menunë, pasi `playerContainer.innerHTML = ''` fshin gjithçka
   if (!video || isSwitching) {
       playerContainer.innerHTML = ''; 
       const menu = document.createElement('div');
@@ -444,7 +460,18 @@ function openPlayerForChannel(ch, isSwitching = false){
   allChannelsList.forEach((channelData, index) => {
     const item = document.createElement('div');
     item.className = 'menu-channel-item';
-    item.textContent = channelData.name;
+    
+    // SHTESA E RE: Numri i kanalit
+    const channelNumber = document.createElement('span');
+    channelNumber.className = 'menu-channel-number';
+    channelNumber.textContent = index + 1; 
+    
+    const channelName = document.createElement('span');
+    channelName.textContent = channelData.name;
+    
+    item.appendChild(channelNumber);
+    item.appendChild(channelName);
+    
     item.setAttribute('data-url', channelData.url);
     item.setAttribute('data-index', index);
     item.tabIndex = 0; 
