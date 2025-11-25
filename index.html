@@ -19,19 +19,59 @@
 
   /* player container that becomes fullscreen */
   #playerContainer { position:fixed; inset:0; background:#000; display:none; z-index:99999; align-items:center; justify-content:center; }
-  /* Këto klasa sigurojnë që videoja të mbulojë të gjithë zonën e player-it */
   #playerContainer.video-landscape video,
   #playerContainer.video-portrait video { width:100vw; height:100vh; object-fit:contain; }
 
   /* ensure no default controls are visible */
   #playerContainer video { outline:none; border:0; }
+
+  /* SHTESA E RE: Stili i Menysë Anësore për Kanale (Glassmorphism) */
+  #channelMenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px; 
+    padding: 20px 0;
+    /* Stili Glassmorphism: light blue transparent */
+    background: rgba(173, 216, 230, 0.1); 
+    backdrop-filter: blur(10px); 
+    border-right: 1px solid rgba(255, 255, 255, 0.1); 
+    overflow-y: auto;
+    display: none; 
+    z-index: 100000;
+  }
+
+  .menu-channel-item {
+    padding: 15px 20px;
+    color: #00008b; /* Dark Blue për tekstin e kanalit */
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .menu-channel-item.focused {
+    background-color: rgba(65, 105, 225, 0.7); /* Royal Blue për elementin e fokusuar */
+    color: #fff;
+    transform: scale(1.03);
+  }
+
+  .menu-channel-item:focus {
+    outline: none; /* Heq konturin default të fokusit */
+  }
 </style>
 </head>
 <body>
   <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
   <div class="grid" id="grid" role="grid"></div>
 
-  <div id="playerContainer"></div>
+  <div id="playerContainer">
+    <div id="channelMenu">
+      </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
@@ -84,6 +124,11 @@ const playerContainer = document.getElementById('playerContainer');
 let hls = null;
 let currentCategory = 'LIVE TV';
 
+// NDIHMËS PËR MENY
+let isMenuVisible = false;
+let menuFocusIndex = 0;
+const allChannelsList = channelsByCategory["LIVE TV"]; // Përdorim Live TV si listë default për menu
+
 // --- render UI ---
 categories.forEach((cat,ci)=>{
   const btn = document.createElement('button');
@@ -134,12 +179,81 @@ function focusCurrent(){
   }
 }
 
+// --- player menu logic ---
+function toggleChannelMenu(){
+    const channelMenu = document.getElementById('channelMenu');
+    isMenuVisible = !isMenuVisible;
+    channelMenu.style.display = isMenuVisible ? 'block' : 'none';
+    
+    if (isMenuVisible) {
+        const items = channelMenu.querySelectorAll('.menu-channel-item');
+        if(items.length > 0) {
+            items.forEach(i => i.classList.remove('focused')); 
+            // Sigurohemi që kanali aktual të jetë i fokusuar kur hapet menuja
+            menuFocusIndex = Math.min(Math.max(0, menuFocusIndex), items.length - 1);
+            items[menuFocusIndex].classList.add('focused');
+            items[menuFocusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}
+
+function switchChannel(ch){
+    if(!ch.url) return; // injoro nese kanali nuk ka URL
+    
+    // 1. Mbyll menynë
+    toggleChannelMenu(); 
+    
+    // 2. Rishfaq videon e kanalit të ri
+    // Duke ripërdorur openPlayerForChannel, ne sigurohemi që HLS.js të pastrohet dhe të hapet lidhja e re
+    openPlayerForChannel(ch, true); // true tregon që po ndërrojmë kanalin brenda player-it
+}
+
+
 // handle remote arrows / enter
 document.addEventListener('keydown', (e)=>{
-  // if player open, handle only player-specific keys
+  
   if(playerContainer.style.display === 'flex'){
-    if(e.key === 'Backspace' || e.key === 'Escape'){ closePlayer(); history.back(); }
-    return;
+    const channelMenu = document.getElementById('channelMenu');
+    const menuItems = channelMenu.querySelectorAll('.menu-channel-item');
+    const maxIndex = allChannelsList.length - 1;
+
+    // KONTROLLA E MENYSË (Kur menuja është hapur)
+    if(isMenuVisible){
+        if(e.key === 'ArrowUp'){
+            menuItems[menuFocusIndex]?.classList.remove('focused');
+            menuFocusIndex = Math.max(0, menuFocusIndex - 1);
+            menuItems[menuFocusIndex]?.classList.add('focused');
+            menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if(e.key === 'ArrowDown'){
+            menuItems[menuFocusIndex]?.classList.remove('focused');
+            menuFocusIndex = Math.min(maxIndex, menuFocusIndex + 1);
+            menuItems[menuFocusIndex]?.classList.add('focused');
+            menuItems[menuFocusIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if(e.key === 'Enter'){
+            // OK: Ndërro kanalin dhe mbylle menunë
+            const channel = allChannelsList[menuFocusIndex];
+            switchChannel(channel);
+        }
+        // Nëse ArrowLeft/Right shtypet, menuja mbyllet, por kjo mund të rregullohet si më poshtë
+        
+        // Parandalon veprimin default
+        return; 
+    }
+    
+    // KONTROLLA E PLAYER-IT (Kur menuja është mbyllur)
+
+    // OK/ENTER: HAP MENUNË E KANALIT
+    if(e.key === 'Enter'){
+        toggleChannelMenu();
+    }
+
+    // BACKSPACE/ESCAPE: Mbyll player-in
+    if(e.key === 'Backspace' || e.key === 'Escape'){ 
+        closePlayer(); 
+        history.back(); 
+    }
+    
+    return; // Ndalo procesimin e tastave të tjera
   }
 
   if(e.key === 'ArrowRight'){
@@ -175,7 +289,7 @@ document.addEventListener('keydown', (e)=>{
   if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
   if(gridFocus < 0) gridFocus = 0;
 
-  // Enter to activate
+  // Enter to activate (kur nuk jemi në player)
   if(e.key === 'Enter'){
     if(focusedArea === 'cats'){ loadCategory(categories[catFocus]); }
     else { grid.querySelectorAll('.channel')[gridFocus]?.click(); }
@@ -185,50 +299,79 @@ document.addEventListener('keydown', (e)=>{
 });
 
 // --- player helpers (hls.js fallback) ---
-function openPlayerForChannel(ch){
+function openPlayerForChannel(ch, isSwitching = false){
   const url = ch.url;
   if(!url) return;
   
-  // NDRYSHIM 1: Fsheh elementet kryesore të UI për fullscreen
-  document.body.style.padding = '0';
-  document.body.style.overflow = 'hidden';
-  catWrap.style.display = 'none';
-  grid.style.display = 'none';
+  // Nese nuk po ndërrojmë kanalin, fsheh UI-në
+  if (!isSwitching) {
+      document.body.style.padding = '0';
+      document.body.style.overflow = 'hidden';
+      catWrap.style.display = 'none';
+      grid.style.display = 'none';
+      history.pushState({player:true}, 'player');
+      playerContainer.style.display = 'flex';
+  }
   
-  // push history so back button can return to UI
-  history.pushState({player:true}, 'player');
+  // Gjej indeksin aktual të kanalit për menunë
+  menuFocusIndex = allChannelsList.findIndex(channel => channel.url === url);
 
-  // prepare container
-  playerContainer.style.display = 'flex';
-  // choose landscape vs portrait depending on device
-  updateOrientationClass();
-
-  // clear previous content / hls
-  playerContainer.innerHTML = '';
+  // clear previous hls
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
 
-  const video = document.createElement('video');
-  video.id = 'tvplayer';
-  video.autoplay = true;
-  video.controls = false; // user asked: no controls visible
-  video.muted = false;
-  video.setAttribute('playsinline','');
-  // prevent touch controls interfering; remote will use keys
-  video.style.pointerEvents = 'none';
+  let video = document.getElementById('tvplayer');
+  if (!video) {
+      // Krijo player-in vetëm nëse nuk ekziston
+      playerContainer.innerHTML = ''; // Pastro playerin e vjetër dhe menunë e vjetër
+      const menu = document.createElement('div');
+      menu.id = 'channelMenu';
+      playerContainer.appendChild(menu);
+      
+      video = document.createElement('video');
+      video.id = 'tvplayer';
+      video.autoplay = true;
+      video.controls = false; 
+      video.muted = false;
+      video.setAttribute('playsinline','');
+      video.style.pointerEvents = 'none';
+      playerContainer.appendChild(video);
+      
+      updateOrientationClass(); // Vendos klasën e orientimit
+  }
+  
+  // POPULLO DHE FSHEH MENYNË ANËSORE (Gjithmonë rindërtohet lista)
+  const channelMenu = document.getElementById('channelMenu');
+  channelMenu.innerHTML = ''; 
+  allChannelsList.forEach((channelData, index) => {
+    const item = document.createElement('div');
+    item.className = 'menu-channel-item';
+    item.textContent = channelData.name;
+    item.setAttribute('data-url', channelData.url);
+    item.setAttribute('data-index', index);
+    item.tabIndex = 0; 
+    
+    if (channelData.url === url) {
+        item.classList.add('focused');
+        menuFocusIndex = index;
+    }
+    
+    item.onclick = () => switchChannel(channelData); 
+    channelMenu.appendChild(item);
+  });
+  isMenuVisible = false;
+  channelMenu.style.display = 'none';
 
-  playerContainer.appendChild(video);
 
-  // play with hls.js if needed
+  // Luaj me hls.js nëse është i nevojshëm
   if(Hls && Hls.isSupported()){
     hls = new Hls({
-      // minimal config, you can tune buffer settings later
       maxBufferLength: 30
     });
     hls.loadSource(url);
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, function(){ video.play().catch(()=>{}); });
   } else {
-    // native playback (Safari, some Android WebViews)
+    // native playback
     video.src = url;
     video.play().catch(()=>{});
   }
@@ -242,11 +385,12 @@ function openPlayerForChannel(ch){
 }
 
 function closePlayer(){
-  // NDRYSHIM 2: Rishfaq elementet kryesore të UI kur player-i mbyllet
+  // Rishfaq elementet kryesore të UI kur player-i mbyllet
   document.body.style.padding = '40px';
   document.body.style.overflow = 'auto'; 
   catWrap.style.display = 'flex';
   grid.style.display = 'grid';
+  isMenuVisible = false;
 
   // stop hls and remove video
   if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
@@ -255,23 +399,20 @@ function closePlayer(){
   // unlock orientation if possible
   try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
   
-  // Sigurohu që fokusi të kthehet në elementin e fundit të fokusuar
   focusCurrent();
 }
 
 // handle history/back
 window.addEventListener('popstate', (e)=>{
-  // if player open, close it and prevent app exit
   if(playerContainer.style.display === 'flex'){
     closePlayer();
-    // do not push additional history here
   }
 });
 
 // also map Escape/Backspace to close
 window.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape' || e.key === 'Backspace'){
-    if(playerContainer.style.display === 'flex'){
+    if(playerContainer.style.display === 'flex' && !isMenuVisible){
       history.back(); // triggers popstate -> closePlayer
     }
   }
