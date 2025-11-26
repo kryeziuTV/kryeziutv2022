@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar (Optimizim i Performancës)</title>
+<title>TV App UI - Përditësuar (Mbyllja e Menysë me BACK)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   /* STILIMET KRYESORE */
@@ -191,7 +191,7 @@
     overflow-y: auto; 
     display: none; 
     z-index: 100001; 
-    /* SCROLL MË I THJESHTË PËR TV */
+    /* SCROLL MË I THJESHTË PËR TV (Performanca) */
     scroll-behavior: auto; 
   } 
 
@@ -518,6 +518,13 @@ document.addEventListener('keydown', (e)=>{
     
     // KONTROLLA E MENYSË (Kur menuja është hapur)
     if(isMenuVisible){
+        // LOGJIKA RE: Mbyll Menunë Anësore me BACK/Escape/Backspace
+        if(e.key === 'Backspace' || e.key === 'Escape'){
+            e.preventDefault(); // Parandalon mbylljen e gjithë lojtarit/historisë
+            toggleChannelMenu(); // Mbyll vetëm menunë
+            return;
+        }
+
         if(e.key === 'ArrowUp'){
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.max(0, menuFocusIndex - 1);
@@ -561,7 +568,7 @@ document.addEventListener('keydown', (e)=>{
         toggleChannelMenu();
     } 
 
-    // BACKSPACE/ESCAPE: Mbyll player-in
+    // BACKSPACE/ESCAPE: Mbyll player-in (vetëm nëse menuja nuk është hapur)
     if(e.key === 'Backspace' || e.key === 'Escape'){ 
         closePlayer(); 
         history.back(); 
@@ -570,7 +577,7 @@ document.addEventListener('keydown', (e)=>{
     return; 
   } 
 
-  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjta)
+  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjtat)
   if(e.key === 'ArrowRight'){
     if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
     else { gridFocus = gridFocus + 1; }
@@ -767,8 +774,10 @@ window.addEventListener('popstate', (e)=>{
 
 window.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape' || e.key === 'Backspace'){
+    // VETËM NËSE PLAYERI ËSHTË HAPUR DHE MENUJA NUK ËSHTË HAPUR
     if(playerContainer.style.display === 'flex' && !isMenuVisible){
-      history.back(); 
+      // Ky rast tani trajtohet në funksionin kryesor të keydown
+      // duke mbyllur playerin
     }
   }
 }); 
