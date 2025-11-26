@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V4 (Fiksime UX)</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V5 (Përditësim i Dukshmërisë)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -107,7 +107,7 @@
     /* --- FUNDI I STILIMIT TË WIDGET-IT --- */
 
 
-    /* KONTEJNERI KRYESOR PËR QENDRËZIM (pa ndryshime thelbësore) */
+    /* KONTEJNERI KRYESOR PËR QENDRËZIM */
     #mainContent {
         display: flex;
         flex-direction: column;
@@ -117,7 +117,7 @@
         margin-top: 20px; 
     } 
 
-    /* KATEGORITË & GRIDI I KANALEVE (pa ndryshime thelbësore) */
+    /* KATEGORITË & GRIDI I KANALEVE */
     .categories { 
         display:flex; 
         gap:20px; 
@@ -151,11 +151,12 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (V2) --- */
+    /* --- STILIMI I KANALIT (V2) - PËRDITËSUAR --- */
     .channel { 
         width:120px; 
         height:120px; 
-        background:rgba(255, 255, 255, 0.1); 
+        /* PËRDITËSUAR: Opaciteti 0.3 (më pak transparent) */
+        background:rgba(255, 255, 255, 0.3); 
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
         display:flex; 
@@ -185,12 +186,14 @@
         max-width: 90%; 
         max-height: 90%; 
         object-fit: contain; 
-        filter: saturate(0.7); 
+        /* PËRDITËSUAR: Saturimi 1 (ngjyrat origjinale, më të gjalla) */
+        filter: saturate(1); 
         transition: filter 0.2s, transform 0.2s; 
     } 
     
     .channel:focus img, .channel.focused img { 
-        filter: saturate(1); 
+        /* Rritet saturimi pak më shumë kur fokusohet */
+        filter: saturate(1.2); 
         transform: translateY(-5px); 
     }
     
@@ -221,7 +224,7 @@
     }
     /* --- FUNDI I STILIMIT TË KANALIT --- */
     
-    /* PLAYER CONTAINER (pa ndryshime thelbësore) */
+    /* PLAYER CONTAINER */
     #playerContainer { 
         position:fixed; 
         inset:0; 
@@ -283,7 +286,7 @@
         max-width: 100%; 
     }
 
-    /* Loading/Error Overlay (pa ndryshime thelbësore) */
+    /* Loading/Error Overlay */
     #loadingOverlay {
         position: absolute;
         inset: 0;
@@ -317,7 +320,7 @@
         font-weight: bold;
     } 
 
-    /* --- PËRDITËSIMI I MENUSË ANËSORE --- */
+    /* --- MENYJA ANËSORE --- */
     #channelMenu {
         position: absolute;
         top: 0;
@@ -328,7 +331,7 @@
         background: rgba(0, 0, 0, 0.95); 
         border-right: 1px solid rgba(255, 255, 255, 0.1); 
         overflow-y: auto; 
-        overflow-x: hidden; /* FIKSIMI I SCROLL-IT ANËSOR */
+        overflow-x: hidden;
         display: none; 
         z-index: 100001; 
         scroll-behavior: auto; 
@@ -339,7 +342,7 @@
         color: #fff; 
         font-size: 1.3em; 
         font-weight: 500;
-        cursor: pointer;
+        cursor:pointer;
         transition: background-color 0.2s; 
         white-space: nowrap;
         overflow: hidden;
@@ -368,7 +371,7 @@
     .menu-channel-item:focus {
         outline: none; 
     }
-    /* --- FUNDI I PËRDITËSIMIT TË MENUSË ANËSORE --- */
+    /* --- FUNDI I STILIMIT TË MENUSË ANËSORE --- */
 </style>
 </head>
 <body>
