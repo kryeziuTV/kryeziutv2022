@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG) - V9</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V10</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -15,7 +15,7 @@
         margin:0; 
     } 
     
-    /* PËRDITËSUAR: SFONDI STATIK I IMZHIT (Zëvendëson Videon) */
+    /* SFONDI STATIK I IMZHIT */
     #background-image {
         position: fixed;
         right: 0;
@@ -26,15 +26,13 @@
         height: auto;
         z-index: -2; 
         object-fit: cover;
-        /* Imazhi i ri */
         background-image: url("https://img.freepik.com/premium-photo/dark-black-gray-blurred-gradient-leaf-shadow-background-has-little-abstract-light_532332-1850.jpg");
         background-size: cover;
         background-position: center;
-        /* Efektet e videos së mëparshme për pamje të ngjashme */
         filter: brightness(0.7) blur(2px); 
     }
 
-    /* SHTRESA BLUR-UAR - Vazhdon të ekzistojë për efektet e UI-së */
+    /* SHTRESA BLUR-UAR */
     #blur-overlay {
         position: fixed;
         inset: 0;
@@ -262,13 +260,12 @@
         pointer-events:none; 
     } 
 
-    /* PËRDITËSUAR: Info Bar (Pa EPG) */
+    /* Info Bar */
     #infoBar {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        /* U PËRGJYSUM LARTËSIA */
         height: 60px; 
         background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)); 
         padding: 10px 40px 10px 40px; 
@@ -281,7 +278,7 @@
         transform: translateY(100%); 
         transition: opacity 0.5s, transform 0.5s ease-out; 
         z-index: 99999;
-        justify-content: center; /* Qendërzon titullin e kanalit */
+        justify-content: center; 
     } 
 
     #infoBar.visible {
@@ -296,8 +293,6 @@
         line-height: 1;
     } 
 
-    /* STILIMI I EPG - I FSHIRË */
-    
     /* Loading/Error Overlay */
     #loadingOverlay {
         position: absolute;
@@ -347,8 +342,8 @@
         display: none; 
         z-index: 100001; 
         scroll-behavior: auto; 
+        /* PËRDITËSUAR: Hekur transition: transform 0.3s ease-out; */
         transform: translateX(-100%); 
-        transition: transform 0.3s ease-out; 
     } 
 
     #channelMenu.active {
@@ -361,7 +356,8 @@
         font-size: 1.3em; 
         font-weight: 500;
         cursor:pointer;
-        transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s; 
+        /* PËRDITËSUAR: Shpejtuar/Eliminuar tranzicioni */
+        transition: background-color 0.05s, transform 0.05s, box-shadow 0.05s; 
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -602,7 +598,7 @@ function getWeatherDescription(code) {
 
 function updateClock() {
     const now = new Date();
-    // Përdor 'h23' për formatin 24-orësh, heq 'e paradites'
+    // Përdor 'h23' për formatin 24-orësh
     const timeString = now.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
     const dateString = now.toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long' });
     
@@ -685,22 +681,16 @@ function loadSuharekeWeather() {
 }
 
 
-// --- EPG LOGIC - Tani është i FSHIRË PLOTËSISHT ---
-// Funksionet getChannelEpg, EPG_XML_URL janë hequr.
-
 // --- INFO BAR, PLAYER, NAVIGATION ---
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
-    // Nuk ka më .epg-info
 
     if (!infoBar || !title) return; 
 
     title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
     infoBar.classList.add('visible'); 
     
-    // Nuk ka më ngarkim të EPG-së
-
     if (infoBarTimer) clearTimeout(infoBarTimer); 
 
     infoBarTimer = setTimeout(() => {
@@ -740,6 +730,7 @@ function centerMenuFocus(menuItems, index) {
     const menuHeight = channelMenu.clientHeight; 
     const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2); 
 
+    // PËRDITËSUAR: Përdorim 'auto' për scroll të menjëhershëm
     channelMenu.scrollTo({ 
         top: targetScrollTop, 
         behavior: 'auto' 
@@ -751,19 +742,23 @@ function toggleChannelMenu(){
     if (!channelMenu) return; 
 
     isMenuVisible = !isMenuVisible;
-    channelMenu.classList.toggle('active', isMenuVisible);
-    channelMenu.style.display = 'block'; 
-
-    if (!isMenuVisible) {
-        setTimeout(() => {
-            channelMenu.style.display = 'none';
-        }, 300); 
+    
+    // PËRDITËSUAR: Menjëherë ndryshojmë transform-in pa tranzicion
+    if(isMenuVisible) {
+        channelMenu.classList.add('active'); 
+        channelMenu.style.display = 'block';
     } else {
+        channelMenu.classList.remove('active');
+        channelMenu.style.display = 'none';
+    }
+    
+    if (isMenuVisible) {
         const items = channelMenu.querySelectorAll('.menu-channel-item');
         if(items.length > 0) {
             items.forEach(i => i.classList.remove('focused')); 
             menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); 
             items[menuFocusIndex].classList.add('focused');
+            // Sigurohemi që scrolling të jetë i menjëhershëm
             centerMenuFocus(items, menuFocusIndex); 
         }
     }
@@ -778,6 +773,7 @@ function switchChannel(ch){
     }
     
     if (isMenuVisible) {
+        // Mbyllja e menusë është e menjëhershme tani
         toggleChannelMenu(); 
     }
     
@@ -810,7 +806,6 @@ document.addEventListener('keydown', (e)=>{
             
             const infoBar = document.getElementById('infoBar');
             const title = infoBar.querySelector('.channel-title');
-            // EPG info është hequr
 
             title.textContent = `Kanali: ${digitBuffer}`;
             infoBar.classList.add('visible'); 
