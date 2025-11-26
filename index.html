@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V2</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V3 (Menu e Zmadhuar)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -151,7 +151,7 @@
         gap:20px; 
     } 
 
-    /* --- PËRDITËSIMI KRYESOR I STILIT TË KANALIT (OPSIONI 1) --- */
+    /* --- STILIMI I KANALIT (Vazhdim i V2) --- */
     .channel { 
         width:120px; 
         height:120px; 
@@ -159,7 +159,7 @@
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
         display:flex; 
-        flex-direction: column; /* I vendosemi verticalisht */
+        flex-direction: column; 
         justify-content:center; 
         align-items:center; 
         cursor:pointer; 
@@ -168,15 +168,14 @@
         overflow: hidden; 
         padding: 10px; 
         box-sizing: border-box;
-        position: relative; /* Për të pozicionuar emrin e kanalit */
+        position: relative; 
     }
     
-    /* STILIMI I RI PËR FOKUSIN */
     .channel:focus, .channel.focused { 
-        transform: scale(1.07) translateY(-5px); /* Ngritje lart dhe zmadhim me efekt 3D */
+        transform: scale(1.07) translateY(-5px); 
         box-shadow: 
             0 8px 30px rgba(0, 0, 0, 0.7), 
-            0 0 15px 10px rgba(65, 105, 225, 0.9); /* Shkëlqim më i fortë blu */
+            0 0 15px 10px rgba(65, 105, 225, 0.9); 
         outline:none; 
         border: 3px solid white; 
     }
@@ -187,15 +186,14 @@
         max-height: 90%; 
         object-fit: contain; 
         filter: saturate(0.7); 
-        transition: filter 0.2s, transform 0.2s; /* Shtohet transform */
+        transition: filter 0.2s, transform 0.2s; 
     } 
     
     .channel:focus img, .channel.focused img { 
         filter: saturate(1); 
-        transform: translateY(-5px); /* Ngritje e butë e logos */
+        transform: translateY(-5px); 
     }
     
-    /* STILIMI I EMRAVE TË KANALIT NË FOKUS */
     .channel-name-overlay {
         position: absolute;
         bottom: 0;
@@ -221,7 +219,7 @@
         opacity: 1;
         transform: translateY(0%);
     }
-    /* --- FUNDI I PËRDITËSIMIT TË KANALIT --- */
+    /* --- FUNDI I STILIMIT TË KANALIT --- */
     
     /* PLAYER CONTAINER (pa ndryshime thelbësore) */
     #playerContainer { 
@@ -319,15 +317,15 @@
         font-weight: bold;
     } 
 
-    /* MENUJA ANËSORE (pa ndryshime thelbësore) */
+    /* --- PËRDITËSIMI I MENUSË ANËSORE (OPSIONI I RI) --- */
     #channelMenu {
         position: absolute;
         top: 0;
         left: 0;
         height: 100vh; 
-        width: 300px; 
+        width: 350px; /* Zmadhuam gjerësinë */
         padding: 20px 0;
-        background: rgba(0, 0, 0, 0.9); 
+        background: rgba(0, 0, 0, 0.95); /* E bëmë pak më të errët */
         border-right: 1px solid rgba(255, 255, 255, 0.1); 
         overflow-y: auto; 
         display: none; 
@@ -336,9 +334,9 @@
     } 
 
     .menu-channel-item {
-        padding: 15px 20px;
+        padding: 20px 25px; /* Zmadhuam hapësirën (padding) */
         color: #fff; 
-        font-size: 1.1em; 
+        font-size: 1.3em; /* Zmadhuam tekstin */
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s; 
@@ -346,24 +344,30 @@
         overflow: hidden;
         text-overflow: ellipsis;
         display: flex;
-        gap: 15px; 
+        align-items: center; /* Për të qenë në qendër vertikalisht */
+        gap: 20px; /* Zmadhuam hapësirën */
+        border-left: 5px solid transparent; 
     } 
 
     .menu-channel-number {
-        font-weight: bold;
+        font-weight: 700; /* E bëmë më bold */
         color: #6246B8; 
-        width: 40px; 
+        font-size: 1.5em; /* Zmadhuam numrin */
+        width: 45px; /* Rritëm gjerësinë e numrit */
         text-align: right;
     } 
 
     .menu-channel-item.focused {
-        background-color: rgba(65, 105, 225, 0.7); 
+        background-color: rgba(65, 105, 225, 0.2); /* Më transparent */
+        border-left-color: #4169e1; /* Bordurë blu në të majtë */
         color: #fff;
+        transform: scale(1.02);
     } 
 
     .menu-channel-item:focus {
         outline: none; 
     }
+    /* --- FUNDI I PËRDITËSIMIT TË MENUSË ANËSORE --- */
 </style>
 </head>
 <body>
