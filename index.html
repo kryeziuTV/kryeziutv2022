@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me GeoLocation & EPG</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -29,17 +29,17 @@
     /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË TË DJATHTË) --- */
     #headerWidget {
         position: fixed;
-        bottom: 20px; /* Zvogelimi i pozicionit vertikal */
-        right: 20px; /* Zhvendosja në të djathtë */
-        left: auto; /* Heqja e qendrës horizontalisht */
-        transform: none; /* Heqja e transformit qendërzues */
+        bottom: 20px; 
+        right: 20px; 
+        left: auto; 
+        transform: none; 
         color: #fff;
         text-align: center; 
         z-index: 10;
         display: flex; 
-        flex-direction: column; /* Vendosja e orës sipër motit (opsionale, por e mirë) */
-        align-items: flex-end; /* I rreshton elementet në të djathtë */
-        gap: 15px; /* Zvogëlohet gap-i */
+        flex-direction: column; 
+        align-items: flex-end; 
+        gap: 15px; 
         pointer-events: none; 
     } 
 
@@ -49,48 +49,48 @@
         flex-direction: column;
         align-items: center; 
         background: rgba(0, 0, 0, 0.5); 
-        padding: 8px 15px; /* Zvogëlimi i padding-ut */
+        padding: 8px 15px; 
         border-radius: 10px;
-        min-width: 150px; /* Për të qenë më kompakt */
+        min-width: 150px; 
     }
     #currentTime {
-        font-size: 2em; /* Zvogëlimi i madhësisë */
+        font-size: 2em; 
         font-weight: 700;
         line-height: 1;
     }
     #currentDate {
-        font-size: 1.2em; /* Zvogëlimi i madhësisë */
+        font-size: 1.2em; 
         font-weight: 400; 
     } 
 
     /* MOTI */
     #weatherInfo {
         background: rgba(0, 0, 0, 0.5); 
-        padding: 15px 20px; /* Zvogëlimi i padding-ut */
+        padding: 15px 20px; 
         border-radius: 10px;
         opacity: 1; 
         display: flex;
         flex-direction: column;
         align-items: center;
-        max-width: 400px; /* Kufizimi i gjerësisë */
+        max-width: 400px; 
     }
     #weatherSummary {
         display: block;
-        font-size: 1.2em; /* Zvogëlimi i madhësisë */
+        font-size: 1.2em; 
         font-weight: 500;
         margin-bottom: 8px;
     }
     .forecast-grid {
         display: grid;
         grid-template-columns: repeat(7, auto); 
-        gap: 15px; /* Zvogëlimi i gap-it */
+        gap: 15px; 
         padding-top: 5px;
     }
     .day-forecast {
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-size: 0.8em; /* Zvogëlimi i madhësisë */
+        font-size: 0.8em; 
         opacity: 0.9;
     }
     .day-forecast .day-name {
@@ -98,7 +98,7 @@
         margin-bottom: 3px;
     }
     .day-forecast .day-icon {
-        font-size: 1.8em; /* Zvogëlimi i madhësisë */
+        font-size: 1.8em; 
         margin: 4px 0 6px 0;
     }
     .day-forecast .day-temp {
@@ -211,7 +211,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 100px; /* Zvogëlohet pak për të përfshirë EPG */
+        height: 100px; 
         background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
         padding: 10px 40px 20px 40px;
         box-sizing: border-box;
@@ -245,7 +245,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 100%; /* Siguron që të mbajë brenda */
+        max-width: 100%; 
     }
 
     /* Loading/Error Overlay (pa ndryshime thelbësore) */
@@ -340,7 +340,7 @@
         </div> 
 
         <div id="weatherInfo">
-            <span id="weatherSummary">Po ngarkohet moti...</span>
+            <span id="weatherSummary"></span> 
             <div id="forecast7Day" class="forecast-grid">
             </div>
         </div>
@@ -528,16 +528,14 @@ function updateClock() {
     document.getElementById('currentDate').textContent = dateString;
 } 
 
-// 1. Funksioni i Motit Tani Merr Koordinatat dhe Emrin e Qytetit
+// 1. Funksioni i Motit Tani Merr Koordinatat Statike
 async function fetchWeather(lat, lon, cityName) {
     const weatherInfo = document.getElementById('weatherInfo');
     const weatherSummary = document.getElementById('weatherSummary');
     const forecastGrid = document.getElementById('forecast7Day');
     
-    weatherSummary.textContent = `Po ngarkohet moti për ${cityName}...`;
     weatherInfo.style.opacity = 0.5; 
 
-    // Përdorim koordinatat e marra nga GeoLocation
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`; 
 
     try {
@@ -558,7 +556,7 @@ async function fetchWeather(lat, lon, cityName) {
             if (currentTemp < dailyData.temperature_2m_min[0]) dailyData.temperature_2m_min[0] = currentTemp;
         } 
 
-        // Shfaq emrin e qytetit të marrë në mënyrë dinamike
+        // Shfaq emrin e qytetit statik (Suhareke)
         weatherSummary.textContent = `${cityName}: ${currentTemp}°C, ${currentWeatherDesc.emoji} (${currentWeatherDesc.description})`; 
 
         // PARASHIKIMI 7-DITOR
@@ -593,100 +591,49 @@ async function fetchWeather(lat, lon, cityName) {
     }
 } 
 
-// 2. Kthimi i Koordinatave në Emër Qyteti (Reverse Geocoding)
-async function reverseGeocode(lat, lon) {
-    const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
-    let cityName = "Vendndodhja Aktuale"; 
-    
-    try {
-        const response = await fetch(geoUrl, {
-            headers: {
-                'User-Agent': 'MyAppWeatherWidget/1.0 (contact@example.com)'
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            // Përpiquni të merrni qytetin/vendin, në varësi të saktësisë
-            cityName = data.address.city || data.address.town || data.address.village || data.address.country || "Vendndodhja Aktuale";
-        }
-    } catch(e) {
-        console.error("Dështoi Reverse Geocoding:", e);
-    }
-    
-    fetchWeather(lat, lon, cityName);
-} 
+// 2. Funksioni Kryesor PËR MOTIN STATIK (SUHAREKE)
+function loadSuharekeWeather() {
+    // Koordinatat e Suharekës (përafërsisht)
+    const suharekeLat = 42.36; 
+    const suharekeLon = 20.84; 
+    const suharekeCity = "Suhareke"; 
 
-// 3. Funksioni Kryesor për Marrjen e Vendndodhjes
-function getLocation() {
-    // Koordinatat e Prishtinës si fallback
-    const defaultLat = 42.66;
-    const defaultLon = 21.17;
-    const defaultCity = "Prishtinë (Default)"; 
-
-    const weatherSummary = document.getElementById('weatherSummary');
-    weatherSummary.textContent = `Po kërkoj vendndodhjen tuaj...`; 
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                // Thërrasim Reverse Geocoding për të gjetur emrin e qytetit
-                reverseGeocode(lat, lon);
-            },
-            (error) => {
-                console.warn(`Gabim në GeoLocation (${error.code}): ${error.message}. Duke përdorur ${defaultCity}.`);
-                // Në rast gabimi, përdorim vendndodhjen default (Prishtinë)
-                weatherSummary.textContent = `GeoLocation dështoi. Duke përdorur ${defaultCity}.`;
-                fetchWeather(defaultLat, defaultLon, defaultCity);
-            },
-            {
-                enableHighAccuracy: false, 
-                timeout: 5000, 
-                maximumAge: 0
-            }
-        );
-    } else {
-        // Shfletuesi nuk mbështet Geolocation
-        weatherSummary.textContent = `Shfletuesi nuk mbështet gjeolokalizimin. Duke përdorur ${defaultCity}.`;
-        fetchWeather(defaultLat, defaultLon, defaultCity);
-    }
+    // Thërrasim funksionin e motit me koordinata statike
+    fetchWeather(suharekeLat, suharekeLon, suharekeCity);
 }
 
 
 // --- EPG LOGIC (Simulim për shkak të XML/CORS) ---
+const EPG_XML_URL = "https://epghub.xyz/epg/EPG-AL.xml";
+
 function getChannelEpg(channelId) {
     const epgInfo = document.querySelector('#infoBar .epg-info');
     if (!epgInfo) return;
 
-    epgInfo.textContent = 'Po ngarkohet programi...';
+    epgInfo.textContent = 'Po kërkohet programi...'; 
 
-    // API e EPG-së: "https://epghub.xyz/epg/EPG-AL.xml"
-    // Kjo API kthen XML, i cili nuk mund të përpunohet thjesht në frontend për shkak të CORS dhe kompleksitetit.
-    // Prandaj, po SIMULOJMË një përgjigje.
-
+    // Simulimi i përgjigjes nga XML EPG
     const simulationData = {
-        "RTK 1": "Ora 18:00 - Lajmet e Mbrëmjes | Ora 19:00 - Debat",
-        "RTV 21": "Ora 17:30 - Seriale TV | Ora 18:30 - Analiza Sportive",
-        "DISNEY JUNIOR": "Ora 16:00 - Mikja Ime E Mrekullueshme",
+        "RTK1.xk": "Ora 18:00 - Lajmet e Mbrëmjes | Ora 19:00 - Debat",
+        "RTV21.xk": "Ora 17:30 - Seriale TV | Ora 18:30 - Analiza Sportive",
+        "KTV.xk": "Në transmetim: Express (Live) | Më pas: Flladi",
+        "DISNEY_JR.xk": "Ora 16:00 - Mikja Ime E Mrekullueshme",
     };
 
-    const currentChannel = allChannelsList[currentChannelIndex];
+    const currentChannel = allChannelsList.find(ch => ch.channelId === channelId);
     const channelName = currentChannel ? currentChannel.name : null;
 
     clearTimeout(epgInfo.timer);
 
     // Simulon vonesën e thirrjes API (1.5 sekonda)
     epgInfo.timer = setTimeout(() => {
-        if (simulationData[channelName]) {
-            epgInfo.textContent = simulationData[channelName];
+        if (simulationData[channelId]) {
+            epgInfo.textContent = simulationData[channelId];
         } else {
-            // Kontrollon nëse kanali ka një URL
             if(currentChannel && currentChannel.url){
-                epgInfo.textContent = `Nuk u gjet programi TV për ${channelName}.`;
+                epgInfo.textContent = `Nuk u gjet programi TV për ${channelName}. (ID: ${channelId})`;
             } else {
-                epgInfo.textContent = `Nuk ka program TV (Kanali joaktiv).`;
+                epgInfo.textContent = `Kanali ${channelName}: Jo aktiv ose pa program TV.`;
             }
             
         }
@@ -794,7 +741,7 @@ document.addEventListener('keydown', (e)=>{
     if(playerContainer.style.display === 'flex'){
         const channelMenu = document.getElementById('channelMenu');
         const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
-        const maxIndex = allChannelsList.length - 1; 
+        const MAX_CHANNEL_INDEX = allChannelsList.length - 1; 
 
         // LOGJIKA E NDËRRIMIT ME NUMRA
         if (e.key >= '0' && e.key <= '9') {
@@ -1008,10 +955,6 @@ function openPlayerForChannel(ch, isSwitching = false){
         channelMenu.id = 'channelMenu';
         playerContainer.appendChild(channelMenu);
         
-        // Këto tashmë janë në HTML, thjesht sigurohemi që janë në playerContainer
-        // playerContainer.appendChild(document.getElementById('loadingOverlay'));
-        // playerContainer.appendChild(document.getElementById('infoBar'));
-        
         updateOrientationClass(); 
     }
 
@@ -1141,13 +1084,13 @@ loadCategory(currentCategory);
 
 // INICIALIZIMI I WIDGET-IT TË MOTIT/ORËS
 updateClock(); 
-// Tani thërrasim funksionin e ri të vendndodhjes
-getLocation(); 
+// Thërrasim funksionin e vendndodhjes statike (Suhareke)
+loadSuharekeWeather(); 
 
 // Përditësojmë Orën çdo minutë (60000ms)
 setInterval(updateClock, 60000); 
 // Përditësojmë Motin çdo 10 minuta (600000ms)
-setInterval(getLocation, 600000); 
+setInterval(loadSuharekeWeather, 600000); 
 
 </script>
 </body>
