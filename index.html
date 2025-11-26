@@ -2,12 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar (Blur në gjithë Body & Kategori Transparente)</title>
+<title>TV App UI - Versioni Dinamik me GeoLocation</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
 <style>
-  /* STILIMET KRYESORE */
+  /* --- STILIMET KRYESORE --- */
   body { 
-    /* VENDOSJA E WALLPAPER-IT (TANI E QARTË) */
     background: #1e1e1e url('https://www.appcreator24.com/srv/imgs/gen/1009381_fondo.png') no-repeat center center fixed; 
     background-size: cover; 
     font-family:'Rubik',sans-serif; 
@@ -24,6 +25,83 @@
       -webkit-backdrop-filter: blur(10px);
       z-index: -1; 
   }
+
+  /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË MES) --- */
+  #headerWidget {
+      position: fixed;
+      bottom: 40px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      color: #fff;
+      text-align: center; 
+      z-index: 10;
+      display: flex; 
+      align-items: flex-end; 
+      gap: 40px; 
+      pointer-events: none; 
+  }
+
+  /* ORA DHE DATA */
+  #timeDate {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+      background: rgba(0, 0, 0, 0.5); 
+      padding: 10px 20px;
+      border-radius: 12px;
+  }
+  #currentTime {
+      font-size: 2.5em; 
+      font-weight: 700;
+      line-height: 1;
+  }
+  #currentDate {
+      font-size: 1.4em; 
+      font-weight: 400; 
+  }
+
+  /* MOTI */
+  #weatherInfo {
+      background: rgba(0, 0, 0, 0.5); 
+      padding: 20px 25px; 
+      border-radius: 12px;
+      opacity: 1; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+  #weatherSummary {
+      display: block;
+      font-size: 1.5em; 
+      font-weight: 500;
+      margin-bottom: 10px;
+  }
+  .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(7, auto); 
+      gap: 20px; 
+      padding-top: 5px;
+  }
+  .day-forecast {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.9em;
+      opacity: 0.9;
+  }
+  .day-forecast .day-name {
+      font-weight: 500;
+      margin-bottom: 3px;
+  }
+  .day-forecast .day-icon {
+      font-size: 2em; 
+      margin: 5px 0 8px 0;
+  }
+  .day-forecast .day-temp {
+      font-weight: 700;
+  }
+  /* --- FUNDI I STILIMIT TË WIDGET-IT --- */
+
 
   /* KONTEJNERI KRYESOR PËR QENDRËZIM */
   #mainContent {
@@ -49,7 +127,6 @@
 
   /* STILI I FOKUSIT PËR KATEGORITË */
   .cat-btn { 
-    /* NDYSHIMI KRYESOR: Sfondi tani është vjollcë transparente */
     background: rgba(98, 70, 184, 0.4); 
     color:#fff; 
     padding:15px 28px; 
@@ -61,9 +138,7 @@
     border: 3px solid transparent; 
   }
   .cat-btn:focus, .cat-btn.focused { 
-    /* Kur fokusohet, SFONDI BËHET I PLOTË për theksim */
     background: #6246B8; 
-    /* PËRMBIRËSIMI I SHADOW-VE */
     box-shadow:0 0 15px 8px rgba(255, 255, 255, 0.6), 0 12px 40px rgba(0,0,0,.6); 
     transform:scale(1.05); 
     outline:none; 
@@ -82,7 +157,6 @@
   .channel { 
     width:120px; 
     height:120px; 
-    /* SFOND I KANALIT TRANSPARENT */
     background:rgba(255, 255, 255, 0.1); 
     border-radius:14px; 
     box-shadow:0 6px 20px rgba(0,0,0,.5); 
@@ -98,7 +172,6 @@
   }
   .channel:focus, .channel.focused { 
     transform:scale(1.05); 
-    /* PËRMBIRËSIMI I SHADOW-VE */
     box-shadow:0 0 15px 8px rgba(65, 105, 225, 0.8), 0 12px 40px rgba(0,0,0,.6); 
     outline:none; 
     border: 3px solid white; 
@@ -109,8 +182,13 @@
     max-width: 90%; 
     max-height: 90%; 
     object-fit: contain; 
+    filter: saturate(0.7); 
+    transition: filter 0.2s; 
   } 
-
+  .channel:focus img, .channel.focused img { 
+    filter: saturate(1); 
+  }
+  
   /* PLAYER CONTAINER */
   #playerContainer { 
     position:fixed; 
@@ -199,7 +277,7 @@
     font-weight: bold;
   }
 
-  /* MENUJA ANËSORE (E errët dhe transparente - OPTIMIZUAR) */
+  /* MENUJA ANËSORE */
   #channelMenu {
     position: absolute;
     top: 0;
@@ -207,14 +285,11 @@
     height: 100vh; 
     width: 300px; 
     padding: 20px 0;
-    /* PËR PERFORMANCË MË TË MIRË, ZGJEDHIM NJË SFOND MË TË THJESHTË: */
     background: rgba(0, 0, 0, 0.9); 
-    /* U HEQ: backdrop-filter: blur(10px); */ 
     border-right: 1px solid rgba(255, 255, 255, 0.1); 
     overflow-y: auto; 
     display: none; 
     z-index: 100001; 
-    /* SCROLL MË I THJESHTË PËR TV */
     scroll-behavior: auto; 
   } 
 
@@ -252,6 +327,19 @@
 <body>
   
   <div id="blur-overlay"></div>
+  
+  <div id="headerWidget">
+      <div id="timeDate">
+          <span id="currentTime">--:--</span>
+          <span id="currentDate">--/--</span>
+      </div>
+
+      <div id="weatherInfo">
+          <span id="weatherSummary">Po ngarkohet moti...</span>
+          <div id="forecast7Day" class="forecast-grid">
+              </div>
+      </div>
+  </div>
   
   <div id="mainContent">
     <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
@@ -327,12 +415,11 @@ const GRID_COLS = 7;
 // NDIHMËS PËR MENY & NAVIGIM
 let isMenuVisible = false;
 let menuFocusIndex = 0;
-let currentChannelIndex = 0; // indeksi i kanalit aktual që po luhet në listën e plotë (flat)
+let currentChannelIndex = 0; 
 let infoBarTimer = null; 
 let digitBuffer = ''; 
 let digitTimer = null; 
 
-// Krijojmë listën e rreshtuar (flat) të të gjitha kanaleve, duke ruajtur numrin unik
 const allChannelsList = [];
 let channelNumberCounter = 0;
 categories.forEach(categoryName => {
@@ -348,7 +435,7 @@ categories.forEach(categoryName => {
 const MAX_CHANNEL_INDEX = allChannelsList.length - 1;
 
 
-// --- render UI (loadCategory/focusCurrent mbeten të njëjtat) ---
+// --- render UI ---
 categories.forEach((cat,ci)=>{
   const btn = document.createElement('button');
   btn.className = 'cat-btn';
@@ -400,12 +487,173 @@ function focusCurrent(){
   }
 } 
 
-// --- INFO BAR & LOADING LOGIC ---
+// --- WIDGET LOGIC (Ora dhe Moti - I PËRDITËSUAR TANI PËR VENDNDODHJEN DINAMIKE) ---
 
+function getWeatherDescription(code) {
+    if (code === 0) return { description: "Diell i pastër", emoji: "☀️" };
+    if (code === 1) return { description: "Kryesisht diell", emoji: "🌤️" };
+    if (code === 2) return { description: "Pjesërisht i vranët", emoji: "⛅️" };
+    if (code === 3) return { description: "Moti i vranët", emoji: "☁️" };
+    if (code === 45 || code === 48) return { description: "Mjegull", emoji: "🌫️" };
+    if (code >= 51 && code <= 55) return { description: "Shi i lehtë", emoji: "🌦️" };
+    if (code >= 61 && code <= 65) return { description: "Shi i fortë", emoji: "🌧️" };
+    
+    // Përditësimi për borë: përfshin të gjitha kodet e borës (71-77, 85-86) dhe shi/borë të përzier (66-67)
+    if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86) || code === 66 || code === 67) {
+        return { description: "Borë", emoji: "❄️" };
+    }
+    
+    if (code >= 80 && code <= 82) return { description: "Stuhi me shi", emoji: "⛈️" };
+    if (code >= 95 && code <= 99) return { description: "Stuhi", emoji: "🌩️" };
+    
+    if (code >= 50 && code <= 89) {
+        return { description: "I Lagësht/Shi", emoji: "💧" }; 
+    }
+    
+    return { description: "Moti i Panjohur", emoji: "❓" }; 
+}
+
+function updateClock() {
+    const now = new Date();
+    // Përdor 'h23' për formatin 24-orësh, heq 'e paradites'
+    const timeString = now.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    const dateString = now.toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long' });
+    
+    document.getElementById('currentTime').textContent = timeString;
+    document.getElementById('currentDate').textContent = dateString;
+}
+
+// 1. Funksioni i Motit Tani Merr Koordinatat dhe Emrin e Qytetit
+async function fetchWeather(lat, lon, cityName) {
+    const weatherInfo = document.getElementById('weatherInfo');
+    const weatherSummary = document.getElementById('weatherSummary');
+    const forecastGrid = document.getElementById('forecast7Day');
+    
+    weatherSummary.textContent = `Po ngarkohet moti për ${cityName}...`;
+    weatherInfo.style.opacity = 0.5;
+
+    // Përdorim koordinatat e marra nga GeoLocation
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Gabim HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+
+        const currentTemp = Math.round(data.current.temperature_2m);
+        const currentCode = data.current.weather_code;
+        const currentWeatherDesc = getWeatherDescription(currentCode);
+        
+        const dailyData = data.daily;
+        if (dailyData.weather_code && dailyData.weather_code.length > 0) {
+            dailyData.weather_code[0] = currentCode; 
+            if (currentTemp > dailyData.temperature_2m_max[0]) dailyData.temperature_2m_max[0] = currentTemp;
+            if (currentTemp < dailyData.temperature_2m_min[0]) dailyData.temperature_2m_min[0] = currentTemp;
+        }
+
+        // Shfaq emrin e qytetit të marrë në mënyrë dinamike
+        weatherSummary.textContent = `${cityName}: ${currentTemp}°C, ${currentWeatherDesc.emoji} (${currentWeatherDesc.description})`;
+
+        // PARASHIKIMI 7-DITOR
+        forecastGrid.innerHTML = ''; 
+        for (let i = 0; i < dailyData.time.length && i < 7; i++) {
+            const date = new Date(dailyData.time[i]);
+            
+            const dayName = i === 0 ? "Sot" : date.toLocaleDateString('sq-AL', { weekday: 'short' }); 
+            
+            const maxTemp = Math.round(dailyData.temperature_2m_max[i]);
+            const minTemp = Math.round(dailyData.temperature_2m_min[i]);
+            const code = dailyData.weather_code[i];
+            const desc = getWeatherDescription(code);
+
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day-forecast';
+            dayDiv.innerHTML = `
+                <span class="day-name">${dayName}</span>
+                <span class="day-icon">${desc.emoji}</span>
+                <span class="day-temp">${maxTemp}°/${minTemp}°</span>
+            `;
+            forecastGrid.appendChild(dayDiv);
+        }
+        
+        weatherInfo.style.opacity = 1;
+
+    } catch (error) {
+        console.error("Gabim në marrjen e motit:", error);
+        weatherSummary.textContent = `${cityName}: Dështoi ngarkimi i motit.`;
+        forecastGrid.innerHTML = '';
+        weatherInfo.style.opacity = 1;
+    }
+}
+
+// 2. Kthimi i Koordinatave në Emër Qyteti (Reverse Geocoding)
+async function reverseGeocode(lat, lon) {
+    const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+    let cityName = "Vendndodhja Aktuale"; 
+    
+    try {
+        const response = await fetch(geoUrl, {
+            headers: {
+                'User-Agent': 'MyAppWeatherWidget/1.0 (contact@example.com)'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            // Përpiquni të merrni qytetin/vendin, në varësi të saktësisë
+            cityName = data.address.city || data.address.town || data.address.village || data.address.country || "Vendndodhja Aktuale";
+        }
+    } catch(e) {
+        console.error("Dështoi Reverse Geocoding:", e);
+    }
+    
+    fetchWeather(lat, lon, cityName);
+}
+
+// 3. Funksioni Kryesor për Marrjen e Vendndodhjes
+function getLocation() {
+    // Koordinatat e Prishtinës si fallback
+    const defaultLat = 42.66;
+    const defaultLon = 21.17;
+    const defaultCity = "Prishtinë (Default)";
+
+    const weatherSummary = document.getElementById('weatherSummary');
+    weatherSummary.textContent = `Po kërkoj vendndodhjen tuaj...`;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                // Thërrasim Reverse Geocoding për të gjetur emrin e qytetit
+                reverseGeocode(lat, lon);
+            },
+            (error) => {
+                console.warn(`Gabim në GeoLocation (${error.code}): ${error.message}. Duke përdorur ${defaultCity}.`);
+                // Në rast gabimi, përdorim vendndodhjen default (Prishtinë)
+                weatherSummary.textContent = `GeoLocation dështoi. Duke përdorur ${defaultCity}.`;
+                fetchWeather(defaultLat, defaultLon, defaultCity);
+            },
+            {
+                enableHighAccuracy: false, 
+                timeout: 5000, 
+                maximumAge: 0
+            }
+        );
+    } else {
+        // Shfletuesi nuk mbështet Geolocation
+        weatherSummary.textContent = `Shfletuesi nuk mbështet gjeolokalizimin. Duke përdorur ${defaultCity}.`;
+        fetchWeather(defaultLat, defaultLon, defaultCity);
+    }
+}
+
+
+// --- INFO BAR, PLAYER, NAVIGATION (Mbetet njësoj) ---
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
-    
     if (!infoBar || !title) return;
 
     title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
@@ -440,7 +688,6 @@ function updateLoadingState(state, channelName = null) {
     }
 }
 
-// FUNKSIONI PËR PËRQENDRIMIN E FOKUSIT TË MENYSË (Centering Scroll)
 function centerMenuFocus(menuItems, index) {
     const channelMenu = document.getElementById('channelMenu');
     const focusedItem = menuItems[index];
@@ -449,19 +696,14 @@ function centerMenuFocus(menuItems, index) {
 
     const itemHeight = focusedItem.offsetHeight; 
     const menuHeight = channelMenu.clientHeight; 
-
-    // Kalkulojmë pozicionin e scrollit: Pozicioni i elementit - (Lartësia e menysë / 2) + (Lartësia e elementit / 2)
     const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2);
 
-    // Vendos scroll-in e ri, TANI ME 'auto' PËR SHPEJTËSI (performancë)
     channelMenu.scrollTo({ 
         top: targetScrollTop, 
         behavior: 'auto' 
     });
 }
 
-
-// --- player menu logic ---
 function toggleChannelMenu(){
     const channelMenu = document.getElementById('channelMenu');
     if (!channelMenu) return; 
@@ -475,7 +717,6 @@ function toggleChannelMenu(){
             items.forEach(i => i.classList.remove('focused')); 
             menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); 
             items[menuFocusIndex].classList.add('focused');
-            // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
             centerMenuFocus(items, menuFocusIndex); 
         }
     }
@@ -484,7 +725,6 @@ function toggleChannelMenu(){
 function switchChannel(ch){
     if(!ch.url) return;
     
-    // Kontrollo nëse kanali i ri është i njëjti me atë aktual
     if (ch.fullIndex === currentChannelIndex && isMenuVisible) {
         toggleChannelMenu(); 
         return; 
@@ -546,13 +786,11 @@ document.addEventListener('keydown', (e)=>{
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.max(0, menuFocusIndex - 1);
             menuItems[menuFocusIndex]?.classList.add('focused');
-            // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
             centerMenuFocus(menuItems, menuFocusIndex); 
         } else if(e.key === 'ArrowDown'){
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
             menuItems[menuFocusIndex]?.classList.add('focused');
-            // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
             centerMenuFocus(menuItems, menuFocusIndex); 
         } else if(e.key === 'Enter'){
             const channel = allChannelsList[menuFocusIndex];
@@ -594,7 +832,7 @@ document.addEventListener('keydown', (e)=>{
     return; 
   } 
 
-  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjtat)
+  // KONTROLLAT E NAVIGIMIT TË UI-SË 
   if(e.key === 'ArrowRight'){
     if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
     else { gridFocus = gridFocus + 1; }
@@ -639,7 +877,6 @@ function openPlayerForChannel(ch, isSwitching = false){
   const url = ch.url;
   if(!url) return;
   
-  // 1. Shfaq Loading dhe Info Bar
   updateLoadingState('loading');
   showInfoBar(ch);
   
@@ -740,11 +977,9 @@ function openPlayerForChannel(ch, isSwitching = false){
     video.play().catch(()=>{});
   } 
 
-  // Eventi i fillimit të luajtjes (fsheh loading)
   video.onplaying = () => {
     updateLoadingState('hidden');
   };
-  // Eventi i gabimit (shfaq "Kanali nuk punon")
   video.onerror = () => {
     updateLoadingState('error', ch.name);
   }
@@ -807,6 +1042,16 @@ window.addEventListener('orientationchange', updateOrientationClass);
 
 // initial load
 loadCategory(currentCategory); 
+
+// INICIALIZIMI I WIDGET-IT TË MOTIT/ORËS
+updateClock(); 
+// Tani thërrasim funksionin e ri të vendndodhjes
+getLocation(); 
+
+// Përditësojmë Orën çdo minutë (60000ms)
+setInterval(updateClock, 60000); 
+// Përditësojmë Motin çdo 10 minuta (600000ms)
+setInterval(getLocation, 600000); 
 
 </script>
 </body>
