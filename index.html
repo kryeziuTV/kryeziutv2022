@@ -2,22 +2,21 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V7 (Kategori më të Mëdha)</title>
+<title>TV App UI - Versioni Statik (Pa EPG) - V9</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
 <style>
     /* --- STILIMET KRYESORE --- */
     body { 
-        /* SFONDI I FONDIT TË FUSHE (VIDEO-s) */
         background: #1e1e1e; 
         font-family:'Rubik',sans-serif; 
         color:#fff; 
         margin:0; 
     } 
     
-    /* SFONDI DINAMIK (VIDEO) */
-    #background-video {
+    /* PËRDITËSUAR: SFONDI STATIK I IMZHIT (Zëvendëson Videon) */
+    #background-image {
         position: fixed;
         right: 0;
         bottom: 0;
@@ -25,17 +24,22 @@
         min-height: 100%;
         width: auto;
         height: auto;
-        z-index: -2; /* Pas blur-overlay */
+        z-index: -2; 
         object-fit: cover;
-        filter: brightness(0.7) blur(2px); /* E errëson dhe e paqarton videon */
+        /* Imazhi i ri */
+        background-image: url("https://img.freepik.com/premium-photo/dark-black-gray-blurred-gradient-leaf-shadow-background-has-little-abstract-light_532332-1850.jpg");
+        background-size: cover;
+        background-position: center;
+        /* Efektet e videos së mëparshme për pamje të ngjashme */
+        filter: brightness(0.7) blur(2px); 
     }
 
-    /* PËRDITËSUAR: SHTRESA BLUR-UAR NË TË GJITHË BODY */
+    /* SHTRESA BLUR-UAR - Vazhdon të ekzistojë për efektet e UI-së */
     #blur-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.6); /* Sfondi më i errët */
-        backdrop-filter: blur(15px); /* BLUR MË I FORTË (Nga 10px në 15px) */
+        background: rgba(0, 0, 0, 0.6); 
+        backdrop-filter: blur(15px); 
         -webkit-backdrop-filter: blur(15px);
         z-index: -1; 
     } 
@@ -144,7 +148,6 @@
         color:#fff; 
         padding:15px 28px; 
         border-radius:12px; 
-        /* PËRDITËSUAR: Rritet font-size dhe theksohet font-weight */
         font-size: 1.2em; 
         font-weight: 600; 
         cursor:pointer; 
@@ -169,7 +172,7 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (V2) - PËRDITËSUAR --- */
+    /* --- STILIMI I KANALIT (V2) --- */
     .channel { 
         width:120px; 
         height:120px; 
@@ -259,15 +262,16 @@
         pointer-events:none; 
     } 
 
-    /* PËRDITËSUAR: Info Bar (On-Screen Display) */
+    /* PËRDITËSUAR: Info Bar (Pa EPG) */
     #infoBar {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 120px; 
+        /* U PËRGJYSUM LARTËSIA */
+        height: 60px; 
         background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)); 
-        padding: 10px 40px 20px 40px;
+        padding: 10px 40px 10px 40px; 
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -277,6 +281,7 @@
         transform: translateY(100%); 
         transition: opacity 0.5s, transform 0.5s ease-out; 
         z-index: 99999;
+        justify-content: center; /* Qendërzon titullin e kanalit */
     } 
 
     #infoBar.visible {
@@ -288,22 +293,11 @@
         font-size: 2.2em;
         font-weight: 700;
         color: #fff;
-        margin-bottom: 5px;
-        line-height: 1.1;
+        line-height: 1;
     } 
 
-    /* STILIMI I EPG */
-    .epg-info {
-        font-size: 1.4em;
-        font-weight: 400;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: 1.1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%; 
-    }
-
+    /* STILIMI I EPG - I FSHIRË */
+    
     /* Loading/Error Overlay */
     #loadingOverlay {
         position: absolute;
@@ -405,10 +399,7 @@
 </head>
 <body>
     
-    <video autoplay muted loop id="background-video">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-blue-liquid-flow-1345-large.mp4" type="video/mp4">
-        Video nuk mbështetet.
-    </video>
+    <div id="background-image"></div>
 
     <div id="blur-overlay"></div>
     
@@ -438,7 +429,7 @@
 
         <div id="infoBar">
             <div class="channel-title"></div>
-            <div class="epg-info"></div> </div>
+        </div> 
     </div> 
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -694,57 +685,21 @@ function loadSuharekeWeather() {
 }
 
 
-// --- EPG LOGIC (Simulim për shkak të XML/CORS) ---
-const EPG_XML_URL = "https://epghub.xyz/epg/EPG-AL.xml";
-
-function getChannelEpg(channelId) {
-    const epgInfo = document.querySelector('#infoBar .epg-info');
-    if (!epgInfo) return;
-
-    // Fsheh tekstin duke vënë një hapësirë boshe fillimisht
-    epgInfo.textContent = ''; 
-
-    const simulationData = {
-        "RTK1.xk": "Ora 18:00 - Lajmet e Mbrëmjes | Ora 19:00 - Debat",
-        "RTV21.xk": "Ora 17:30 - Seriale TV | Ora 18:30 - Analiza Sportive",
-        "KTV.xk": "Në transmetim: Express (Live) | Më pas: Flladi",
-        "DISNEY_JR.xk": "Ora 16:00 - Mikja Ime E Mrekullueshme",
-    };
-
-    const currentChannel = allChannelsList.find(ch => ch.channelId === channelId);
-    const channelName = currentChannel ? currentChannel.name : null;
-
-    clearTimeout(epgInfo.timer);
-
-    epgInfo.timer = setTimeout(() => {
-        let programText = '';
-        if (simulationData[channelId]) {
-            programText = simulationData[channelId];
-        } else {
-            // Nëse kanali nuk ka as URL, mund të shfaqim një mesazh tjetër
-            if (!currentChannel || !currentChannel.url) {
-                programText = `Kanali ${channelName || 'Jo-Aktiv'}: Nuk ka program të transmetueshëm.`;
-            }
-            // Nëse 'programText' mbetet bosh, info bar do jetë bosh.
-        }
-        
-        epgInfo.textContent = programText; 
-
-    }, 1500);
-}
-
+// --- EPG LOGIC - Tani është i FSHIRË PLOTËSISHT ---
+// Funksionet getChannelEpg, EPG_XML_URL janë hequr.
 
 // --- INFO BAR, PLAYER, NAVIGATION ---
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
+    // Nuk ka më .epg-info
+
     if (!infoBar || !title) return; 
 
     title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
     infoBar.classList.add('visible'); 
     
-    // Ngarkon informacionin e EPG-së
-    getChannelEpg(ch.channelId); 
+    // Nuk ka më ngarkim të EPG-së
 
     if (infoBarTimer) clearTimeout(infoBarTimer); 
 
@@ -796,7 +751,6 @@ function toggleChannelMenu(){
     if (!channelMenu) return; 
 
     isMenuVisible = !isMenuVisible;
-    // PËRDITËSUAR: Përdorim klasën 'active' për transform
     channelMenu.classList.toggle('active', isMenuVisible);
     channelMenu.style.display = 'block'; 
 
@@ -856,10 +810,9 @@ document.addEventListener('keydown', (e)=>{
             
             const infoBar = document.getElementById('infoBar');
             const title = infoBar.querySelector('.channel-title');
-            const epgInfo = infoBar.querySelector('.epg-info');
+            // EPG info është hequr
 
             title.textContent = `Kanali: ${digitBuffer}`;
-            epgInfo.textContent = ''; 
             infoBar.classList.add('visible'); 
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
