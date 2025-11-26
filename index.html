@@ -2,241 +2,241 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar (Mbyllja e Menysë me BACK)</title>
+<title>TV App UI - Përditësuar (Mbyllja e Menysë me ENTER)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  /* STILIMET KRYESORE */
-  body { 
-    background:#3f4451; 
-    font-family:'Rubik',sans-serif; 
-    color:#fff; 
-    margin:0; 
-  }
+/* STILIMET KRYESORE */
+body { 
+  background:#3f4451; 
+  font-family:'Rubik',sans-serif; 
+  color:#fff; 
+  margin:0; 
+} 
 
-  /* KONTEJNERI KRYESOR PËR QENDRËZIM */
-  #mainContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    padding: 40px; 
-  }
+/* KONTEJNERI KRYESOR PËR QENDRËZIM */
+#mainContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  padding: 40px; 
+} 
 
-  /* KATEGORITË */
-  .categories { 
-    display:flex; 
-    gap:20px; 
-    margin-bottom:40px; 
-    justify-content: center; 
-    width: 100%; 
-  }
+/* KATEGORITË */
+.categories { 
+  display:flex; 
+  gap:20px; 
+  margin-bottom:40px; 
+  justify-content: center; 
+  width: 100%; 
+} 
 
-  /* STILI I FOKUSIT PËR KATEGORITË */
-  .cat-btn { 
-    background:#6246B8; 
-    color:#fff; 
-    padding:15px 28px; 
-    border-radius:12px; 
-    font-weight:500; 
-    cursor:pointer; 
-    box-shadow:0 6px 20px rgba(0,0,0,.45); 
-    transition:.2s cubic-bezier(0,-0.5,0,3); 
-    border: 3px solid transparent; 
-  }
-  .cat-btn:focus, .cat-btn.focused { 
-    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.5); 
-    transform:scale(1.05); 
-    outline:none; 
-    border: 3px solid white; 
-  }
-  .cat-btn:active { transform:scale(0.98); } 
+/* STILI I FOKUSIT PËR KATEGORITË */
+.cat-btn { 
+  background:#6246B8; 
+  color:#fff; 
+  padding:15px 28px; 
+  border-radius:12px; 
+  font-weight:500; 
+  cursor:pointer; 
+  box-shadow:0 6px 20px rgba(0,0,0,.45); 
+  transition:.2s cubic-bezier(0,-0.5,0,3); 
+  border: 3px solid transparent; 
+}
+.cat-btn:focus, .cat-btn.focused { 
+  box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.5); 
+  transform:scale(1.05); 
+  outline:none; 
+  border: 3px solid white; 
+}
+.cat-btn:active { transform:scale(0.98); } 
 
-  /* GRIDI I KANALEVE */
-  .grid { 
-    display:grid; 
-    grid-template-columns:repeat(7,120px); 
-    gap:20px; 
-  }
+/* GRIDI I KANALEVE */
+.grid { 
+  display:grid; 
+  grid-template-columns:repeat(7,120px); 
+  gap:20px; 
+} 
 
-  /* RREGULLIMI I LOGOS DHE STILI I FOKUSIT PËR KANALET */
-  .channel { 
-    width:120px; 
-    height:120px; 
-    background:#fff; 
-    border-radius:14px; 
-    box-shadow:0 6px 20px rgba(0,0,0,.5); 
-    display:flex; 
-    justify-content:center; 
-    align-items:center; 
-    cursor:pointer; 
-    transition:.2s cubic-bezier(0,-0.5,0,3); 
-    border: 3px solid transparent; 
-    overflow: hidden; 
-    padding: 10px; 
-    box-sizing: border-box; 
-  }
-  .channel:focus, .channel.focused { 
-    transform:scale(1.05); 
-    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.55); 
-    outline:none; 
-    border: 3px solid white; 
-  }
-  .channel:active { transform:scale(0.98); }
+/* RREGULLIMI I LOGOS DHE STILI I FOKUSIT PËR KANALET */
+.channel { 
+  width:120px; 
+  height:120px; 
+  background:#fff; 
+  border-radius:14px; 
+  box-shadow:0 6px 20px rgba(0,0,0,.5); 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  cursor:pointer; 
+  transition:.2s cubic-bezier(0,-0.5,0,3); 
+  border: 3px solid transparent; 
+  overflow: hidden; 
+  padding: 10px; 
+  box-sizing: border-box; 
+}
+.channel:focus, .channel.focused { 
+  transform:scale(1.05); 
+  box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.55); 
+  outline:none; 
+  border: 3px solid white; 
+}
+.channel:active { transform:scale(0.98); } 
 
-  .channel img { 
-    max-width: 90%; 
-    max-height: 90%; 
-    object-fit: contain; 
-  } 
+.channel img { 
+  max-width: 90%; 
+  max-height: 90%; 
+  object-fit: contain; 
+} 
 
-  /* PLAYER CONTAINER */
-  #playerContainer { 
-    position:fixed; 
-    inset:0; 
-    background:#000; 
-    display:none; 
-    z-index:99999; 
-    align-items:center; 
-    justify-content:center; 
-  }
-  #playerContainer video { 
-    width:100vw; 
-    height:100vh; 
-    object-fit:contain; 
-    outline:none; 
-    border:0; 
-    pointer-events:none; 
-  } 
+/* PLAYER CONTAINER */
+#playerContainer { 
+  position:fixed; 
+  inset:0; 
+  background:#000; 
+  display:none; 
+  z-index:99999; 
+  align-items:center; 
+  justify-content:center; 
+}
+#playerContainer video { 
+  width:100vw; 
+  height:100vh; 
+  object-fit:contain; 
+  outline:none; 
+  border:0; 
+  pointer-events:none; 
+} 
 
-  /* Info Bar (On-Screen Display) */
-  #infoBar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
-    padding: 10px 40px 20px 40px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: flex-end;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s;
-    z-index: 99999;
-    flex-direction: column;
-    align-items: flex-start;
-  }
+/* Info Bar (On-Screen Display) */
+#infoBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  padding: 10px 40px 20px 40px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+  z-index: 99999;
+  flex-direction: column;
+  align-items: flex-start;
+} 
 
-  #infoBar.visible {
-    opacity: 1;
-  }
+#infoBar.visible {
+  opacity: 1;
+} 
 
-  .channel-title {
-    font-size: 2.2em;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 5px;
-  }
+.channel-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 5px;
+} 
 
-  /* Loading/Error Overlay */
-  #loadingOverlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: none; 
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 100000; 
-  }
+/* Loading/Error Overlay */
+#loadingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000; 
+} 
 
-  #loadingOverlay .message {
-    font-size: 1.5em;
-    font-weight: 500;
-    color: #fff;
-    margin-top: 20px;
-  }
+#loadingOverlay .message {
+  font-size: 1.5em;
+  font-weight: 500;
+  color: #fff;
+  margin-top: 20px;
+} 
 
-  .spinner {
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top: 5px solid #6246B8;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-  }
+.spinner {
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top: 5px solid #6246B8;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+} 
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+} 
 
-  .error-text {
-    color: #ff4d4f; 
+.error-text {
+  color: #ff4d4f; 
+  font-weight: bold;
+} 
+
+/* MENUJA ANËSORE (E errët dhe transparente - OPTIMIZUAR) */
+#channelMenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh; 
+  width: 300px; 
+  padding: 20px 0;
+  /* PËR PERFORMANCË MË TË MIRË, ZGJEDHIM NJË SFOND MË TË THJESHTË: */
+  background: rgba(0, 0, 0, 0.9); 
+  /* U HEQ: backdrop-filter: blur(10px); */ 
+  border-right: 1px solid rgba(255, 255, 255, 0.1); 
+  overflow-y: auto; 
+  display: none; 
+  z-index: 100001; 
+  /* SCROLL MË I THJESHTË PËR TV */
+  scroll-behavior: auto; 
+} 
+
+.menu-channel-item {
+  padding: 15px 20px;
+  color: #fff; 
+  font-size: 1.1em; 
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  gap: 15px; 
+} 
+
+.menu-channel-number {
     font-weight: bold;
-  }
+    color: #6246B8; 
+    width: 40px; 
+    text-align: right;
+} 
 
-  /* MENUJA ANËSORE (E errët dhe transparente - OPTIMIZUAR) */
-  #channelMenu {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh; 
-    width: 300px; 
-    padding: 20px 0;
-    /* PËR PERFORMANCË MË TË MIRË, ZGJEDHIM NJË SFOND MË TË THJESHTË: */
-    background: rgba(0, 0, 0, 0.9); 
-    /* U HEQ: backdrop-filter: blur(10px); */ 
-    border-right: 1px solid rgba(255, 255, 255, 0.1); 
-    overflow-y: auto; 
-    display: none; 
-    z-index: 100001; 
-    /* SCROLL MË I THJESHTË PËR TV (Performanca) */
-    scroll-behavior: auto; 
-  } 
+.menu-channel-item.focused {
+  background-color: rgba(65, 105, 225, 0.7); 
+  color: #fff;
+} 
 
-  .menu-channel-item {
-    padding: 15px 20px;
-    color: #fff; 
-    font-size: 1.1em; 
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s; 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    gap: 15px; 
-  } 
-
-  .menu-channel-number {
-      font-weight: bold;
-      color: #6246B8; 
-      width: 40px; 
-      text-align: right;
-  }
-
-  .menu-channel-item.focused {
-    background-color: rgba(65, 105, 225, 0.7); 
-    color: #fff;
-  } 
-
-  .menu-channel-item:focus {
-    outline: none; 
-  }
+.menu-channel-item:focus {
+  outline: none; 
+}
 </style>
 </head>
 <body>
   <div id="mainContent">
     <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
     <div class="grid" id="grid" role="grid"></div> 
-  </div>
+  </div> 
 
   <div id="playerContainer">
     <div id="loadingOverlay">
       <div class="spinner"></div>
       <div class="message">Po ngarkohet...</div>
-    </div>
+    </div> 
 
     <div id="infoBar">
       <div class="channel-title"></div>
@@ -376,30 +376,30 @@ function focusCurrent(){
   }
 } 
 
-// --- INFO BAR & LOADING LOGIC ---
+// --- INFO BAR & LOADING LOGIC --- 
 
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
     
-    if (!infoBar || !title) return;
+    if (!infoBar || !title) return; 
 
     title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
-    infoBar.classList.add('visible');
+    infoBar.classList.add('visible'); 
 
-    if (infoBarTimer) clearTimeout(infoBarTimer);
+    if (infoBarTimer) clearTimeout(infoBarTimer); 
 
     infoBarTimer = setTimeout(() => {
         infoBar.classList.remove('visible');
     }, 5000);
-}
+} 
 
 function updateLoadingState(state, channelName = null) {
     const overlay = document.getElementById('loadingOverlay');
     const spinner = overlay.querySelector('.spinner');
-    const message = overlay.querySelector('.message');
+    const message = overlay.querySelector('.message'); 
 
-    if (!overlay) return;
+    if (!overlay) return; 
 
     if (state === 'loading') {
         spinner.style.display = 'block';
@@ -414,20 +414,20 @@ function updateLoadingState(state, channelName = null) {
     } else if (state === 'hidden') {
         overlay.style.display = 'none';
     }
-}
+} 
 
 // FUNKSIONI PËR PËRQENDRIMIN E FOKUSIT TË MENYSË (Centering Scroll)
 function centerMenuFocus(menuItems, index) {
     const channelMenu = document.getElementById('channelMenu');
-    const focusedItem = menuItems[index];
+    const focusedItem = menuItems[index]; 
 
-    if (!focusedItem || !channelMenu) return;
+    if (!focusedItem || !channelMenu) return; 
 
     const itemHeight = focusedItem.offsetHeight; 
     const menuHeight = channelMenu.clientHeight; 
 
     // Kalkulojmë pozicionin e scrollit: Pozicioni i elementit - (Lartësia e menysë / 2) + (Lartësia e elementit / 2)
-    const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2);
+    const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2); 
 
     // Vendos scroll-in e ri, TANI ME 'auto' PËR SHPEJTËSI (performancë)
     channelMenu.scrollTo({ 
@@ -471,7 +471,7 @@ function switchChannel(ch){
     }
     
     currentChannelIndex = ch.fullIndex; 
-    menuFocusIndex = ch.fullIndex;
+    menuFocusIndex = ch.fullIndex; 
 
     openPlayerForChannel(ch, true);
 }
@@ -518,13 +518,6 @@ document.addEventListener('keydown', (e)=>{
     
     // KONTROLLA E MENYSË (Kur menuja është hapur)
     if(isMenuVisible){
-        // LOGJIKA RE: Mbyll Menunë Anësore me BACK/Escape/Backspace
-        if(e.key === 'Backspace' || e.key === 'Escape'){
-            e.preventDefault(); // Parandalon mbylljen e gjithë lojtarit/historisë
-            toggleChannelMenu(); // Mbyll vetëm menunë
-            return;
-        }
-
         if(e.key === 'ArrowUp'){
             menuItems[menuFocusIndex]?.classList.remove('focused');
             menuFocusIndex = Math.max(0, menuFocusIndex - 1);
@@ -538,11 +531,18 @@ document.addEventListener('keydown', (e)=>{
             // THIRRJA E FUNKSIONIT TË QENDRËZIMIT
             centerMenuFocus(menuItems, menuFocusIndex); 
         } else if(e.key === 'Enter'){
+             // LOGJIKA E RE: Nese Enter/OK shtypet dhe kanali i fokusuar eshte ai qe luhet, thjesht mbyll menune.
+            if (menuFocusIndex === currentChannelIndex) {
+                toggleChannelMenu(); // Mbyll menunë
+                return;
+            }
+            
+            // Ndryshe, ndërro kanalin
             const channel = allChannelsList[menuFocusIndex];
             switchChannel(channel);
         }
         return; 
-    }
+    } 
 
     // NDËRRIMI SEKUENCIAL ME UP/DOWN
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
@@ -568,7 +568,7 @@ document.addEventListener('keydown', (e)=>{
         toggleChannelMenu();
     } 
 
-    // BACKSPACE/ESCAPE: Mbyll player-in (vetëm nëse menuja nuk është hapur)
+    // BACKSPACE/ESCAPE: Mbyll player-in
     if(e.key === 'Backspace' || e.key === 'Escape'){ 
         closePlayer(); 
         history.back(); 
@@ -577,7 +577,7 @@ document.addEventListener('keydown', (e)=>{
     return; 
   } 
 
-  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjtat)
+  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjta)
   if(e.key === 'ArrowRight'){
     if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
     else { gridFocus = gridFocus + 1; }
@@ -774,10 +774,8 @@ window.addEventListener('popstate', (e)=>{
 
 window.addEventListener('keydown', (e)=>{
   if(e.key === 'Escape' || e.key === 'Backspace'){
-    // VETËM NËSE PLAYERI ËSHTË HAPUR DHE MENUJA NUK ËSHTË HAPUR
     if(playerContainer.style.display === 'flex' && !isMenuVisible){
-      // Ky rast tani trajtohet në funksionin kryesor të keydown
-      // duke mbyllur playerin
+      history.back(); 
     }
   }
 }); 
