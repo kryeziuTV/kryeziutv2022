@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V10</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V11</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -170,7 +170,7 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (V2) --- */
+    /* --- STILIMI I KANALIT (I PËRDITËSUAR PËR EFEKT MË TË LEHTË DHE BORDER) --- */
     .channel { 
         width:120px; 
         height:120px; 
@@ -182,7 +182,8 @@
         justify-content:center; 
         align-items:center; 
         cursor:pointer; 
-        transition:.2s cubic-bezier(0,-0.5,0,3); 
+        /* Shpejtuar tranzicioni për ndjenjë më të shpejtë */
+        transition:.15s cubic-bezier(0, -0.5, 0, 3); 
         border: 3px solid transparent; 
         overflow: hidden; 
         padding: 10px; 
@@ -191,11 +192,14 @@
     }
     
     .channel:focus, .channel.focused { 
-        transform: scale(1.1) translateY(-5px); 
+        /* EFEKTI I PËRDITËSUAR (Më i lehtë + Border) */
+        transform: scale(1.03) translateY(-1px); 
+        
         box-shadow: 
-            0 0 0 3px white, 
-            0 8px 30px rgba(0, 0, 0, 0.7), 
-            0 0 15px 10px rgba(65, 105, 225, 0.9); 
+            0 0 0 4px #fff, /* Bordura e jashtme e bardhë */
+            inset 0 0 10px 5px rgba(65, 105, 225, 0.8), /* Hije e brendshme Blu */
+            0 5px 15px rgba(0, 0, 0, 0.5); /* Hija e jashtme e lehtë */
+        
         outline:none; 
         border: 3px solid transparent; 
     }
@@ -206,39 +210,16 @@
         max-height: 90%; 
         object-fit: contain; 
         filter: saturate(1); 
-        transition: filter 0.2s, transform 0.2s; 
+        transition: filter 0.15s, transform 0.15s; 
     } 
     
     .channel:focus img, .channel.focused img { 
         filter: saturate(1.2); 
-        transform: translateY(-5px); 
+        transform: translateY(-5px); /* Lëvizja e lehtë lart e logos */
     }
     
-    .channel-name-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 5px 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
-        color: #fff;
-        font-size: 0.8em;
-        font-weight: 500;
-        text-align: center;
-        border-bottom-left-radius: 14px;
-        border-bottom-right-radius: 14px;
-        opacity: 0;
-        transform: translateY(100%);
-        transition: all 0.2s ease-out;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+    /* KY BLLOK U LARGUA: channel-name-overlay */
 
-    .channel.focused .channel-name-overlay {
-        opacity: 1;
-        transform: translateY(0%);
-    }
     /* --- FUNDI I STILIMIT TË KANALIT --- */
     
     /* PLAYER CONTAINER */
@@ -327,7 +308,7 @@
         font-weight: bold;
     } 
 
-    /* --- MENYJA ANËSORE --- */
+    /* --- MENYJA ANËSORE (E Shpejtë) --- */
     #channelMenu {
         position: absolute;
         top: 0;
@@ -342,7 +323,6 @@
         display: none; 
         z-index: 100001; 
         scroll-behavior: auto; 
-        /* PËRDITËSUAR: Hekur transition: transform 0.3s ease-out; */
         transform: translateX(-100%); 
     } 
 
@@ -356,7 +336,6 @@
         font-size: 1.3em; 
         font-weight: 500;
         cursor:pointer;
-        /* PËRDITËSUAR: Shpejtuar/Eliminuar tranzicioni */
         transition: background-color 0.05s, transform 0.05s, box-shadow 0.05s; 
         white-space: nowrap;
         overflow: hidden;
@@ -396,7 +375,6 @@
 <body>
     
     <div id="background-image"></div>
-
     <div id="blur-overlay"></div>
     
     <div id="headerWidget">
@@ -534,11 +512,7 @@ function loadCategory(cat){
         logo.alt = ch.name;
         box.appendChild(logo);
 
-        // Shtohet emri i kanalit (on focus overlay)
-        const nameOverlay = document.createElement('div');
-        nameOverlay.className = 'channel-name-overlay';
-        nameOverlay.textContent = ch.name;
-        box.appendChild(nameOverlay);
+        // KODI I MËPARSHËM PËR channel-name-overlay ËSHTË HEQUR.
 
         box.onclick = ()=> openPlayerForChannel(ch);
         box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } 
@@ -730,7 +704,7 @@ function centerMenuFocus(menuItems, index) {
     const menuHeight = channelMenu.clientHeight; 
     const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2); 
 
-    // PËRDITËSUAR: Përdorim 'auto' për scroll të menjëhershëm
+    // Përdorim 'auto' për scroll të menjëhershëm
     channelMenu.scrollTo({ 
         top: targetScrollTop, 
         behavior: 'auto' 
@@ -743,7 +717,7 @@ function toggleChannelMenu(){
 
     isMenuVisible = !isMenuVisible;
     
-    // PËRDITËSUAR: Menjëherë ndryshojmë transform-in pa tranzicion
+    // Shfaqja/Fshehja e menjëhershme pa tranzicion
     if(isMenuVisible) {
         channelMenu.classList.add('active'); 
         channelMenu.style.display = 'block';
@@ -758,7 +732,6 @@ function toggleChannelMenu(){
             items.forEach(i => i.classList.remove('focused')); 
             menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); 
             items[menuFocusIndex].classList.add('focused');
-            // Sigurohemi që scrolling të jetë i menjëhershëm
             centerMenuFocus(items, menuFocusIndex); 
         }
     }
@@ -773,7 +746,6 @@ function switchChannel(ch){
     }
     
     if (isMenuVisible) {
-        // Mbyllja e menusë është e menjëhershme tani
         toggleChannelMenu(); 
     }
     
