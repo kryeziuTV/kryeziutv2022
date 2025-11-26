@@ -2,15 +2,27 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Përditësuar (Optimizim i Performancës)</title>
+<title>TV App UI - Përditësuar (Blur në gjithë Body & Kategori Transparente)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   /* STILIMET KRYESORE */
   body { 
-    background:#3f4451; 
+    /* VENDOSJA E WALLPAPER-IT (TANI E QARTË) */
+    background: #1e1e1e url('https://www.appcreator24.com/srv/imgs/gen/1009381_fondo.png') no-repeat center center fixed; 
+    background-size: cover; 
     font-family:'Rubik',sans-serif; 
     color:#fff; 
     margin:0; 
+  }
+
+  /* SHTRESA BLUR-UAR NË TË GJITHË BODY */
+  #blur-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4); 
+      backdrop-filter: blur(10px); 
+      -webkit-backdrop-filter: blur(10px);
+      z-index: -1; 
   }
 
   /* KONTEJNERI KRYESOR PËR QENDRËZIM */
@@ -19,6 +31,11 @@
     flex-direction: column;
     align-items: center; 
     padding: 40px; 
+    background: none; 
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 20px;
+    margin-top: 20px; 
   }
 
   /* KATEGORITË */
@@ -32,7 +49,8 @@
 
   /* STILI I FOKUSIT PËR KATEGORITË */
   .cat-btn { 
-    background:#6246B8; 
+    /* NDYSHIMI KRYESOR: Sfondi tani është vjollcë transparente */
+    background: rgba(98, 70, 184, 0.4); 
     color:#fff; 
     padding:15px 28px; 
     border-radius:12px; 
@@ -43,10 +61,13 @@
     border: 3px solid transparent; 
   }
   .cat-btn:focus, .cat-btn.focused { 
-    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.5); 
+    /* Kur fokusohet, SFONDI BËHET I PLOTË për theksim */
+    background: #6246B8; 
+    /* PËRMBIRËSIMI I SHADOW-VE */
+    box-shadow:0 0 15px 8px rgba(255, 255, 255, 0.6), 0 12px 40px rgba(0,0,0,.6); 
     transform:scale(1.05); 
     outline:none; 
-    border: 3px solid white; 
+    border: 3px solid #fff; 
   }
   .cat-btn:active { transform:scale(0.98); } 
 
@@ -61,7 +82,8 @@
   .channel { 
     width:120px; 
     height:120px; 
-    background:#fff; 
+    /* SFOND I KANALIT TRANSPARENT */
+    background:rgba(255, 255, 255, 0.1); 
     border-radius:14px; 
     box-shadow:0 6px 20px rgba(0,0,0,.5); 
     display:flex; 
@@ -76,7 +98,8 @@
   }
   .channel:focus, .channel.focused { 
     transform:scale(1.05); 
-    box-shadow:0 0 10px 5px rgba(255, 255, 255, 0.8), 0 12px 40px rgba(0,0,0,.55); 
+    /* PËRMBIRËSIMI I SHADOW-VE */
+    box-shadow:0 0 15px 8px rgba(65, 105, 225, 0.8), 0 12px 40px rgba(0,0,0,.6); 
     outline:none; 
     border: 3px solid white; 
   }
@@ -227,6 +250,9 @@
 </style>
 </head>
 <body>
+  
+  <div id="blur-overlay"></div>
+  
   <div id="mainContent">
     <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
     <div class="grid" id="grid" role="grid"></div> 
@@ -568,7 +594,7 @@ document.addEventListener('keydown', (e)=>{
     return; 
   } 
 
-  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjta)
+  // KONTROLLAT E NAVIGIMIT TË UI-SË (Mbeten të njëjtat)
   if(e.key === 'ArrowRight'){
     if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
     else { gridFocus = gridFocus + 1; }
