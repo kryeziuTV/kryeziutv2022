@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V3 (Menu e Zmadhuar)</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V4 (Fiksime UX)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -151,7 +151,7 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (Vazhdim i V2) --- */
+    /* --- STILIMI I KANALIT (V2) --- */
     .channel { 
         width:120px; 
         height:120px; 
@@ -271,7 +271,7 @@
         line-height: 1.1;
     } 
 
-    /* STILIMI I RI PËR EPG */
+    /* STILIMI I EPG */
     .epg-info {
         font-size: 1.4em;
         font-weight: 400;
@@ -317,26 +317,27 @@
         font-weight: bold;
     } 
 
-    /* --- PËRDITËSIMI I MENUSË ANËSORE (OPSIONI I RI) --- */
+    /* --- PËRDITËSIMI I MENUSË ANËSORE --- */
     #channelMenu {
         position: absolute;
         top: 0;
         left: 0;
         height: 100vh; 
-        width: 350px; /* Zmadhuam gjerësinë */
+        width: 350px; 
         padding: 20px 0;
-        background: rgba(0, 0, 0, 0.95); /* E bëmë pak më të errët */
+        background: rgba(0, 0, 0, 0.95); 
         border-right: 1px solid rgba(255, 255, 255, 0.1); 
         overflow-y: auto; 
+        overflow-x: hidden; /* FIKSIMI I SCROLL-IT ANËSOR */
         display: none; 
         z-index: 100001; 
         scroll-behavior: auto; 
     } 
 
     .menu-channel-item {
-        padding: 20px 25px; /* Zmadhuam hapësirën (padding) */
+        padding: 20px 25px; 
         color: #fff; 
-        font-size: 1.3em; /* Zmadhuam tekstin */
+        font-size: 1.3em; 
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s; 
@@ -344,22 +345,22 @@
         overflow: hidden;
         text-overflow: ellipsis;
         display: flex;
-        align-items: center; /* Për të qenë në qendër vertikalisht */
-        gap: 20px; /* Zmadhuam hapësirën */
+        align-items: center; 
+        gap: 20px; 
         border-left: 5px solid transparent; 
     } 
 
     .menu-channel-number {
-        font-weight: 700; /* E bëmë më bold */
+        font-weight: 700; 
         color: #6246B8; 
-        font-size: 1.5em; /* Zmadhuam numrin */
-        width: 45px; /* Rritëm gjerësinë e numrit */
+        font-size: 1.5em; 
+        width: 45px; 
         text-align: right;
     } 
 
     .menu-channel-item.focused {
-        background-color: rgba(65, 105, 225, 0.2); /* Më transparent */
-        border-left-color: #4169e1; /* Bordurë blu në të majtë */
+        background-color: rgba(65, 105, 225, 0.2); 
+        border-left-color: #4169e1; 
         color: #fff;
         transform: scale(1.02);
     } 
@@ -400,7 +401,7 @@
 
         <div id="infoBar">
             <div class="channel-title"></div>
-            <div class="epg-info">Po ngarkohet EPG...</div> </div>
+            <div class="epg-info"></div> </div>
     </div> 
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -663,9 +664,9 @@ function getChannelEpg(channelId) {
     const epgInfo = document.querySelector('#infoBar .epg-info');
     if (!epgInfo) return;
 
-    epgInfo.textContent = 'Po kërkohet programi...'; 
+    // Fsheh tekstin duke vënë një hapësirë boshe fillimisht
+    epgInfo.textContent = ''; 
 
-    // Simulimi i përgjigjes nga XML EPG
     const simulationData = {
         "RTK1.xk": "Ora 18:00 - Lajmet e Mbrëmjes | Ora 19:00 - Debat",
         "RTV21.xk": "Ora 17:30 - Seriale TV | Ora 18:30 - Analiza Sportive",
@@ -678,18 +679,20 @@ function getChannelEpg(channelId) {
 
     clearTimeout(epgInfo.timer);
 
-    // Simulon vonesën e thirrjes API (1.5 sekonda)
     epgInfo.timer = setTimeout(() => {
+        let programText = '';
         if (simulationData[channelId]) {
-            epgInfo.textContent = simulationData[channelId];
+            programText = simulationData[channelId];
         } else {
-            if(currentChannel && currentChannel.url){
-                epgInfo.textContent = `Nuk u gjet programi TV për ${channelName}. (ID: ${channelId})`;
-            } else {
-                epgInfo.textContent = `Kanali ${channelName}: Jo aktiv ose pa program TV.`;
+            // Nëse kanali nuk ka as URL, mund të shfaqim një mesazh tjetër
+            if (!currentChannel || !currentChannel.url) {
+                programText = `Kanali ${channelName || 'Jo-Aktiv'}: Nuk ka program të transmetueshëm.`;
             }
-            
+            // Nëse 'programText' mbetet bosh, info bar do jetë bosh.
         }
+        
+        epgInfo.textContent = programText; // Vë tekstin. Nëse është bosh, nuk shfaqet asgjë.
+
     }, 1500);
 }
 
@@ -816,7 +819,8 @@ document.addEventListener('keydown', (e)=>{
             const epgInfo = infoBar.querySelector('.epg-info');
 
             title.textContent = `Kanali: ${digitBuffer}`;
-            epgInfo.textContent = 'Shtyp Enter për të konfirmuar';
+            // Heqim mesazhin "Shtyp Enter per te konfirmuar"
+            epgInfo.textContent = ''; 
             infoBar.classList.add('visible'); 
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
