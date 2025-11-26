@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V11</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V12</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -142,6 +142,7 @@
         width: 100%; 
     } 
     .cat-btn { 
+        /* Ngjyra e Kategorisë (Dark Purple me transparencë) */
         background: rgba(98, 70, 184, 0.4); 
         color:#fff; 
         padding:15px 28px; 
@@ -170,11 +171,12 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (I PËRDITËSUAR PËR EFEKT MË TË LEHTË DHE BORDER) --- */
+    /* --- STILIMI I KANALIT (I PËRDITËSUAR ME LIGHT PURPLE) --- */
     .channel { 
         width:120px; 
         height:120px; 
-        background:rgba(255, 255, 255, 0.3); 
+        /* Ngjyra e Kanaleve (Light Purple me transparencë) */
+        background: rgba(180, 160, 255, 0.2); /* Light Purple */
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
         display:flex; 
@@ -182,7 +184,6 @@
         justify-content:center; 
         align-items:center; 
         cursor:pointer; 
-        /* Shpejtuar tranzicioni për ndjenjë më të shpejtë */
         transition:.15s cubic-bezier(0, -0.5, 0, 3); 
         border: 3px solid transparent; 
         overflow: hidden; 
@@ -192,7 +193,7 @@
     }
     
     .channel:focus, .channel.focused { 
-        /* EFEKTI I PËRDITËSUAR (Më i lehtë + Border) */
+        /* EFEKTI I FOKUSIT MË I LEHTË (SIÇ KËRKUAT) */
         transform: scale(1.03) translateY(-1px); 
         
         box-shadow: 
@@ -215,11 +216,9 @@
     
     .channel:focus img, .channel.focused img { 
         filter: saturate(1.2); 
-        transform: translateY(-5px); /* Lëvizja e lehtë lart e logos */
+        transform: translateY(-5px); 
     }
     
-    /* KY BLLOK U LARGUA: channel-name-overlay */
-
     /* --- FUNDI I STILIMIT TË KANALIT --- */
     
     /* PLAYER CONTAINER */
@@ -511,8 +510,6 @@ function loadCategory(cat){
         logo.src = ch.logo;
         logo.alt = ch.name;
         box.appendChild(logo);
-
-        // KODI I MËPARSHËM PËR channel-name-overlay ËSHTË HEQUR.
 
         box.onclick = ()=> openPlayerForChannel(ch);
         box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } 
