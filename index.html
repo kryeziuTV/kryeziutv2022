@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke)</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V2</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -151,6 +151,7 @@
         gap:20px; 
     } 
 
+    /* --- PËRDITËSIMI KRYESOR I STILIT TË KANALIT (OPSIONI 1) --- */
     .channel { 
         width:120px; 
         height:120px; 
@@ -158,6 +159,7 @@
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
         display:flex; 
+        flex-direction: column; /* I vendosemi verticalisht */
         justify-content:center; 
         align-items:center; 
         cursor:pointer; 
@@ -165,11 +167,16 @@
         border: 3px solid transparent; 
         overflow: hidden; 
         padding: 10px; 
-        box-sizing: border-box; 
+        box-sizing: border-box;
+        position: relative; /* Për të pozicionuar emrin e kanalit */
     }
+    
+    /* STILIMI I RI PËR FOKUSIN */
     .channel:focus, .channel.focused { 
-        transform:scale(1.05); 
-        box-shadow:0 0 15px 8px rgba(65, 105, 225, 0.8), 0 12px 40px rgba(0,0,0,.6); 
+        transform: scale(1.07) translateY(-5px); /* Ngritje lart dhe zmadhim me efekt 3D */
+        box-shadow: 
+            0 8px 30px rgba(0, 0, 0, 0.7), 
+            0 0 15px 10px rgba(65, 105, 225, 0.9); /* Shkëlqim më i fortë blu */
         outline:none; 
         border: 3px solid white; 
     }
@@ -180,11 +187,41 @@
         max-height: 90%; 
         object-fit: contain; 
         filter: saturate(0.7); 
-        transition: filter 0.2s; 
+        transition: filter 0.2s, transform 0.2s; /* Shtohet transform */
     } 
+    
     .channel:focus img, .channel.focused img { 
         filter: saturate(1); 
+        transform: translateY(-5px); /* Ngritje e butë e logos */
     }
+    
+    /* STILIMI I EMRAVE TË KANALIT NË FOKUS */
+    .channel-name-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 5px 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+        color: #fff;
+        font-size: 0.8em;
+        font-weight: 500;
+        text-align: center;
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+        opacity: 0;
+        transform: translateY(100%);
+        transition: all 0.2s ease-out;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .channel.focused .channel-name-overlay {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+    /* --- FUNDI I PËRDITËSIMIT TË KANALIT --- */
     
     /* PLAYER CONTAINER (pa ndryshime thelbësore) */
     #playerContainer { 
@@ -461,7 +498,19 @@ function loadCategory(cat){
         box.className = 'channel';
         box.tabIndex = 0;
         box.setAttribute('data-idx', idx);
-        box.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" />`;
+        
+        // Shtohet logo
+        const logo = document.createElement('img');
+        logo.src = ch.logo;
+        logo.alt = ch.name;
+        box.appendChild(logo);
+
+        // Shtohet emri i kanalit (on focus overlay)
+        const nameOverlay = document.createElement('div');
+        nameOverlay.className = 'channel-name-overlay';
+        nameOverlay.textContent = ch.name;
+        box.appendChild(nameOverlay);
+
         box.onclick = ()=> openPlayerForChannel(ch);
         box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } 
         grid.appendChild(box);
