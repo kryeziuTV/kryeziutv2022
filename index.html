@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me GeoLocation</title>
+<title>TV App UI - Final: GeoLocation, EPG, Dinamike</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
@@ -238,6 +238,13 @@
     color: #fff;
     margin-bottom: 5px;
   }
+  /* Shtesë për EPG në Info Bar */
+  .epg-title {
+      font-size: 1.2em;
+      font-weight: 500;
+      color: #ccc;
+  }
+
 
   /* Loading/Error Overlay */
   #loadingOverlay {
@@ -283,7 +290,7 @@
     top: 0;
     left: 0;
     height: 100vh; 
-    width: 300px; 
+    width: 380px; /* e zmadhojmë për të dhënat e EPG-së */
     padding: 20px 0;
     background: rgba(0, 0, 0, 0.9); 
     border-right: 1px solid rgba(255, 255, 255, 0.1); 
@@ -304,8 +311,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: flex;
-    gap: 15px; 
+    flex-direction: column; /* Rreshtat e EPG-së poshtë emrit të kanalit */
+    gap: 5px; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   } 
+  
+  .channel-title-row {
+      display: flex;
+      gap: 15px;
+  }
 
   .menu-channel-number {
       font-weight: bold;
@@ -321,6 +335,20 @@
 
   .menu-channel-item:focus {
     outline: none; 
+  }
+  
+  /* Stilimi i EPG-së në Menu */
+  .epg-program-list {
+      font-size: 0.9em;
+      color: #aaa;
+      margin-top: 5px;
+      line-height: 1.4;
+      white-space: normal; 
+      text-overflow: clip; 
+  }
+  .epg-program-list strong {
+      color: #fff;
+      font-weight: 600;
   }
 </style>
 </head>
@@ -354,50 +382,62 @@
 
     <div id="infoBar">
       <div class="channel-title"></div>
+      <div class="epg-title"></div>
     </div>
     </div> 
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 // --- data ---
-const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+// URL-ja e saktë e EPG
+const EPG_URL = "https://epghub.xyz/epg/EPG-AL.xml"; 
+
 const channelsByCategory = {
   "LIVE TV": [
-    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"RTV 21", logo:"https://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8" },
-    { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8" },
-    { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"PRO 1", logo:"https://i.imgur.com/r3W0bmb.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8" },
-    { name:"A2 CNN", logo:"https://i.imgur.com/Pj7GWKn.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8" },
-    { name:"BB VIP KS 1", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/a4d30f2c-7f6d-4956-80c0-6870cba4489d.m3u8" },
-    { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/ae40b0f2-de0d-4483-9fb5-9697cbff13b6.m3u8" }
+    // Shtojmë EPG ID. Kjo ID duhet të përputhet me 'channel id' në XML
+    { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", epgId: "RTK1.xk" },
+    { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", epgId: "RTK3.xk" },
+    { name:"RTV 21", logo:"https://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", epgId: "RTV21.xk" },
+    { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8", epgId: "KTV.xk" },
+    { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", epgId: "ATV.xk" },
+    { name:"PRO 1", logo:"https://i.imgur.com/r3W0bmb.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", epgId: "PRO1.xk" },
+    { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", epgId: "T7.xk" },
+    { name:"A2 CNN", logo:"https://i.imgur.com/Pj7GWKn.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", epgId: "A2CNN.al" },
+    { name:"BB VIP KS 1", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/a4d30f2c-7f6d-4956-80c0-6870cba4489d.m3u8", epgId: "BBVIPKS1.xk" },
+    { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/ae40b0f2-de0d-4483-9fb5-9697cbff13b6.m3u8", epgId: "BBVIPKS2.xk" }
   ],
   "FILMA": [ 
-    { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"" },
-    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
-    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C2", url:"" },
-    { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C3", url:"" } 
+    { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"", epgId: "Cinema1.al" },
+    { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"", epgId: "Cinema2.al" },
+    { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C2", url:"", epgId: "Cinema3.al" },
+    { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C3", url:"", epgId: "Cinema4.al" } 
 ],
   "SPORT": [ 
-    { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S+", url:"" },
-    { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=A", url:"" } 
+    { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S+", url:"", epgId: "Sport1.al" },
+    { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S+", url:"", epgId: "Sport2.al" },
+    { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S+", url:"", epgId: "Sport3.al" },
+    { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=A", url:"", epgId: "Sport4.al" } 
 ],
   "FEMIJE": [ 
-    { name:"DISNEY JUNIOR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8" }, 
-    { name:"AVATAR", logo:"https://via.placeholder.com/120x120?text=K1", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/60b4c17a81e29300071d3a39/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=8e05edb7-1f2c-11ef-86d8-5d587df108c6&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=640a4092-5016-4d01-bcbf-d66e4f7aa21d" }, 
-    { name:"ONE PIECE", logo:"https://via.placeholder.com/120x120?text=K1", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6380c94947c72b0007ee9a13/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=8e06d815-1f2c-11ef-86d8-5d587df108c6&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=011422f0-e50a-4334-9bb5-b01fe7684ef5" }, 
-    { name:"NARUTO", logo:"https://via.placeholder.com/120x120?text=K2", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/65d5fc39a25d5e00082895c4/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=1b1f1164-4b81-11ef-a8ac-e146e4e7be02&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=91b30c33-90e6-47e3-95e6-a297bd00e5df" } 
+    { name:"DISNEY JUNIOR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8", epgId: "DisneyJr.al" }, 
+    { name:"AVATAR", logo:"https://via.placeholder.com/120x120?text=K1", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/60b4c17a81e29300071d3a39/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=8e05edb7-1f2c-11ef-86d8-5d587df108c6&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=640a4092-5016-4d01-bcbf-d66e4f7aa21d", epgId: "Avatar.al" }, 
+    { name:"ONE PIECE", logo:"https://via.placeholder.com/120x120?text=K1", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6380c94947c72b0007ee9a13/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=8e06d815-1f2c-11ef-86d8-5d587df108c6&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=011422f0-e50a-4334-9bb5-b01fe7684ef5", epgId: "OnePiece.al" }, 
+    { name:"NARUTO", logo:"https://via.placeholder.com/120x120?text=K2", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/65d5fc39a25d5e00082895c4/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=1b1f1164-4b81-11ef-a8ac-e146e4e7be02&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=91b30c33-90e6-47e3-95e6-a297bd00e5df", epgId: "Naruto.al" } 
 ],
   "DOKU": [ 
-    { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8" }, 
-    { name:"NAT GEO WILD", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8" }, 
-    { name:"HISTORY", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/history_channel/index.m3u8" }, 
-    { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D2", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a" } ]
+    { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8", epgId: "NatGeo.al" }, 
+    { name:"NAT GEO WILD", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8", epgId: "NatGeoWild.al" }, 
+    { name:"HISTORY", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/history_channel/index.m3u8", epgId: "History.al" }, 
+    { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D2", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a", epgId: "CarsTV.al" } 
+  ]
 }; 
+const categories = Object.keys(channelsByCategory);
+
+
+// --- EPG STATE ---
+const epgData = {}; // Kjo do të mbajë të gjitha të dhënat e EPG-së të grupuara sipas ID-së
+let epgLoaded = false;
+
 
 // --- DOM refs ---
 const catWrap = document.getElementById('categories');
@@ -487,8 +527,7 @@ function focusCurrent(){
   }
 } 
 
-// --- WIDGET LOGIC (Ora dhe Moti - I PËRDITËSUAR TANI PËR VENDNDODHJEN DINAMIKE) ---
-
+// --- WIDGET LOGIC (GeoLocation & Moti) ---
 function getWeatherDescription(code) {
     if (code === 0) return { description: "Diell i pastër", emoji: "☀️" };
     if (code === 1) return { description: "Kryesisht diell", emoji: "🌤️" };
@@ -497,25 +536,19 @@ function getWeatherDescription(code) {
     if (code === 45 || code === 48) return { description: "Mjegull", emoji: "🌫️" };
     if (code >= 51 && code <= 55) return { description: "Shi i lehtë", emoji: "🌦️" };
     if (code >= 61 && code <= 65) return { description: "Shi i fortë", emoji: "🌧️" };
-    
-    // Përditësimi për borë: përfshin të gjitha kodet e borës (71-77, 85-86) dhe shi/borë të përzier (66-67)
     if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86) || code === 66 || code === 67) {
         return { description: "Borë", emoji: "❄️" };
     }
-    
     if (code >= 80 && code <= 82) return { description: "Stuhi me shi", emoji: "⛈️" };
     if (code >= 95 && code <= 99) return { description: "Stuhi", emoji: "🌩️" };
-    
     if (code >= 50 && code <= 89) {
         return { description: "I Lagësht/Shi", emoji: "💧" }; 
     }
-    
     return { description: "Moti i Panjohur", emoji: "❓" }; 
 }
 
 function updateClock() {
     const now = new Date();
-    // Përdor 'h23' për formatin 24-orësh, heq 'e paradites'
     const timeString = now.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
     const dateString = now.toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long' });
     
@@ -523,7 +556,6 @@ function updateClock() {
     document.getElementById('currentDate').textContent = dateString;
 }
 
-// 1. Funksioni i Motit Tani Merr Koordinatat dhe Emrin e Qytetit
 async function fetchWeather(lat, lon, cityName) {
     const weatherInfo = document.getElementById('weatherInfo');
     const weatherSummary = document.getElementById('weatherSummary');
@@ -532,20 +564,16 @@ async function fetchWeather(lat, lon, cityName) {
     weatherSummary.textContent = `Po ngarkohet moti për ${cityName}...`;
     weatherInfo.style.opacity = 0.5;
 
-    // Përdorim koordinatat e marra nga GeoLocation
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
 
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Gabim HTTP: ${response.status}`);
-        }
+        if (!response.ok) { throw new Error(`Gabim HTTP: ${response.status}`); }
         const data = await response.json();
 
         const currentTemp = Math.round(data.current.temperature_2m);
         const currentCode = data.current.weather_code;
         const currentWeatherDesc = getWeatherDescription(currentCode);
-        
         const dailyData = data.daily;
         if (dailyData.weather_code && dailyData.weather_code.length > 0) {
             dailyData.weather_code[0] = currentCode; 
@@ -553,16 +581,12 @@ async function fetchWeather(lat, lon, cityName) {
             if (currentTemp < dailyData.temperature_2m_min[0]) dailyData.temperature_2m_min[0] = currentTemp;
         }
 
-        // Shfaq emrin e qytetit të marrë në mënyrë dinamike
         weatherSummary.textContent = `${cityName}: ${currentTemp}°C, ${currentWeatherDesc.emoji} (${currentWeatherDesc.description})`;
 
-        // PARASHIKIMI 7-DITOR
         forecastGrid.innerHTML = ''; 
         for (let i = 0; i < dailyData.time.length && i < 7; i++) {
             const date = new Date(dailyData.time[i]);
-            
             const dayName = i === 0 ? "Sot" : date.toLocaleDateString('sq-AL', { weekday: 'short' }); 
-            
             const maxTemp = Math.round(dailyData.temperature_2m_max[i]);
             const minTemp = Math.round(dailyData.temperature_2m_min[i]);
             const code = dailyData.weather_code[i];
@@ -577,7 +601,6 @@ async function fetchWeather(lat, lon, cityName) {
             `;
             forecastGrid.appendChild(dayDiv);
         }
-        
         weatherInfo.style.opacity = 1;
 
     } catch (error) {
@@ -588,33 +611,25 @@ async function fetchWeather(lat, lon, cityName) {
     }
 }
 
-// 2. Kthimi i Koordinatave në Emër Qyteti (Reverse Geocoding)
 async function reverseGeocode(lat, lon) {
     const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
     let cityName = "Vendndodhja Aktuale"; 
     
     try {
         const response = await fetch(geoUrl, {
-            headers: {
-                'User-Agent': 'MyAppWeatherWidget/1.0 (contact@example.com)'
-            }
+            headers: { 'User-Agent': 'MyAppWeatherWidget/1.0 (contact@example.com)' }
         });
         
         if (response.ok) {
             const data = await response.json();
-            // Përpiquni të merrni qytetin/vendin, në varësi të saktësisë
             cityName = data.address.city || data.address.town || data.address.village || data.address.country || "Vendndodhja Aktuale";
         }
-    } catch(e) {
-        console.error("Dështoi Reverse Geocoding:", e);
-    }
+    } catch(e) { console.error("Dështoi Reverse Geocoding:", e); }
     
     fetchWeather(lat, lon, cityName);
 }
 
-// 3. Funksioni Kryesor për Marrjen e Vendndodhjes
 function getLocation() {
-    // Koordinatat e Prishtinës si fallback
     const defaultLat = 42.66;
     const defaultLon = 21.17;
     const defaultCity = "Prishtinë (Default)";
@@ -625,38 +640,154 @@ function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                // Thërrasim Reverse Geocoding për të gjetur emrin e qytetit
-                reverseGeocode(lat, lon);
+                reverseGeocode(position.coords.latitude, position.coords.longitude);
             },
             (error) => {
                 console.warn(`Gabim në GeoLocation (${error.code}): ${error.message}. Duke përdorur ${defaultCity}.`);
-                // Në rast gabimi, përdorim vendndodhjen default (Prishtinë)
-                weatherSummary.textContent = `GeoLocation dështoi. Duke përdorur ${defaultCity}.`;
                 fetchWeather(defaultLat, defaultLon, defaultCity);
             },
-            {
-                enableHighAccuracy: false, 
-                timeout: 5000, 
-                maximumAge: 0
-            }
+            { enableHighAccuracy: false, timeout: 5000, maximumAge: 0 }
         );
     } else {
-        // Shfletuesi nuk mbështet Geolocation
         weatherSummary.textContent = `Shfletuesi nuk mbështet gjeolokalizimin. Duke përdorur ${defaultCity}.`;
         fetchWeather(defaultLat, defaultLon, defaultCity);
     }
 }
 
 
-// --- INFO BAR, PLAYER, NAVIGATION (Mbetet njësoj) ---
+// --- LOGJIKA E EPG ---
+
+// NDIHMËS: Kthen stringun XMLTV në objekt Date
+function parseXmlTvDate(xmlTvString) {
+    if (!xmlTvString || xmlTvString.length < 14) return new Date(0);
+    
+    const datePart = xmlTvString.substring(0, 14); 
+    const year = datePart.substring(0, 4);
+    const month = datePart.substring(4, 6); 
+    const day = datePart.substring(6, 8);
+    const hour = datePart.substring(8, 10);
+    const minute = datePart.substring(10, 12);
+    const second = datePart.substring(12, 14);
+    
+    const offsetPart = xmlTvString.length > 14 ? xmlTvString.substring(14) : '';
+    let dateString = `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+
+    if (offsetPart) {
+        const offsetFormatted = offsetPart.length === 5 ? `${offsetPart.substring(0, 3)}:${offsetPart.substring(3, 5)}` : offsetPart;
+        dateString += offsetFormatted;
+    }
+    
+    return new Date(dateString);
+}
+
+
+async function fetchEPG(epgUrl) {
+    try {
+        const response = await fetch(epgUrl);
+        if (!response.ok) {
+            throw new Error(`Gabim HTTP: ${response.status}`);
+        }
+        const text = await response.text();
+
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, "application/xml");
+        const programElements = xmlDoc.querySelectorAll('programme');
+
+        epgLoaded = true;
+        
+        programElements.forEach(prog => {
+            const channelId = prog.getAttribute('channel');
+            const start = prog.getAttribute('start'); 
+            const stop = prog.getAttribute('stop');
+            
+            const titleElement = prog.querySelector('title');
+            const descElement = prog.querySelector('desc');
+            
+            const program = {
+                start: parseXmlTvDate(start),
+                stop: parseXmlTvDate(stop),
+                title: titleElement ? titleElement.textContent : 'Pa titull',
+                description: descElement ? descElement.textContent : ''
+            };
+
+            if (!epgData[channelId]) {
+                epgData[channelId] = [];
+            }
+            epgData[channelId].push(program);
+        });
+
+        for (const id in epgData) {
+            epgData[id].sort((a, b) => a.start - b.start);
+        }
+
+    } catch (error) {
+        console.error("Dështoi ngarkimi ose parsomi i EPG XML:", error);
+    }
+}
+
+
+function getProgramInfo(channelEpgId) {
+    const programs = epgData[channelEpgId] || [];
+    const now = new Date().getTime(); 
+    
+    let currentProgram = null;
+    let nextProgram = null;
+    const futurePrograms = [];
+
+    for (let i = 0; i < programs.length; i++) {
+        const program = programs[i];
+        const start = program.start.getTime();
+        const stop = program.stop.getTime();
+        
+        if (now >= start && now < stop) {
+            currentProgram = program;
+            if (i + 1 < programs.length) {
+                nextProgram = programs[i + 1];
+            }
+            for (let j = i + 1; j < programs.length && j < i + 4; j++) { 
+                futurePrograms.push(programs[j]);
+            }
+            break;
+        } else if (now < start) {
+            if (!currentProgram) {
+                currentProgram = { title: "Jashtë orarit", description: "Programi i ardhshëm fillon së shpejti." };
+            }
+            nextProgram = program;
+             for (let j = i; j < programs.length && j < i + 3; j++) { 
+                futurePrograms.push(programs[j]);
+            }
+            break; 
+        }
+    }
+    
+    const currentTitle = currentProgram ? currentProgram.title : "Nuk ka të dhëna EPG";
+    const nextTitle = nextProgram ? `${nextProgram.start.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })} - ${nextProgram.title}` : '';
+    
+    return {
+        currentTitle,
+        nextTitle,
+        futurePrograms
+    };
+}
+
+
+// --- PLAYER LOGIC (Përditësuar për EPG) ---
+
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
-    if (!infoBar || !title) return;
+    const epgTitle = infoBar.querySelector('.epg-title');
+    if (!infoBar || !title || !epgTitle) return;
 
-    title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
+    title.textContent = `${ch.number} | ${ch.name}`;
+    
+    if (epgLoaded && ch.epgId) {
+        const info = getProgramInfo(ch.epgId);
+        epgTitle.innerHTML = `${info.currentTitle}<br><small>Tjetri: ${info.nextTitle}</small>`;
+    } else {
+        epgTitle.textContent = epgLoaded ? "Nuk ka të dhëna EPG për këtë kanal." : "Po ngarkohet EPG...";
+    }
+
     infoBar.classList.add('visible');
 
     if (infoBarTimer) clearTimeout(infoBarTimer);
@@ -704,6 +835,68 @@ function centerMenuFocus(menuItems, index) {
     });
 }
 
+function populateChannelMenu() {
+    const channelMenu = document.getElementById('channelMenu');
+    channelMenu.innerHTML = ''; 
+
+    allChannelsList.forEach((channelData, index) => {
+        const item = document.createElement('div');
+        item.className = 'menu-channel-item';
+        item.tabIndex = 0; 
+        item.setAttribute('data-index', index);
+
+        // Rreshti 1: Numri dhe Emri i Kanalit
+        const titleRow = document.createElement('div');
+        titleRow.className = 'channel-title-row';
+        
+        const channelNumber = document.createElement('span');
+        channelNumber.className = 'menu-channel-number';
+        channelNumber.textContent = channelData.number; 
+        
+        const channelName = document.createElement('span');
+        channelName.textContent = channelData.name;
+        
+        titleRow.appendChild(channelNumber);
+        titleRow.appendChild(channelName);
+        item.appendChild(titleRow);
+
+        // Rreshti 2: Programet e Ardhshme (EPG)
+        if (epgLoaded && channelData.epgId && epgData[channelData.epgId]) {
+            const epgListDiv = document.createElement('div');
+            epgListDiv.className = 'epg-program-list';
+            
+            const { currentTitle, futurePrograms } = getProgramInfo(channelData.epgId);
+            
+            let htmlContent = `**Tani:** ${currentTitle}`;
+            
+            if (futurePrograms.length > 0) {
+                htmlContent += ' | **Tjetri:** ' + futurePrograms.map(p => 
+                    `${p.start.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' })} - ${p.title.substring(0, 30)}...`
+                ).join(' | ');
+            } else if (currentTitle !== "Nuk ka të dhëna EPG") {
+                 htmlContent += ' | Tjetri nuk dihet.';
+            }
+
+            epgListDiv.innerHTML = htmlContent;
+            item.appendChild(epgListDiv);
+        } else {
+            const epgStatusDiv = document.createElement('div');
+            epgStatusDiv.className = 'epg-program-list';
+            epgStatusDiv.textContent = epgLoaded ? "Nuk ka EPG për këtë kanal" : "Po ngarkohet EPG...";
+            item.appendChild(epgStatusDiv);
+        }
+
+        item.onclick = () => switchChannel(channelData); 
+        
+        if (index === currentChannelIndex) {
+            item.classList.add('focused');
+        }
+        
+        channelMenu.appendChild(item);
+    });
+}
+
+
 function toggleChannelMenu(){
     const channelMenu = document.getElementById('channelMenu');
     if (!channelMenu) return; 
@@ -712,6 +905,7 @@ function toggleChannelMenu(){
     channelMenu.style.display = isMenuVisible ? 'block' : 'none';
     
     if (isMenuVisible) {
+        populateChannelMenu(); 
         const items = channelMenu.querySelectorAll('.menu-channel-item');
         if(items.length > 0) {
             items.forEach(i => i.classList.remove('focused')); 
@@ -741,6 +935,116 @@ function switchChannel(ch){
 }
 
 
+function openPlayerForChannel(ch, isSwitching = false){
+  const url = ch.url;
+  if(!url) return;
+  
+  updateLoadingState('loading');
+  
+  if (ch.fullIndex !== undefined) {
+      currentChannelIndex = ch.fullIndex;
+      menuFocusIndex = ch.fullIndex; 
+  } else {
+     const foundIndex = allChannelsList.findIndex(channel => channel.url === url);
+     if (foundIndex !== -1) {
+         currentChannelIndex = foundIndex;
+         menuFocusIndex = foundIndex;
+     }
+  }
+
+  if (!isSwitching) {
+      document.body.style.padding = '0';
+      document.body.style.overflow = 'hidden';
+      document.getElementById('mainContent').style.display = 'none'; 
+      history.pushState({player:true}, 'player');
+      playerContainer.style.display = 'flex';
+  }
+  
+  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; } 
+
+  let video = document.getElementById('tvplayer');
+  let channelMenu = document.getElementById('channelMenu');
+  
+  if (!video) {
+      video = document.createElement('video');
+      video.id = 'tvplayer';
+      video.autoplay = true;
+      video.controls = false; 
+      video.muted = false;
+      video.setAttribute('playsinline','');
+      playerContainer.appendChild(video);
+      
+      channelMenu = document.createElement('div');
+      channelMenu.id = 'channelMenu';
+      playerContainer.appendChild(channelMenu);
+      
+      playerContainer.appendChild(document.getElementById('loadingOverlay'));
+      playerContainer.appendChild(document.getElementById('infoBar'));
+      
+      updateOrientationClass(); 
+  }
+
+  showInfoBar(ch); 
+  
+  if(Hls && Hls.isSupported()){
+    hls = new Hls({ maxBufferLength: 30 });
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
+        video.play().catch(()=>{}); 
+    });
+    
+    hls.on(Hls.Events.ERROR, function(event, data){
+        if (data.fatal) {
+            updateLoadingState('error', ch.name);
+            console.error('HLS Fatal Error:', data.details);
+        }
+    });
+  } else {
+    video.src = url;
+    video.play().catch(()=>{});
+  } 
+
+  video.onplaying = () => {
+    updateLoadingState('hidden');
+  };
+  video.onerror = () => {
+    updateLoadingState('error', ch.name);
+  }
+
+  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){} 
+  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
+  try{ req && req.call(video).catch(()=>{}); }catch(e){}
+} 
+
+function closePlayer(){
+  document.body.style.padding = '40px';
+  document.body.style.overflow = 'auto'; 
+  document.getElementById('mainContent').style.display = 'flex'; 
+  isMenuVisible = false; 
+
+  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
+  const video = document.getElementById('tvplayer');
+  if (video) video.remove(); 
+  
+  const menu = document.getElementById('channelMenu');
+  if (menu) menu.style.display = 'none';
+
+  updateLoadingState('hidden'); 
+  if (infoBarTimer) {
+      clearTimeout(infoBarTimer); 
+      document.getElementById('infoBar').classList.remove('visible');
+  }
+  if (digitTimer) clearTimeout(digitTimer); 
+  digitBuffer = '';
+  
+  playerContainer.style.display = 'none';
+  
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+  
+  focusCurrent();
+} 
+
 // handle remote arrows / enter / digits
 document.addEventListener('keydown', (e)=>{
   
@@ -757,6 +1061,7 @@ document.addEventListener('keydown', (e)=>{
         const infoBar = document.getElementById('infoBar');
         const title = infoBar.querySelector('.channel-title');
         title.textContent = `Kanali: ${digitBuffer}`;
+        infoBar.querySelector('.epg-title').textContent = ''; 
         infoBar.classList.add('visible'); 
 
         if (infoBarTimer) clearTimeout(infoBarTimer);
@@ -872,151 +1177,6 @@ document.addEventListener('keydown', (e)=>{
   focusCurrent();
 }); 
 
-// --- player helpers (hls.js fallback) ---
-function openPlayerForChannel(ch, isSwitching = false){
-  const url = ch.url;
-  if(!url) return;
-  
-  updateLoadingState('loading');
-  showInfoBar(ch);
-  
-  if (ch.fullIndex !== undefined) {
-      currentChannelIndex = ch.fullIndex;
-      menuFocusIndex = ch.fullIndex; 
-  } else {
-     const foundIndex = allChannelsList.findIndex(channel => channel.url === url);
-     if (foundIndex !== -1) {
-         currentChannelIndex = foundIndex;
-         menuFocusIndex = foundIndex;
-     }
-  }
-
-
-  if (!isSwitching) {
-      document.body.style.padding = '0';
-      document.body.style.overflow = 'hidden';
-      document.getElementById('mainContent').style.display = 'none'; 
-      history.pushState({player:true}, 'player');
-      playerContainer.style.display = 'flex';
-  }
-  
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; } 
-
-  let video = document.getElementById('tvplayer');
-  let channelMenu = document.getElementById('channelMenu');
-  
-  if (!video) {
-      video = document.createElement('video');
-      video.id = 'tvplayer';
-      video.autoplay = true;
-      video.controls = false; 
-      video.muted = false;
-      video.setAttribute('playsinline','');
-      playerContainer.appendChild(video);
-      
-      channelMenu = document.createElement('div');
-      channelMenu.id = 'channelMenu';
-      playerContainer.appendChild(channelMenu);
-      
-      playerContainer.appendChild(document.getElementById('loadingOverlay'));
-      playerContainer.appendChild(document.getElementById('infoBar'));
-      
-      updateOrientationClass(); 
-  }
-
-
-  // POPULLO DHE FSHEH MENYNË ANËSORE
-  if (!channelMenu) channelMenu = document.getElementById('channelMenu');
-  channelMenu.innerHTML = ''; 
-  allChannelsList.forEach((channelData, index) => {
-    const item = document.createElement('div');
-    item.className = 'menu-channel-item';
-    
-    const channelNumber = document.createElement('span');
-    channelNumber.className = 'menu-channel-number';
-    channelNumber.textContent = channelData.number; 
-    
-    const channelName = document.createElement('span');
-    channelName.textContent = channelData.name;
-    
-    item.appendChild(channelNumber);
-    item.appendChild(channelName);
-    
-    item.setAttribute('data-url', channelData.url);
-    item.setAttribute('data-index', index);
-    item.tabIndex = 0; 
-    
-    if (index === currentChannelIndex) {
-        item.classList.add('focused');
-    }
-    
-    item.onclick = () => switchChannel(channelData); 
-    channelMenu.appendChild(item);
-  });
-  isMenuVisible = false;
-  channelMenu.style.display = 'none';
-
-
-  // Luaj me hls.js
-  if(Hls && Hls.isSupported()){
-    hls = new Hls({ maxBufferLength: 30 });
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
-        video.play().catch(()=>{}); 
-    });
-    
-    hls.on(Hls.Events.ERROR, function(event, data){
-        if (data.fatal) {
-            updateLoadingState('error', ch.name);
-            console.error('HLS Fatal Error:', data.details);
-        }
-    });
-  } else {
-    video.src = url;
-    video.play().catch(()=>{});
-  } 
-
-  video.onplaying = () => {
-    updateLoadingState('hidden');
-  };
-  video.onerror = () => {
-    updateLoadingState('error', ch.name);
-  }
-
-  try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){} 
-  const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
-  try{ req && req.call(video).catch(()=>{}); }catch(e){}
-} 
-
-function closePlayer(){
-  document.body.style.padding = '40px';
-  document.body.style.overflow = 'auto'; 
-  document.getElementById('mainContent').style.display = 'flex'; 
-  isMenuVisible = false; 
-
-  if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
-  const video = document.getElementById('tvplayer');
-  if (video) video.remove(); 
-  
-  const menu = document.getElementById('channelMenu');
-  if (menu) menu.style.display = 'none';
-
-  updateLoadingState('hidden'); 
-  if (infoBarTimer) {
-      clearTimeout(infoBarTimer); 
-      document.getElementById('infoBar').classList.remove('visible');
-  }
-  if (digitTimer) clearTimeout(digitTimer); 
-  digitBuffer = '';
-  
-  playerContainer.style.display = 'none';
-  
-  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
-  
-  focusCurrent();
-} 
-
 // handle history/back
 window.addEventListener('popstate', (e)=>{
   if(playerContainer.style.display === 'flex'){
@@ -1040,19 +1200,15 @@ function updateOrientationClass(){
 window.addEventListener('resize', updateOrientationClass);
 window.addEventListener('orientationchange', updateOrientationClass); 
 
-// initial load
+// --- THIRRJET INICIALE ---
 loadCategory(currentCategory); 
 
-// INICIALIZIMI I WIDGET-IT TË MOTIT/ORËS
 updateClock(); 
-// Tani thërrasim funksionin e ri të vendndodhjes
 getLocation(); 
+fetchEPG(EPG_URL); 
 
-// Përditësojmë Orën çdo minutë (60000ms)
 setInterval(updateClock, 60000); 
-// Përditësojmë Motin çdo 10 minuta (600000ms)
 setInterval(getLocation, 600000); 
-
 </script>
 </body>
 </html>
