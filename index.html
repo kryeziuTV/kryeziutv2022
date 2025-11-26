@@ -2,27 +2,41 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V5 (Përditësim i Dukshmërisë)</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V6 (Përditësim i Pamjes)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
 <style>
     /* --- STILIMET KRYESORE --- */
     body { 
-        background: #1e1e1e url('https://img.freepik.com/premium-photo/dark-black-gray-blurred-gradient-leaf-shadow-background-has-little-abstract-light_532332-1850.jpg') no-repeat center center fixed; 
-        background-size: cover; 
+        /* SFONDI I FONDIT TË FUSHE (VIDEO-s) */
+        background: #1e1e1e; 
         font-family:'Rubik',sans-serif; 
         color:#fff; 
         margin:0; 
     } 
+    
+    /* SFONDI DINAMIK (VIDEO) */
+    #background-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%; 
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -2; /* Pas blur-overlay */
+        object-fit: cover;
+        filter: brightness(0.7) blur(2px); /* E errëson dhe e paqarton videon */
+    }
 
-    /* SHTRESA BLUR-UAR NË TË GJITHË BODY */
+    /* PËRDITËSUAR: SHTRESA BLUR-UAR NË TË GJITHË BODY */
     #blur-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.4); 
-        backdrop-filter: blur(10px); 
-        -webkit-backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.6); /* Sfondi më i errët */
+        backdrop-filter: blur(15px); /* BLUR MË I FORTË (Nga 10px në 15px) */
+        -webkit-backdrop-filter: blur(15px);
         z-index: -1; 
     } 
 
@@ -138,8 +152,11 @@
     }
     .cat-btn:focus, .cat-btn.focused { 
         background: #6246B8; 
-        box-shadow:0 0 15px 8px rgba(255, 255, 255, 0.6), 0 12px 40px rgba(0,0,0,.6); 
-        transform:scale(1.05); 
+        /* PËRDITËSUAR: Efekt më i mirë i fokusit */
+        transform: scale(1.05) perspective(1000px) rotateX(3deg); 
+        box-shadow: 
+            0 0 15px 8px rgba(255, 255, 255, 0.4), 
+            0 12px 40px rgba(0,0,0,.6); 
         outline:none; 
         border: 3px solid #fff; 
     }
@@ -155,7 +172,6 @@
     .channel { 
         width:120px; 
         height:120px; 
-        /* PËRDITËSUAR: Opaciteti 0.3 (më pak transparent) */
         background:rgba(255, 255, 255, 0.3); 
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
@@ -173,12 +189,14 @@
     }
     
     .channel:focus, .channel.focused { 
-        transform: scale(1.07) translateY(-5px); 
+        /* PËRDITËSUAR: Efekt më i theksuar */
+        transform: scale(1.1) translateY(-5px); 
         box-shadow: 
+            0 0 0 3px white, /* Shkëlqim i brendshëm i bordurës */
             0 8px 30px rgba(0, 0, 0, 0.7), 
             0 0 15px 10px rgba(65, 105, 225, 0.9); 
         outline:none; 
-        border: 3px solid white; 
+        border: 3px solid transparent; 
     }
     .channel:active { transform:scale(0.98); } 
 
@@ -186,13 +204,11 @@
         max-width: 90%; 
         max-height: 90%; 
         object-fit: contain; 
-        /* PËRDITËSUAR: Saturimi 1 (ngjyrat origjinale, më të gjalla) */
         filter: saturate(1); 
         transition: filter 0.2s, transform 0.2s; 
     } 
     
     .channel:focus img, .channel.focused img { 
-        /* Rritet saturimi pak më shumë kur fokusohet */
         filter: saturate(1.2); 
         transform: translateY(-5px); 
     }
@@ -243,14 +259,14 @@
         pointer-events:none; 
     } 
 
-    /* Info Bar (On-Screen Display) */
+    /* PËRDITËSUAR: Info Bar (On-Screen Display) */
     #infoBar {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 100px; 
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+        height: 120px; /* E Rritur në 120px */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)); /* Sfond më i fortë */
         padding: 10px 40px 20px 40px;
         box-sizing: border-box;
         display: flex;
@@ -258,12 +274,15 @@
         align-items: flex-start;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s;
+        /* ANIMACIONI I RI: Tani përdor transform */
+        transform: translateY(100%); 
+        transition: opacity 0.5s, transform 0.5s ease-out; 
         z-index: 99999;
     } 
 
     #infoBar.visible {
         opacity: 1;
+        transform: translateY(0%);
     } 
 
     .channel-title {
@@ -335,7 +354,14 @@
         display: none; 
         z-index: 100001; 
         scroll-behavior: auto; 
+        /* PËRDITËSUAR: Animacion i menysë */
+        transform: translateX(-100%); 
+        transition: transform 0.3s ease-out; 
     } 
+
+    #channelMenu.active {
+        transform: translateX(0);
+    }
 
     .menu-channel-item {
         padding: 20px 25px; 
@@ -343,7 +369,7 @@
         font-size: 1.3em; 
         font-weight: 500;
         cursor:pointer;
-        transition: background-color 0.2s; 
+        transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s; 
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -362,10 +388,16 @@
     } 
 
     .menu-channel-item.focused {
-        background-color: rgba(65, 105, 225, 0.2); 
+        /* PËRDITËSUAR: Stilim i theksuar i fokusit */
+        background-color: rgba(65, 105, 225, 0.3); 
         border-left-color: #4169e1; 
         color: #fff;
-        transform: scale(1.02);
+        transform: scale(1.03);
+        box-shadow: 
+            0 0 10px rgba(65, 105, 225, 0.3),
+            5px 0 15px rgba(0, 0, 0, 0.5); 
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
     } 
 
     .menu-channel-item:focus {
@@ -376,6 +408,11 @@
 </head>
 <body>
     
+    <video autoplay muted loop id="background-video">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-blue-liquid-flow-1345-large.mp4" type="video/mp4">
+        Video nuk mbështetet.
+    </video>
+
     <div id="blur-overlay"></div>
     
     <div id="headerWidget">
@@ -762,9 +799,16 @@ function toggleChannelMenu(){
     if (!channelMenu) return; 
 
     isMenuVisible = !isMenuVisible;
-    channelMenu.style.display = isMenuVisible ? 'block' : 'none';
-    
-    if (isMenuVisible) {
+    // PËRDITËSUAR: Përdorim klasën 'active' për transform
+    channelMenu.classList.toggle('active', isMenuVisible);
+    channelMenu.style.display = 'block'; // Fillon si block për transform
+
+    if (!isMenuVisible) {
+        // Vendos 'display: none' pas mbarimit të transformit
+        setTimeout(() => {
+            channelMenu.style.display = 'none';
+        }, 300); // 300ms = koha e transition-it
+    } else {
         const items = channelMenu.querySelectorAll('.menu-channel-item');
         if(items.length > 0) {
             items.forEach(i => i.classList.remove('focused')); 
@@ -1047,7 +1091,9 @@ function openPlayerForChannel(ch, isSwitching = false){
         item.onclick = () => switchChannel(channelData); 
         channelMenu.appendChild(item);
     });
+    
     isMenuVisible = false;
+    channelMenu.classList.remove('active'); 
     channelMenu.style.display = 'none';
 
 
@@ -1094,7 +1140,10 @@ function closePlayer(){
     if (video) video.remove(); 
     
     const menu = document.getElementById('channelMenu');
-    if (menu) menu.style.display = 'none'; 
+    if (menu) {
+        menu.classList.remove('active'); 
+        menu.style.display = 'none';
+    }
 
     updateLoadingState('hidden'); 
     if (infoBarTimer) {
