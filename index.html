@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V12</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V13</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -171,12 +171,12 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (I PËRDITËSUAR ME LIGHT PURPLE) --- */
+    /* --- STILIMI I KANALIT (I PËRDITËSUAR ME LIGHT PURPLE DHE EFEKT TË HOLLË) --- */
     .channel { 
         width:120px; 
         height:120px; 
         /* Ngjyra e Kanaleve (Light Purple me transparencë) */
-        background: rgba(180, 160, 255, 0.2); /* Light Purple */
+        background: rgba(180, 160, 255, 0.2); 
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
         display:flex; 
@@ -193,13 +193,12 @@
     }
     
     .channel:focus, .channel.focused { 
-        /* EFEKTI I FOKUSIT MË I LEHTË (SIÇ KËRKUAT) */
-        transform: scale(1.03) translateY(-1px); 
+        /* EFEKTI I RI: Vetëm Ngritje (Pop-up) dhe Border i Hollë Vjollcë */
+        transform: scale(1.05); /* Vetëm zmadhim (ngritje) */
         
         box-shadow: 
-            0 0 0 4px #fff, /* Bordura e jashtme e bardhë */
-            inset 0 0 10px 5px rgba(65, 105, 225, 0.8), /* Hije e brendshme Blu */
-            0 5px 15px rgba(0, 0, 0, 0.5); /* Hija e jashtme e lehtë */
+            0 0 0 3px #6246B8, /* Border i hollë i jashtëm Vjollcë (ngjyra e butonave të kategorive) */
+            0 8px 25px rgba(0, 0, 0, 0.5); /* Hija e jashtme e lehtë për thellësi */
         
         outline:none; 
         border: 3px solid transparent; 
@@ -216,7 +215,7 @@
     
     .channel:focus img, .channel.focused img { 
         filter: saturate(1.2); 
-        transform: translateY(-5px); 
+        transform: none; /* Logo nuk zhvendoset lart, vetëm zmadhohet */
     }
     
     /* --- FUNDI I STILIMIT TË KANALIT --- */
@@ -414,11 +413,11 @@ const channelsByCategory = {
         { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "RTK1.xk" },
         { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", channelId: "RTK3.xk" },
         { name:"RTV 21", logo:"https://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", channelId: "RTV21.xk" },
-        { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8", channelId: "KTV.xk" },
-        { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "ATV.xk" },
-        { name:"PRO 1", logo:"https://i.imgur.com/r3W0bmb.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", channelId: "PRO1.xk" },
-        { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "T7.xk" },
-        { name:"A2 CNN", logo:"https://i.imgur.com/Pj7GWKn.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", channelId: "A2CNN.xk" },
+        { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", channelId: "KTV.xk" },
+        { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/0nj-g63-92x-few/tracks-v2a1/mono.ts.m3u8", channelId: "ATV.xk" },
+        { name:"PRO 1", logo:"https://vimg.ipko.tv/logo/color/besa.png", url:"https://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/ehn-g2o-v7w-nh4/tracks-v2a1/mono.m3u8", channelId: "PRO1.xk" },
+        { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v2a1/mono.m3u8", channelId: "T7.xk" },
+        { name:"KLAN KOSOVA", logo:"https://vimg.ipko.tv/logo/color/klankosova.png", url:"http://195.200.234.186:8000/play/a06x", channelId: "A2CNN.xk" },
         { name:"BB VIP KS 1", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/a4d30f2c-7f6d-4956-80c0-6870cba4489d.m3u8", channelId: "BBVipKS1.xk" },
         { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/ae40b0f2-de0d-4483-9fb5-9697cbff13b6.m3u8", channelId: "BBVipKS2.xk" }
     ],
