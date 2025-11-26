@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V6 (Përditësim i Pamjes)</title>
+<title>TV App UI - Versioni Dinamik me EPG & Moti Statik (Suhareke) - V7 (Kategori më të Mëdha)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -144,7 +144,9 @@
         color:#fff; 
         padding:15px 28px; 
         border-radius:12px; 
-        font-weight:500; 
+        /* PËRDITËSUAR: Rritet font-size dhe theksohet font-weight */
+        font-size: 1.2em; 
+        font-weight: 600; 
         cursor:pointer; 
         box-shadow:0 6px 20px rgba(0,0,0,.45); 
         transition:.2s cubic-bezier(0,-0.5,0,3); 
@@ -152,7 +154,6 @@
     }
     .cat-btn:focus, .cat-btn.focused { 
         background: #6246B8; 
-        /* PËRDITËSUAR: Efekt më i mirë i fokusit */
         transform: scale(1.05) perspective(1000px) rotateX(3deg); 
         box-shadow: 
             0 0 15px 8px rgba(255, 255, 255, 0.4), 
@@ -189,10 +190,9 @@
     }
     
     .channel:focus, .channel.focused { 
-        /* PËRDITËSUAR: Efekt më i theksuar */
         transform: scale(1.1) translateY(-5px); 
         box-shadow: 
-            0 0 0 3px white, /* Shkëlqim i brendshëm i bordurës */
+            0 0 0 3px white, 
             0 8px 30px rgba(0, 0, 0, 0.7), 
             0 0 15px 10px rgba(65, 105, 225, 0.9); 
         outline:none; 
@@ -265,8 +265,8 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 120px; /* E Rritur në 120px */
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)); /* Sfond më i fortë */
+        height: 120px; 
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)); 
         padding: 10px 40px 20px 40px;
         box-sizing: border-box;
         display: flex;
@@ -274,7 +274,6 @@
         align-items: flex-start;
         opacity: 0;
         pointer-events: none;
-        /* ANIMACIONI I RI: Tani përdor transform */
         transform: translateY(100%); 
         transition: opacity 0.5s, transform 0.5s ease-out; 
         z-index: 99999;
@@ -354,7 +353,6 @@
         display: none; 
         z-index: 100001; 
         scroll-behavior: auto; 
-        /* PËRDITËSUAR: Animacion i menysë */
         transform: translateX(-100%); 
         transition: transform 0.3s ease-out; 
     } 
@@ -388,7 +386,6 @@
     } 
 
     .menu-channel-item.focused {
-        /* PËRDITËSUAR: Stilim i theksuar i fokusit */
         background-color: rgba(65, 105, 225, 0.3); 
         border-left-color: #4169e1; 
         color: #fff;
@@ -731,7 +728,7 @@ function getChannelEpg(channelId) {
             // Nëse 'programText' mbetet bosh, info bar do jetë bosh.
         }
         
-        epgInfo.textContent = programText; // Vë tekstin. Nëse është bosh, nuk shfaqet asgjë.
+        epgInfo.textContent = programText; 
 
     }, 1500);
 }
@@ -801,13 +798,12 @@ function toggleChannelMenu(){
     isMenuVisible = !isMenuVisible;
     // PËRDITËSUAR: Përdorim klasën 'active' për transform
     channelMenu.classList.toggle('active', isMenuVisible);
-    channelMenu.style.display = 'block'; // Fillon si block për transform
+    channelMenu.style.display = 'block'; 
 
     if (!isMenuVisible) {
-        // Vendos 'display: none' pas mbarimit të transformit
         setTimeout(() => {
             channelMenu.style.display = 'none';
-        }, 300); // 300ms = koha e transition-it
+        }, 300); 
     } else {
         const items = channelMenu.querySelectorAll('.menu-channel-item');
         if(items.length > 0) {
@@ -850,14 +846,11 @@ document.addEventListener('keydown', (e)=>{
         if (e.key >= '0' && e.key <= '9') {
             e.preventDefault();
             
-            // Fshijmë timer-in ekzistues të numrave
             if (digitTimer) clearTimeout(digitTimer);
             
-            // Limitojmë shiritin e numrave në 3 shifra
             if (digitBuffer.length < 3) {
                 digitBuffer += e.key;
             } else {
-                // Nëse është mbi 3 shifra, fillojmë me shifrën e re
                 digitBuffer = e.key;
             }
             
@@ -866,13 +859,11 @@ document.addEventListener('keydown', (e)=>{
             const epgInfo = infoBar.querySelector('.epg-info');
 
             title.textContent = `Kanali: ${digitBuffer}`;
-            // Heqim mesazhin "Shtyp Enter per te konfirmuar"
             epgInfo.textContent = ''; 
             infoBar.classList.add('visible'); 
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
             
-            // Konfirmimi automatik pas 1.5 sekondash
             digitTimer = setTimeout(() => {
                 let targetNumber = parseInt(digitBuffer);
                 
@@ -883,7 +874,6 @@ document.addEventListener('keydown', (e)=>{
                 
                 digitBuffer = '';
                 
-                // Rifut Info Bar normal pas konfirmimit automatik
                 if (allChannelsList[currentChannelIndex]) {
                     showInfoBar(allChannelsList[currentChannelIndex]); 
                 } else {
@@ -916,7 +906,6 @@ document.addEventListener('keydown', (e)=>{
         // NDËRRIMI SEKUENCIAL ME UP/DOWN
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
             
-            // Anulojmë timer-in e numrave nëse shtypet një shigjetë
             if (digitTimer) clearTimeout(digitTimer);
             digitBuffer = '';
             
@@ -938,7 +927,6 @@ document.addEventListener('keydown', (e)=>{
         // OK/ENTER: HAP MENUNË E KANALIT dhe shfaq Info Bar
         if(e.key === 'Enter'){
             if (digitBuffer.length > 0) {
-                // Kjo ndodh kur përdoruesi shtyp Enter menjëherë pas shtypjes së numrave.
                 let targetNumber = parseInt(digitBuffer);
                 if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
                     const targetChannel = allChannelsList[targetNumber - 1];
@@ -947,7 +935,6 @@ document.addEventListener('keydown', (e)=>{
                 if (digitTimer) clearTimeout(digitTimer);
                 digitBuffer = '';
             } else {
-                // Logjika normale: Shfaq info bar dhe toggle menu
                 const currentChannel = allChannelsList[currentChannelIndex];
                 showInfoBar(currentChannel);
                 toggleChannelMenu();
@@ -956,7 +943,7 @@ document.addEventListener('keydown', (e)=>{
 
         // BACKSPACE/ESCAPE: Mbyll player-in
         if(e.key === 'Backspace' || e.key === 'Escape'){ 
-            if (digitTimer) clearTimeout(digitTimer); // Anulojmë numrat në rast se ka
+            if (digitTimer) clearTimeout(digitTimer); 
             digitBuffer = '';
             closePlayer(); 
             history.back(); 
@@ -1018,9 +1005,8 @@ function openPlayerForChannel(ch, isSwitching = false){
     }
     
     updateLoadingState('loading');
-    showInfoBar(ch); // Kjo thërret EPG-në
+    showInfoBar(ch); 
 
-    // Përditësimi i indeksit të kanalit
     if (ch.fullIndex !== undefined) {
         currentChannelIndex = ch.fullIndex;
         menuFocusIndex = ch.fullIndex; 
@@ -1053,7 +1039,7 @@ function openPlayerForChannel(ch, isSwitching = false){
         video.controls = false; 
         video.muted = false;
         video.setAttribute('playsinline','');
-        playerContainer.insertBefore(video, document.getElementById('infoBar')); // Vendoset para InfoBar
+        playerContainer.insertBefore(video, document.getElementById('infoBar')); 
 
         channelMenu = document.createElement('div');
         channelMenu.id = 'channelMenu';
@@ -1170,7 +1156,6 @@ window.addEventListener('popstate', (e)=>{
 window.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape' || e.key === 'Backspace'){
         if(playerContainer.style.display === 'flex' && !isMenuVisible){
-            // Mbyll player-in vetëm nëse është hapur si popstate
             if(window.history.state && window.history.state.player){
                  history.back(); 
             } else {
@@ -1193,7 +1178,6 @@ loadCategory(currentCategory);
 
 // INICIALIZIMI I WIDGET-IT TË MOTIT/ORËS
 updateClock(); 
-// Thërrasim funksionin e vendndodhjes statike (Suhareke)
 loadSuharekeWeather(); 
 
 // Përditësojmë Orën çdo minutë (60000ms)
