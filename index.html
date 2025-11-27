@@ -236,7 +236,9 @@
         object-fit:contain; 
         outline:none; 
         border:0; 
-        pointer-events:none; 
+        pointer-events:none;
+        /* NDYSHIMI 1: E BËJMË SFONDIN E ELEMENTIT TË VIDEOS TË ZI */
+        background-color: #000 !important; 
     } 
 
     /* Info Bar */
@@ -290,8 +292,9 @@
         margin-top: 20px;
     } 
     .spinner {
-        border: 5px solid rgba(255, 255, 255, 0.3);
-        border-top: 5px solid #6246B8;
+        /* NDYSHIMI 2: E BËJMË NGJYRËN E SFONDIT TË SPINNER-IT TË PURPLE/VJOLLCË */
+        border: 5px solid rgba(98, 70, 184, 0.3); 
+        border-top: 5px solid #6246B8; /* Ngjyra kryesore e purple */
         border-radius: 50%;
         width: 50px;
         height: 50px;
