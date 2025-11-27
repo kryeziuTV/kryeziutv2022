@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V13</title>
+<title>TV App UI - Me Shaka Player - V14</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -64,7 +64,8 @@
         display: flex;
         flex-direction: column;
         align-items: center; 
-        background: rgba(0, 0, 0, 0.5); 
+        /* NDYSHIMI: SFONDI VJOLLCË ME TRANSAPRENCË */
+        background: rgba(98, 70, 184, 0.5); 
         padding: 8px 15px; 
         border-radius: 10px;
         min-width: 150px; 
@@ -81,7 +82,8 @@
 
     /* MOTI */
     #weatherInfo {
-        background: rgba(0, 0, 0, 0.5); 
+        /* NDYSHIMI: SFONDI VJOLLCË ME TRANSAPRENCË */
+        background: rgba(98, 70, 184, 0.5); 
         padding: 15px 20px; 
         border-radius: 10px;
         opacity: 1; 
@@ -237,7 +239,7 @@
         outline:none; 
         border:0; 
         pointer-events:none;
-        /* NDYSHIMI 1: E BËJMË SFONDIN E ELEMENTIT TË VIDEOS TË ZI */
+        /* KJO NUK MUND TË PËRDORET NËSE SHAKA PLAYER SHTON KONTROLLA TË VETA */
         background-color: #000 !important; 
     } 
 
@@ -278,7 +280,8 @@
     #loadingOverlay {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.7);
+        /* NDYSHIMI KRYESOR: BËJMË 100% TË ZI KUR NGARKOHET/GABON */
+        background: #000; 
         display: none; 
         flex-direction: column;
         align-items: center;
@@ -407,7 +410,7 @@
         </div> 
     </div> 
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.1/dist/shaka-player.compiled.js"></script>
 <script>
 // --- data ---
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
@@ -454,18 +457,18 @@ const channelsByCategory = {
         { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D4", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a", channelId: "CARS_TV.xk" } ]
 }; 
 
-// --- DOM refs ---
-const catWrap = document.getElementById('categories');
-const grid = document.getElementById('grid');
-const playerContainer = document.getElementById('playerContainer');
-let hls = null;
-let currentCategory = 'LIVE TV'; 
-
 // --- focus/navigation state ---
 let focusedArea = 'cats'; 
 let catFocus = 0;
 let gridFocus = 0;
 const GRID_COLS = 7; 
+
+// --- DOM refs ---
+const catWrap = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const playerContainer = document.getElementById('playerContainer');
+// NDYSHIMI: Shaka Player object
+let shakaPlayer = null; 
 
 // NDIHMËS PËR MENY & NAVIGIM
 let isMenuVisible = false;
@@ -916,8 +919,9 @@ document.addEventListener('keydown', (e)=>{
     focusCurrent();
 }); 
 
-// --- player helpers (hls.js fallback) ---
-function openPlayerForChannel(ch, isSwitching = false){
+
+// NDYSHIMI KRYESOR: ZHVILLIMI I PLAYERIT ME SHAKA PLAYER
+async function openPlayerForChannel(ch, isSwitching = false){
     const url = ch.url;
     if(!url) {
         if (!isSwitching) {
@@ -951,8 +955,6 @@ function openPlayerForChannel(ch, isSwitching = false){
         playerContainer.style.display = 'flex';
     }
     
-    if(hls){ try{ hls.destroy(); }catch(e){} hls = null; } 
-
     let video = document.getElementById('tvplayer');
     let channelMenu = document.getElementById('channelMenu');
     
@@ -970,6 +972,57 @@ function openPlayerForChannel(ch, isSwitching = false){
         playerContainer.appendChild(channelMenu);
         
         updateOrientationClass(); 
+        
+        // NDYSHIMI: Inicializo Shaka Player vetëm një herë
+        if (!shakaPlayer) {
+            shaka.polyfill.installAll(); 
+            if (shaka.Player.is || !shaka.Player.isSupported()) {
+                console.error('Shaka Player nuk mbështetet në këtë shfletues!');
+                return;
+            }
+
+            shakaPlayer = new shaka.Player(video); 
+            shakaPlayer.configure({
+                // Konfigurimet HLS Live: Mund t'i rregullosh për performancë
+                streaming: {
+                    lowLatencyMode: true,
+                    // Përdor 'auto' për t'i lejuar player-it të zgjedhë cilësinë
+                    preferredTextLanguage: 'sq',
+                },
+                // Fik kontrollet UI të Shaka-s (pasi përdorim vetëm elementin <video>)
+                controls: false
+            });
+
+            // Handle Errors
+            shakaPlayer.addEventListener('error', (event) => {
+                const error = event.detail.error;
+                console.error('Shaka Player Error:', error.code, error.data);
+                updateLoadingState('error', ch.name);
+            });
+            
+            // Fiksues: Shaka duhet të luajë në eventin 'loadeddata' për të shmangur vonesat
+            video.addEventListener('loadeddata', () => {
+                updateLoadingState('hidden');
+                video.play().catch(e => {
+                    console.error("Gabim në luajtjen e videos pas ngarkimit:", e);
+                    // Nëse dështon të luajë, trego gabimin.
+                    // updateLoadingState('error', ch.name);
+                });
+            });
+
+            video.addEventListener('waiting', () => {
+                 updateLoadingState('loading');
+            });
+
+            video.addEventListener('playing', () => {
+                 updateLoadingState('hidden');
+            });
+            
+            video.addEventListener('error', () => {
+                updateLoadingState('error', ch.name);
+            });
+
+        }
     }
 
 
@@ -1006,31 +1059,15 @@ function openPlayerForChannel(ch, isSwitching = false){
     channelMenu.classList.remove('active'); 
     channelMenu.style.display = 'none';
 
-
-    // Luaj me hls.js
-    if(Hls && Hls.isSupported()){
-        hls = new Hls({ maxBufferLength: 30 });
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
-            video.play().catch(()=>{}); 
-        });
-        
-        hls.on(Hls.Events.ERROR, function(event, data){
-            if (data.fatal) {
-                updateLoadingState('error', ch.name);
-                console.error('HLS Fatal Error:', data.details);
-            }
-        });
-    } else {
-        video.src = url;
-        video.play().catch(()=>{});
-    } 
-
-    video.onplaying = () => {
-        updateLoadingState('hidden');
-    };
-    video.onerror = () => {
+    // NDYSHIMI: Luaj burimin me Shaka Player
+    try {
+        await shakaPlayer.load(url);
+        console.log('Videoja e Shaka Player u ngarkua me sukses.');
+        // Playeri do të kalojë në 'playing' dhe do të thërrasë updateLoadingState('hidden')
+        // Kontrolli manual i video.play() bëhet në eventin 'loadeddata' si më sipër
+    } catch (e) {
+        // Gabim në load
+        console.error('Gabim në ngarkimin e Shaka Player:', e);
         updateLoadingState('error', ch.name);
     } 
 
@@ -1045,9 +1082,18 @@ function closePlayer(){
     document.getElementById('mainContent').style.display = 'flex'; 
     isMenuVisible = false; 
 
-    if(hls){ try{ hls.destroy(); }catch(e){} hls = null; }
+    // NDYSHIMI: Bëj stop dhe fshi burimin nga Shaka Player
+    if(shakaPlayer){
+        try{
+            shakaPlayer.unload();
+        }catch(e){
+            console.error("Gabim në shkarkimin e Shaka Player:", e);
+        }
+    }
+    
     const video = document.getElementById('tvplayer');
-    if (video) video.remove(); 
+    // Nuk e fshijmë videon, vetëm e fshehim dhe e mbajmë instancën e ShakaPlayer active
+    // if (video) video.remove(); 
     
     const menu = document.getElementById('channelMenu');
     if (menu) {
