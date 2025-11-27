@@ -2,9 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Me Shaka Player - V14</title>
+<title>TV App UI - Me Video.js (HLS) - V14</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
+
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
 
 <style>
     /* --- STILIMET KRYESORE --- */
@@ -64,8 +66,7 @@
         display: flex;
         flex-direction: column;
         align-items: center; 
-        /* NDYSHIMI: SFONDI VJOLLCË ME TRANSAPRENCË */
-        background: rgba(98, 70, 184, 0.5); 
+        background: rgba(0, 0, 0, 0.5); 
         padding: 8px 15px; 
         border-radius: 10px;
         min-width: 150px; 
@@ -82,8 +83,7 @@
 
     /* MOTI */
     #weatherInfo {
-        /* NDYSHIMI: SFONDI VJOLLCË ME TRANSAPRENCË */
-        background: rgba(98, 70, 184, 0.5); 
+        background: rgba(0, 0, 0, 0.5); 
         padding: 15px 20px; 
         border-radius: 10px;
         opacity: 1; 
@@ -232,16 +232,25 @@
         align-items:center; 
         justify-content:center; 
     }
-    #playerContainer video { 
+    
+    /* STILIMI I VIDEO.JS PLAYER DHE VIDEO TAG */
+    .video-js {
+        width: 100vw;
+        height: 100vh;
+        /* Heq kufijtë dhe hijet e Video.js që nuk duhen për TV */
+        background-color: #000;
+        border: none;
+    }
+    /* Për të siguruar që videoja mbulon të gjithë ekranin brenda playerContainer */
+    #tvplayer {
         width:100vw; 
         height:100vh; 
         object-fit:contain; 
         outline:none; 
         border:0; 
-        pointer-events:none;
-        /* KJO NUK MUND TË PËRDORET NËSE SHAKA PLAYER SHTON KONTROLLA TË VETA */
-        background-color: #000 !important; 
-    } 
+        pointer-events:none; /* Për të lejuar klikimin prapa */
+    }
+
 
     /* Info Bar */
     #infoBar {
@@ -280,8 +289,7 @@
     #loadingOverlay {
         position: absolute;
         inset: 0;
-        /* NDYSHIMI KRYESOR: BËJMË 100% TË ZI KUR NGARKOHET/GABON */
-        background: #000; 
+        background: rgba(0, 0, 0, 0.7); 
         display: none; 
         flex-direction: column;
         align-items: center;
@@ -295,9 +303,8 @@
         margin-top: 20px;
     } 
     .spinner {
-        /* NDYSHIMI 2: E BËJMË NGJYRËN E SFONDIT TË SPINNER-IT TË PURPLE/VJOLLCË */
-        border: 5px solid rgba(98, 70, 184, 0.3); 
-        border-top: 5px solid #6246B8; /* Ngjyra kryesore e purple */
+        border: 5px solid rgba(255, 255, 255, 0.3); 
+        border-top: 5px solid #6246B8; 
         border-radius: 50%;
         width: 50px;
         height: 50px;
@@ -410,7 +417,9 @@
         </div> 
     </div> 
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.1/dist/shaka-player.compiled.js"></script>
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@3.9.0/dist/videojs-http-streaming.min.js"></script>
+
 <script>
 // --- data ---
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
@@ -431,18 +440,16 @@ const channelsByCategory = {
         { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://corsproxy.io/?url=https://cdn-1.bbvipal4.xyz/memfs/ae40b0f2-de0d-4483-9fb5-9697cbff13b6.m3u8", channelId: "BBVipKS2.xk" }
     ],
     "FILMA": [ 
-        { name:"SKY AKSION", logo:"https://www.appcreator24.com/srv/imgs/seccs/11371402_ico.png", url:"http://5.206.237.251:1288/SkyAksion", channelId: "C1.xk" },
-        { name:"SKY MAX", logo:"https://www.appcreator24.com/srv/imgs/seccs/11371402_ico.png", url:"http://5.206.237.251:1288/SkyMax", channelId: "C2.xk" },
-        { name:"STAR PLUS", logo:"https://www.appcreator24.com/srv/imgs/seccs/11371402_ico.png", url:"https://t2.tvmak.com/tv/STARPLUS.m3u8", channelId: "C3.xk" },
-        { name:"ALB FILM TV 1", logo:"https://www.appcreator24.com/srv/imgs/seccs/11371402_ico.png", url:"https://t2.tvmak.com/tv/ALBFILMTV1.m3u8", channelId: "C4.xk" } 
+        { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"", channelId: "C1.xk" },
+        { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"", channelId: "C2.xk" },
+        { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"", channelId: "C3.xk" },
+        { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C4", url:"", channelId: "C4.xk" }
     ],
     "SPORT": [ 
-        { name:"beIN SPORT 1", logo:"https://www.appcreator24.com/srv/imgs/seccs/3423992_ico.png", url:"http://176.123.10.77:8480/b1/index.m3u8", channelId: "S1.xk" },
-        { name:"beIN SPORT 2", logo:"https://www.appcreator24.com/srv/imgs/seccs/3423992_ico.png", url:"http://176.123.10.77:8480/b2/index.m3u8", channelId: "S2.xk" },
-        { name:"beIN SPORT 4", logo:"https://www.appcreator24.com/srv/imgs/seccs/3423992_ico.png", url:"http://176.123.10.77:8480/b4/index.m3u8", channelId: "S3.xk" },
-        { name:"PREMIER LEAGUR", logo:"https://www.appcreator24.com/srv/imgs/seccs/3423992_ico.png", url:"http://178.33.239.54:8080/506/index.m3u8", channelId: "S4.xk" },
-        { name:"Sport 1", logo:"https://www.appcreator24.com/srv/imgs/seccs/3454142_ico.png?ts=1764195031", url:"http://176.123.10.77:8480/t1/index.m3u8", channelId: "S4.xk" },
-        { name:"Sport 2", logo:"https://www.appcreator24.com/srv/imgs/seccs/3454142_ico.png?ts=1764195031", url:"http://176.123.10.77:8480/t2/index.m3u8", channelId: "S4.xk" } 
+        { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S1", url:"", channelId: "S1.xk" },
+        { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S2", url:"", channelId: "S2.xk" },
+        { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S3", url:"", channelId: "S3.xk" },
+        { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=S4", url:"", channelId: "S4.xk" }
     ],
     "FEMIJE": [ 
         { name:"DISNEY JUNIOR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8", channelId: "DISNEY_JR.xk" }, 
@@ -457,18 +464,18 @@ const channelsByCategory = {
         { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D4", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a", channelId: "CARS_TV.xk" } ]
 }; 
 
+// --- DOM refs ---
+const catWrap = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const playerContainer = document.getElementById('playerContainer');
+let videoJsPlayer = null; // Krijojmë një ndryshore globale për instancën e Video.js
+let currentCategory = 'LIVE TV'; 
+
 // --- focus/navigation state ---
 let focusedArea = 'cats'; 
 let catFocus = 0;
 let gridFocus = 0;
 const GRID_COLS = 7; 
-
-// --- DOM refs ---
-const catWrap = document.getElementById('categories');
-const grid = document.getElementById('grid');
-const playerContainer = document.getElementById('playerContainer');
-// NDYSHIMI: Shaka Player object
-let shakaPlayer = null; 
 
 // NDIHMËS PËR MENY & NAVIGIM
 let isMenuVisible = false;
@@ -920,8 +927,8 @@ document.addEventListener('keydown', (e)=>{
 }); 
 
 
-// NDYSHIMI KRYESOR: ZHVILLIMI I PLAYERIT ME SHAKA PLAYER
-async function openPlayerForChannel(ch, isSwitching = false){
+// NDYSHIMI KRYESOR: ZHVILLIMI I PLAYERIT ME VIDEO.JS
+function openPlayerForChannel(ch, isSwitching = false){
     const url = ch.url;
     if(!url) {
         if (!isSwitching) {
@@ -946,7 +953,6 @@ async function openPlayerForChannel(ch, isSwitching = false){
         }
     }
 
-
     if (!isSwitching) {
         document.body.style.padding = '0';
         document.body.style.overflow = 'hidden';
@@ -958,74 +964,75 @@ async function openPlayerForChannel(ch, isSwitching = false){
     let video = document.getElementById('tvplayer');
     let channelMenu = document.getElementById('channelMenu');
     
-    if (!video) {
-        video = document.createElement('video');
-        video.id = 'tvplayer';
-        video.autoplay = true;
-        video.controls = false; 
-        video.muted = false;
-        video.setAttribute('playsinline','');
-        playerContainer.insertBefore(video, document.getElementById('infoBar')); 
+    if (videoJsPlayer) {
+        videoJsPlayer.dispose(); // Fshijmë instancën e vjetër të Video.js
+        videoJsPlayer = null;
+        if (video) video.remove();
+    }
+    
+    // Krijojmë një tag të ri <video>
+    video = document.createElement('video');
+    video.id = 'tvplayer';
+    // Kjo është e rëndësishme për Video.js: Shto klasat e tij
+    video.className = 'video-js vjs-big-play-centered'; 
+    video.autoplay = true;
+    video.controls = false; // Për TV, kontrollet merren me telekomandë
+    video.muted = false;
+    video.setAttribute('playsinline','');
+    // Duhet të vendoset atributi 'data-setup="{}"' që Video.js të funksionojë
+    video.setAttribute('data-setup', '{}'); 
+    playerContainer.insertBefore(video, document.getElementById('infoBar')); 
 
+    if (!channelMenu || !document.getElementById('channelMenu')) {
         channelMenu = document.createElement('div');
         channelMenu.id = 'channelMenu';
         playerContainer.appendChild(channelMenu);
-        
-        updateOrientationClass(); 
-        
-        // NDYSHIMI: Inicializo Shaka Player vetëm një herë
-        if (!shakaPlayer) {
-            shaka.polyfill.installAll(); 
-            if (shaka.Player.is || !shaka.Player.isSupported()) {
-                console.error('Shaka Player nuk mbështetet në këtë shfletues!');
-                return;
-            }
-
-            shakaPlayer = new shaka.Player(video); 
-            shakaPlayer.configure({
-                // Konfigurimet HLS Live: Mund t'i rregullosh për performancë
-                streaming: {
-                    lowLatencyMode: true,
-                    // Përdor 'auto' për t'i lejuar player-it të zgjedhë cilësinë
-                    preferredTextLanguage: 'sq',
-                },
-                // Fik kontrollet UI të Shaka-s (pasi përdorim vetëm elementin <video>)
-                controls: false
-            });
-
-            // Handle Errors
-            shakaPlayer.addEventListener('error', (event) => {
-                const error = event.detail.error;
-                console.error('Shaka Player Error:', error.code, error.data);
-                updateLoadingState('error', ch.name);
-            });
-            
-            // Fiksues: Shaka duhet të luajë në eventin 'loadeddata' për të shmangur vonesat
-            video.addEventListener('loadeddata', () => {
-                updateLoadingState('hidden');
-                video.play().catch(e => {
-                    console.error("Gabim në luajtjen e videos pas ngarkimit:", e);
-                    // Nëse dështon të luajë, trego gabimin.
-                    // updateLoadingState('error', ch.name);
-                });
-            });
-
-            video.addEventListener('waiting', () => {
-                 updateLoadingState('loading');
-            });
-
-            video.addEventListener('playing', () => {
-                 updateLoadingState('hidden');
-            });
-            
-            video.addEventListener('error', () => {
-                updateLoadingState('error', ch.name);
-            });
-
-        }
     }
+    
+    updateOrientationClass(); 
+    
+    // 3. INICIALIZIMI I VIDEO.JS
+    videoJsPlayer = videojs(video.id, {
+        controls: false, // E përsërisim, por për settings e playerit
+        autoplay: true,
+        preload: 'auto',
+        // Këto ndihmojnë me HLS dhe Live Streams
+        html5: {
+            hls: {
+                enableWorker: true,
+                liveSyncDuration: 3
+            }
+        }
+    });
 
+    // Handle Events
+    videoJsPlayer.on('loadeddata', function() {
+        // Luajmë vetëm nëse nuk ka gabime (kjo ndihmon të kalojmë bllokimin e autoplay)
+        this.play().catch(e => {
+             console.error("Gabim në luajtjen e videos pas ngarkimit (Video.js):", e);
+             updateLoadingState('error', ch.name);
+        });
+    });
 
+    videoJsPlayer.on('playing', function() {
+        updateLoadingState('hidden');
+    });
+
+    videoJsPlayer.on('waiting', function() {
+         updateLoadingState('loading');
+    });
+    
+    videoJsPlayer.on('error', function() {
+        console.error('Video.js Error:', this.error());
+        updateLoadingState('error', ch.name);
+    });
+
+    // Vendos Burimin e Videos
+    videoJsPlayer.src({
+        src: url,
+        type: 'application/x-mpegURL' // Për HLS
+    });
+    
     // POPULLO DHE FSHEH MENYNË ANËSORE
     if (!channelMenu) channelMenu = document.getElementById('channelMenu');
     channelMenu.innerHTML = ''; 
@@ -1059,18 +1066,6 @@ async function openPlayerForChannel(ch, isSwitching = false){
     channelMenu.classList.remove('active'); 
     channelMenu.style.display = 'none';
 
-    // NDYSHIMI: Luaj burimin me Shaka Player
-    try {
-        await shakaPlayer.load(url);
-        console.log('Videoja e Shaka Player u ngarkua me sukses.');
-        // Playeri do të kalojë në 'playing' dhe do të thërrasë updateLoadingState('hidden')
-        // Kontrolli manual i video.play() bëhet në eventin 'loadeddata' si më sipër
-    } catch (e) {
-        // Gabim në load
-        console.error('Gabim në ngarkimin e Shaka Player:', e);
-        updateLoadingState('error', ch.name);
-    } 
-
     try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){} 
     const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
     try{ req && req.call(video).catch(()=>{}); }catch(e){}
@@ -1082,18 +1077,18 @@ function closePlayer(){
     document.getElementById('mainContent').style.display = 'flex'; 
     isMenuVisible = false; 
 
-    // NDYSHIMI: Bëj stop dhe fshi burimin nga Shaka Player
-    if(shakaPlayer){
+    // NDYSHIMI: Fshijmë instancën e Video.js
+    if(videoJsPlayer){
         try{
-            shakaPlayer.unload();
+            videoJsPlayer.dispose(); 
+            videoJsPlayer = null;
         }catch(e){
-            console.error("Gabim në shkarkimin e Shaka Player:", e);
+            console.error("Gabim në mbylljen e Video.js:", e);
         }
     }
     
     const video = document.getElementById('tvplayer');
-    // Nuk e fshijmë videon, vetëm e fshehim dhe e mbajmë instancën e ShakaPlayer active
-    // if (video) video.remove(); 
+    if (video) video.remove(); 
     
     const menu = document.getElementById('channelMenu');
     if (menu) {
