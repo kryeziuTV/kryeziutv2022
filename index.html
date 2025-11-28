@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V19</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V20</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
 
@@ -76,7 +76,7 @@
         position: relative; 
     }
     
-    /* Moti i menjëhershëm (Tani vetëm tekst, pa sfond) */
+    /* Moti i menjëhershëm */
     #weatherSummary {
         display: flex;
         align-items: center;
@@ -92,7 +92,7 @@
         text-align: right;
     }
     
-    /* ORA (Pa sfond) */
+    /* ORA */
     #currentTime {
         font-size: 3em; 
         font-weight: 700; 
@@ -105,7 +105,7 @@
         text-align: right; 
     }
     
-    /* DITA DHE DATA (Poshtë Orës, pa sfond) */
+    /* DITA DHE DATA */
     #currentDate {
         font-size: 1em; 
         font-weight: 400; 
@@ -141,7 +141,7 @@
         margin-top: 20px; 
     } 
 
-    /* KATEGORITË & GRIDI I KANALEVE (I Përditësuar për Shpejtësi) */
+    /* KATEGORITË & GRIDI I KANALEVE */
     .categories { 
         display:flex; 
         gap:20px; 
@@ -159,13 +159,11 @@
         font-weight: 600; 
         cursor:pointer; 
         box-shadow:0 6px 20px rgba(0,0,0,.45); 
-        /* NDRYSHIM: Tranzicion më i thjeshtë */
         transition: .15s ease-out; 
         border: 3px solid transparent; 
     }
     .cat-btn:focus, .cat-btn.focused { 
         background: #6246B8; 
-        /* NDRYSHIM: Transformim më i thjeshtë */
         transform: scale(1.05); 
         box-shadow: 
             0 0 15px 8px rgba(255, 255, 255, 0.4), 
@@ -194,29 +192,43 @@
         justify-content:center; 
         align-items:center; 
         cursor:pointer; 
-        /* NDRYSHIM: Tranzicion më i shpejtë, shtohet border-color */
         transition: transform .1s ease-out, box-shadow .1s ease-out, border-color .1s ease-out; 
         border: 3px solid transparent; 
         overflow: hidden; 
         padding: 10px; 
         box-sizing: border-box;
-        position: relative; 
+        position: relative; /* E rëndësishme për vendosjen e indikatorit */
     }
     
     .channel:focus, .channel.focused { 
-        /* NDRYSHIM I MADH: Scale më i theksuar */
-        transform: scale(1.15); /* Zmadhimi me 15% */
+        /* NDRYSHIM 1: Scale më i madh (1.25) */
+        transform: scale(1.25); 
         
-        /* NDRYSHIM I MADH: Shtohet borderi i poshtëm Light Purple */
+        /* NDRYSHIM 2: Hiqet borderi i vjetër i poshtëm */
         border: 3px solid transparent; 
-        border-bottom: 5px solid #b4a0ff; /* Light Purple */
         
-        /* HIJA E PËRMBYLLUR */
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); 
-        
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); /* Rritet hija */
         outline:none; 
     }
     .channel:active { transform:scale(0.98); } 
+
+    /* NDRYSHIM I RI: Vija e bardhë në fund (Indikatori) */
+    .channel-indicator {
+        position: absolute;
+        bottom: 5px; /* Ngrihet pak nga fundi i kutisë */
+        left: 50%; /* Qendra horizontale */
+        transform: translateX(-50%);
+        width: 40px; /* Gjatësia e vizës */
+        height: 4px; /* Trashësia e vizës */
+        background-color: transparent; /* Fshehur normalisht */
+        transition: background-color .1s ease-out;
+        border-radius: 2px;
+        z-index: 2; /* Siguron që të jetë mbi çdo gjë tjetër brenda kanalit */
+    }
+    /* Shfaqet vetëm kur është fokusuar */
+    .channel:focus .channel-indicator, .channel.focused .channel-indicator {
+        background-color: #ffffff; 
+    }
 
     .channel img { 
         max-width: 90%; 
@@ -432,7 +444,7 @@ const channelsByCategory = {
         { name:"RTV 21", logo:"https://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", channelId: "RTV21.xk" },
         { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", channelId: "KTV.xk" },
         { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/0nj-g63-92x-few/tracks-v2a1/mono.ts.m3u8", channelId: "ATV.xk" },
-        { name:"BESA", logo:"https://vimg.ipko.tv/logo/color/besa.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/ehn-g2o-v7w-nh4/tracks-v2a1/mono.ts.m3u8", channelId: "PRO1.xk" },
+        { name:"BESA", logo:"https://vimg.ipko.tv/logo/color/besa.png", url:"http://gjirafa-video-live-n1/ehn-g2o-v7w-nh4/tracks-v2a1/mono.ts.m3u8", channelId: "PRO1.xk" },
         { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v2a1/mono.m3u8", channelId: "T7.xk" },
         { name:"TV PRIZRENI", logo:"https://vimg.ipko.tv/logo/color/tvprizreni.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v3a1/mono.ts.m3u8", channelId: "T7.xk" },
         { name:"TV SYRI", logo:"https://vimg.ipko.tv/logo/color/syritv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/xej-xnb-ba0-kup/index.m3u8", channelId: "T7.xk" },
@@ -477,7 +489,7 @@ const grid = document.getElementById('grid');
 const playerContainer = document.getElementById('playerContainer');
 let hls = null;
 let currentCategory = 'LIVE TV'; 
-let currentFocusedElement = null; // Mbajtja e elementit aktual të fokusuar
+let currentFocusedElement = null; 
 
 // --- focus/navigation state ---
 let focusedArea = 'cats'; 
@@ -535,6 +547,11 @@ function loadCategory(cat){
         logo.src = ch.logo;
         logo.alt = ch.name;
         box.appendChild(logo);
+        
+        // SHTESA E RE: Shtohet elementi i indikatorit (vija e bardhë)
+        const indicator = document.createElement('div');
+        indicator.className = 'channel-indicator';
+        box.appendChild(indicator);
 
         box.onclick = ()=> openPlayerForChannel(ch);
         box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } 
@@ -549,7 +566,6 @@ function loadCategory(cat){
 
 // NDRYSHIM: Optimizimi i funksionit të fokusit
 function focusCurrent(){
-    // Hiq fokusin nga elementi i mëparshëm
     if (currentFocusedElement) {
         currentFocusedElement.classList.remove('focused');
     }
@@ -594,7 +610,6 @@ function getWeatherDescription(code) {
     if (code >= 80 && code <= 82) return { description: "Stuhi me shi", emoji: "⛈️" };
     if (code >= 95 && code <= 99) return { description: "Stuhi", emoji: "🌩️" };
     
-    // Kod i lagësht/shi për çdo gjë të mbetur me shi
     if (code >= 50 && code <= 89) {
         return { description: "I Lagësht/Shi", emoji: "💧" }; 
     }
@@ -604,21 +619,15 @@ function getWeatherDescription(code) {
 
 function updateClock() {
     const now = new Date();
-    // Përdor 'h23' për formatin 24-orësh si në foto (p.sh., 02:27)
     const timeString = now.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-    
-    // Dita, Data dhe Muaji
     const dateString = now.toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long' });
     
     document.getElementById('currentTime').textContent = timeString;
-    // Data/Dita/Muaji - shfaqet në qendër poshtë orës
     document.getElementById('currentDate').textContent = dateString;
 } 
 
-// 1. Funksioni i Motit Tani Merr Koordinatat Statike
 async function fetchWeather(lat, lon, cityName) {
     const weatherSummary = document.getElementById('weatherSummary');
-    
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`; 
 
     try {
@@ -632,8 +641,6 @@ async function fetchWeather(lat, lon, cityName) {
         const currentCode = data.current.weather_code;
         const currentWeatherDesc = getWeatherDescription(currentCode);
         
-        // Përditësimi i motit
-        // Formati: "emoji temperatura°C"
         weatherSummary.innerHTML = `${currentWeatherDesc.emoji} ${currentTemp}°C`; 
         
     } catch (error) {
@@ -642,14 +649,10 @@ async function fetchWeather(lat, lon, cityName) {
     }
 } 
 
-// 2. Funksioni Kryesor PËR MOTIN STATIK (SUHAREKE)
 function loadSuharekeWeather() {
-    // Koordinatat e Suharekës (përafërsisht)
     const suharekeLat = 42.36; 
     const suharekeLon = 20.84; 
     const suharekeCity = "Suharekë"; 
-
-    // Thërrasim funksionin e motit me koordinata statike
     fetchWeather(suharekeLat, suharekeLon, suharekeCity);
 }
 
@@ -703,7 +706,6 @@ function centerMenuFocus(menuItems, index) {
     const menuHeight = channelMenu.clientHeight; 
     const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2); 
 
-    // Përdorim 'auto' për scroll të menjëhershëm
     channelMenu.scrollTo({ 
         top: targetScrollTop, 
         behavior: 'auto' 
@@ -716,7 +718,6 @@ function toggleChannelMenu(){
 
     isMenuVisible = !isMenuVisible;
     
-    // Shfaqja/Fshehja e menjëhershme pa tranzicion
     if(isMenuVisible) {
         channelMenu.classList.add('active'); 
         channelMenu.style.display = 'block';
@@ -783,7 +784,6 @@ document.addEventListener('keydown', (e)=>{
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
             
-            // Kohëzgjatja e pritjes për numra e reduktuar në 1000ms për reagim më të shpejtë
             digitTimer = setTimeout(() => {
                 let targetNumber = parseInt(digitBuffer);
                 
@@ -880,7 +880,7 @@ document.addEventListener('keydown', (e)=>{
             if (gridFocus < gridItems.length - 1) {
                 gridFocus = gridFocus + 1;
             } else {
-                // Opsional: Kthehu në fillim të rreshtit ose lëviz majtas
+                // ...
             }
         }
     }
@@ -1012,7 +1012,6 @@ function openPlayerForChannel(ch, isSwitching = false){
 
     // Luaj me hls.js
     if(Hls && Hls.isSupported()){
-        // Reduktuar maxBufferLength për përdorim më të ulët të kujtesës dhe ngarkim më të shpejtë
         hls = new Hls({ maxBufferLength: 10 }); 
         hls.loadSource(url);
         hls.attachMedia(video);
