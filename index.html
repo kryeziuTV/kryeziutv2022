@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V22</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V21</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
 <style>
@@ -13,8 +13,6 @@
         font-family:'Rubik',sans-serif; 
         color:#fff; 
         margin:0; 
-        /* Sigurohuni që trupi të mos shkaktojë scroll horizontal */
-        overflow-x: hidden; 
     } 
     
     /* SFONDI STATIK I IMZHIT - BLUR I LARGUR */
@@ -31,8 +29,13 @@
         background-image: url("https://i.imgur.com/yeiw0tZ.jpeg");
         background-size: cover;
         background-position: center;
+        /* HEQUR: blur(2px) */
         filter: brightness(0.7); 
     }
+
+    /* SHTRESA BLUR-UAR - E LARGUR PLOTËSISHT */
+    /* U LARGUA: #blur-overlay stili */
+
 
     /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË TË DJATHTË) --- */
     #headerWidget {
@@ -52,16 +55,17 @@
         pointer-events: none; 
     } 
 
-    /* KARTELA KRYESORE E WIDGET-IT - TANI PA SFOND DHE HIJE */
+    /* KARTELA KRYESORE E WIDGET-IT */
     #timeDate {
         display: flex;
         flex-direction: column;
         align-items: flex-end; 
-        background: none; 
+        /* KUFIZUESI KRYESOR ME NGJYRËN E KANALEVE */
+        background: rgba(180, 160, 255, 0.2); 
         padding: 10px 20px; 
         border-radius: 14px; 
         min-width: 200px; 
-        box-shadow: none; 
+        box-shadow: 0 6px 20px rgba(0,0,0,.5); 
         position: relative; 
     }
 
@@ -123,39 +127,36 @@
         align-items: center; 
         padding: 40px; 
         background: none; 
+        /* KATEGORITË KALUAN LART */
         margin-top: 20px; 
-        /* NDRYSHIM: Siguron që përmbajtja të jetë e centruar pavarësisht shkallëzimit */
-        width: 100%; 
-        box-sizing: border-box; 
     } 
 
     /* KATEGORITË & GRIDI I KANALEVE */
     .categories { 
         display:flex; 
-        gap: 20px; 
+        gap: 0; /* Larguar gap-i per butona te bashkuar */
         margin-bottom:40px; 
         justify-content: center; 
-        /* NDRYSHIM: Kufizojmë gjerësinë për të mos u shtrirë shumë në ekrane të mëdha */
-        max-width: 1000px; 
         width: 100%; 
+        /* Shtohet Padding lart, për të zhvendosur kategoritë lart */
         padding-top: 0; 
     } 
 
     /* STILIMI I RI PËR KATEGORITË */
     .cat-btn { 
+        /* HEQUR background, box-shadow, border */
         background: none; 
         color:#fff; 
         padding:15px 28px; 
-        font-size: 1.3em; 
+        font-size: 1.2em; 
         font-weight: 600; 
         cursor:pointer; 
-        transition: transform .15s ease-out; 
-        border: none; 
+        transition: color .15s ease-out; 
+        border: none; /* Hequr border-i */
         border-radius: 0;
-        position: relative; 
-        margin: 0; 
+        position: relative; /* E rëndësishme për ::after */
+        margin: 0 10px; /* Ndarje minimale mes butonave */
         outline: none;
-        white-space: nowrap; /* Parandalon thyerjen e tekstit */
     }
 
     /* Vija e bardhë (Indikatori) */
@@ -172,73 +173,31 @@
         transition: width 0.1s ease-out;
     }
 
-    /* STILIMI I FOKUSIT (VETËM VIZA POSHTË DHE SCALE UP) */
+    /* STILIMI I FOKUSIT (VETËM VIZA POSHTË DHE NGJYRA) */
     .cat-btn:focus, .cat-btn.focused { 
-        background: none; 
+        background: none; /* Sigurohu që të jetë transparent */
         color: #fff;
-        transform: scale(1.05); 
-        box-shadow: none; 
+        transform: none; /* Larguar efekti pop-up */
+        box-shadow: none; /* Larguar hija */
     }
     
     .cat-btn:focus::after, .cat-btn.focused::after {
-        width: 30px; 
+        width: 30px; /* Gjatësia e vizës kur është fokusuar */
     }
 
-    .cat-btn:active { transform:scale(0.98); } 
+    .cat-btn:active { transform:none; } /* Larguar efekti aktiv */
 
-    /* GRIDA KRYESORE - PËR DESKTOP DHE EKRANE TË GJERA */
     .grid { 
         display:grid; 
-        /* 7 Kolona me hapësirë të barabartë */
-        grid-template-columns: repeat(7, 1fr); 
-        max-width: 1000px; 
-        width: 100%;
+        grid-template-columns:repeat(7,120px); 
         gap:20px; 
     } 
-    
-    /* --- MEDIA QUERY PËR TË RREGULLUAR SHFAQJEN NË TELEFON (Pajisjet e Ngushta) --- */
-    /* NËSE GJERËSIA E EKRANIT ËSHTË NËN 768px (E RËNDËSISHME PËR TELEFONIN) */
-    @media (max-width: 768px) {
-        #mainContent {
-            /* zvogëlo pak padding-un */
-            padding: 20px 10px; 
-        }
 
-        .categories {
-             /* Lejon kategoritë të kalojnë në rreshtin tjetër nëse nuk ka hapësirë */
-            flex-wrap: wrap; 
-        }
-        
-        .cat-btn {
-            /* zvogëlo pak madhësinë e butonit */
-            padding: 10px 15px; 
-            font-size: 1.1em;
-        }
-
-        .grid { 
-            /* NDRYSHIM PËR PËRSHTATJEN: 4 ose 5 kolona për të zënë ekranin e plotë të telefonit */
-            /* Zgjidhni 4 Kolona për të parandaluar ndarjen në gjysmë */
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 10px; /* zvogëlo gap-in */
-            max-width: 100%; /* Shfrytëzo gjerësinë e plotë */
-        } 
-        
-        /* Zvogëlo pak madhësinë e focus-it që mos t'i 'pushtojë' kanalet fqinje */
-        .channel:focus, .channel.focused {
-             transform: scale(1.1);
-        }
-        
-        /* Rregullon widget-in e orës në qoshen poshtë djathtas */
-        #headerWidget {
-            bottom: 10px;
-            right: 10px;
-        }
-    }
-
-    /* --- STILIMI I KANALIT (I Përditësuar) --- */
+    /* --- STILIMI I KANALIT (I Përditësuar me Kërkesë) --- */
     .channel { 
-        width: auto; 
-        aspect-ratio: 1 / 1; 
+        width:120px; 
+        height:120px; 
+        /* Ngjyra e Kanaleve (Light Purple me transparencë) */
         background: rgba(180, 160, 255, 0.2); 
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
@@ -252,30 +211,34 @@
         overflow: hidden; 
         padding: 10px; 
         box-sizing: border-box;
-        position: relative; 
+        position: relative; /* E rëndësishme për vendosjen e indikatorit */
     }
 
     .channel:focus, .channel.focused { 
+        /* NDRYSHIM 1: Scale më i madh (1.25) */
         transform: scale(1.25); 
+        /* NDRYSHIM 2: Hiqet borderi i vjetër i poshtëm */
         border: 3px solid transparent; 
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); /* Rritet hija */
         outline:none; 
     }
     .channel:active { transform:scale(0.98); } 
 
+    /* NDRYSHIM I RI: Vija e bardhë në fund (Indikatori) */
     .channel-indicator {
         position: absolute;
-        bottom: 5px; 
-        left: 50%; 
+        bottom: 5px; /* Ngrihet pak nga fundi i kutisë */
+        left: 50%; /* Qendra horizontale */
         transform: translateX(-50%);
-        width: 40px; 
-        height: 4px; 
-        background-color: transparent; 
+        width: 40px; /* Gjatësia e vizës */
+        height: 4px; /* Trashësia e vizës */
+        background-color: transparent; /* Fshehur normalisht */
         transition: background-color .1s ease-out;
         border-radius: 2px;
-        z-index: 2; 
+        z-index: 2; /* Siguron që të jetë mbi çdo gjë tjetër brenda kanalit */
     }
 
+    /* Shfaqet vetëm kur është fokusuar */
     .channel:focus .channel-indicator, .channel.focused .channel-indicator {
         background-color: #ffffff;
     }
@@ -448,7 +411,6 @@
 <body>
     
     <div id="background-image"></div>
-    
     <div id="headerWidget">
         <div id="timeDate">
             <span id="weatherSummary"></span> 
@@ -541,7 +503,7 @@ let currentFocusedElement = null;
 let focusedArea = 'cats'; 
 let catFocus = 0;
 let gridFocus = 0;
-const GRID_COLS = 7; // Kjo përdoret vetëm në logjikën e navigimit
+const GRID_COLS = 7; 
 
 // NDIHMËS PËR MENY & NAVIGIM
 let isMenuVisible = false;
@@ -635,9 +597,6 @@ function focusCurrent(){
         targetElement.classList.add('focused');
         targetElement.focus(); 
         currentFocusedElement = targetElement;
-        
-        // Scroll në elementin e fokusuar (siguron që nuk shfaqet gjysma)
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 } 
 
@@ -1070,8 +1029,6 @@ document.addEventListener('keydown', (e)=>{
     } 
 
     // KONTROLLAT E NAVIGIMIT TË UI-SË (jashtë player-it)
-    const GRID_COLS_CURRENT = window.innerWidth <= 768 ? 4 : 7; // Përshtat gridin e navigimit
-
     if(e.key === 'ArrowRight'){
         if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
         else { 
@@ -1094,7 +1051,7 @@ document.addEventListener('keydown', (e)=>{
             gridFocus = Math.min(catFocus, grid.querySelectorAll('.channel').length - 1); 
         } else {
             const currentItems = grid.querySelectorAll('.channel');
-            const newIndex = gridFocus + GRID_COLS_CURRENT;
+            const newIndex = gridFocus + GRID_COLS;
             if (newIndex < currentItems.length) {
                 gridFocus = newIndex;
             }
@@ -1102,12 +1059,12 @@ document.addEventListener('keydown', (e)=>{
     }
     if(e.key === 'ArrowUp'){
         if(focusedArea === 'grid'){
-            if(gridFocus < GRID_COLS_CURRENT){ 
+            if(gridFocus < GRID_COLS){ 
                 focusedArea = 'cats';
                 // Përditëso catFocus bazuar në pozicionin e kolonës
                 catFocus = Math.min(gridFocus, categories.length - 1);
             } else {
-                gridFocus = gridFocus - GRID_COLS_CURRENT;
+                gridFocus = gridFocus - GRID_COLS;
             }
         }
     } 
@@ -1134,6 +1091,7 @@ document.addEventListener('keydown', (e)=>{
 
     focusCurrent();
 }); 
+
 
 // handle history/back
 window.addEventListener('popstate', (e)=>{
