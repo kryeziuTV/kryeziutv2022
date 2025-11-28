@@ -2,9 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V21</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TV App UI - Versioni me Sidebar - V24.1 (UPDATED)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 
 <style>
     /* --- STILIMET KRYESORE --- */
@@ -13,6 +15,7 @@
         font-family:'Rubik',sans-serif; 
         color:#fff; 
         margin:0; 
+        overflow-x: hidden; 
     } 
     
     /* SFONDI STATIK I IMZHIT - BLUR I LARGUR */
@@ -29,13 +32,8 @@
         background-image: url("https://i.imgur.com/yeiw0tZ.jpeg");
         background-size: cover;
         background-position: center;
-        /* HEQUR: blur(2px) */
         filter: brightness(0.7); 
     }
-
-    /* SHTRESA BLUR-UAR - E LARGUR PLOTËSISHT */
-    /* U LARGUA: #blur-overlay stili */
-
 
     /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË TË DJATHTË) --- */
     #headerWidget {
@@ -55,13 +53,13 @@
         pointer-events: none; 
     } 
 
-    /* KARTELA KRYESORE E WIDGET-IT */
     #timeDate {
         display: flex;
         flex-direction: column;
         align-items: flex-end; 
-        /* KUFIZUESI KRYESOR ME NGJYRËN E KANALEVE */
-        background: rgba(180, 160, 255, 0.2); 
+        /* NDRYSHIMI 2: HEQJA E TRANSPARENCËS NGA WIDGET-I I MOTIT */
+        background: rgb(30, 30, 30); /* Ngjyrë e ngurtë në vend të rgba(...) */
+        opacity: 1; /* Sigurohu që transparenca e widget-it të jetë hequr */
         padding: 10px 20px; 
         border-radius: 14px; 
         min-width: 200px; 
@@ -69,7 +67,6 @@
         position: relative; 
     }
 
-    /* Moti i menjëhershëm */
     #weatherSummary {
         display: flex;
         align-items: center;
@@ -85,7 +82,6 @@
         text-align: right;
     }
 
-    /* ORA */
     #currentTime {
         font-size: 3em; 
         font-weight: 700; 
@@ -98,7 +94,6 @@
         text-align: right; 
     }
 
-    /* DITA DHE DATA */
     #currentDate {
         font-size: 1em; 
         font-weight: 400; 
@@ -111,55 +106,125 @@
         text-align: right; 
     } 
 
-    /* Vendi/Qyteti (I Fshehur) */
     #weatherCity { display: none; } 
-
-    /* Parashikimi 7-ditor (I FSHEHUR PLOTËSISHT) */
     #weatherInfo { display: none; } 
 
     /* --- FUNDI I STILIMIT TË WIDGET-IT --- */
 
 
-    /* KONTEJNERI KRYESOR PËR QENDRËZIM */
+    /* --- MENYJA ANËSORE (SIDEBAR) --- */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100px; /* Gjerësia e butonave */
+        height: 100vh;
+        /* NDRYSHIMI 1: BËJ SHIRITIN E ZI TRANSPARENT DHE QENDËRSO Ikonat Vertikalisht */
+        background: transparent; /* Heqja e sfondit të zi */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; /* Ikonat në qendër vertikalisht */
+        padding-top: 0; /* Heqja e padding-ut të lartë */
+        z-index: 50; 
+        gap: 15px;
+    }
+
+    .sidebar-btn {
+        width: 80px;
+        height: 80px; 
+        background: none;
+        border: 3px solid transparent; 
+        border-radius: 18px; 
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-size: 0.8em; 
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform .1s ease-out, box-shadow .1s ease-out, background-color .1s;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .sidebar-btn i {
+        font-size: 2.2em; /* Madhësia e ikonës */
+        color: rgba(255, 255, 255, 0.7); 
+        transition: color 0.1s;
+    }
+
+    .sidebar-btn.focused, .sidebar-btn:focus {
+        background-color: rgba(180, 160, 255, 0.3);
+        transform: scale(1.08); 
+        box-shadow: 0 0 15px rgba(180, 160, 255, 0.5); 
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    .sidebar-btn.focused i, .sidebar-btn:focus i {
+        color: #fff;
+    }
+
+
+    /* --- KONTEJNERI KRYESOR PËR PAMJET --- */
     #mainContent {
         display: flex;
         flex-direction: column;
         align-items: center; 
-        padding: 40px; 
+        /* Shtohet padding i majtë për t'i lënë vend sidebar-it (100px + 40px) */
+        padding: 40px 40px 40px 140px; 
         background: none; 
-        /* KATEGORITË KALUAN LART */
         margin-top: 20px; 
+        width: calc(100% - 140px); /* I jep gjerësinë e mbetur */
+        box-sizing: border-box; 
+        min-height: 100vh;
     } 
+    
+    .view-section {
+        width: 100%;
+        max-width: 1200px;
+        display: none; 
+    }
+    .view-section.active {
+        display: block; 
+    }
+    
+    .view-section h2 {
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 30px;
+        border-left: 5px solid #6246B8;
+        padding-left: 15px;
+    }
 
-    /* KATEGORITË & GRIDI I KANALEVE */
+    /* KATEGORITË DHE GRIDI (Tani vetëm brenda pamjes LIVE TV) */
     .categories { 
         display:flex; 
-        gap: 0; /* Larguar gap-i per butona te bashkuar */
+        gap: 20px; 
         margin-bottom:40px; 
         justify-content: center; 
         width: 100%; 
-        /* Shtohet Padding lart, për të zhvendosur kategoritë lart */
         padding-top: 0; 
+        max-width: 1000px; 
     } 
 
-    /* STILIMI I RI PËR KATEGORITË */
     .cat-btn { 
-        /* HEQUR background, box-shadow, border */
         background: none; 
         color:#fff; 
         padding:15px 28px; 
-        font-size: 1.2em; 
+        font-size: 1.3em; 
         font-weight: 600; 
         cursor:pointer; 
-        transition: color .15s ease-out; 
-        border: none; /* Hequr border-i */
+        transition: transform .15s ease-out; 
+        border: none; 
         border-radius: 0;
-        position: relative; /* E rëndësishme për ::after */
-        margin: 0 10px; /* Ndarje minimale mes butonave */
+        position: relative; 
+        margin: 0; 
         outline: none;
+        white-space: nowrap; 
     }
 
-    /* Vija e bardhë (Indikatori) */
     .cat-btn::after {
         content: '';
         position: absolute;
@@ -173,31 +238,32 @@
         transition: width 0.1s ease-out;
     }
 
-    /* STILIMI I FOKUSIT (VETËM VIZA POSHTË DHE NGJYRA) */
     .cat-btn:focus, .cat-btn.focused { 
-        background: none; /* Sigurohu që të jetë transparent */
+        background: none; 
         color: #fff;
-        transform: none; /* Larguar efekti pop-up */
-        box-shadow: none; /* Larguar hija */
+        transform: scale(1.05); 
+        box-shadow: none; 
     }
     
     .cat-btn:focus::after, .cat-btn.focused::after {
-        width: 30px; /* Gjatësia e vizës kur është fokusuar */
+        width: 30px; 
     }
 
-    .cat-btn:active { transform:none; } /* Larguar efekti aktiv */
+    .cat-btn:active { transform:scale(0.98); } 
 
     .grid { 
         display:grid; 
-        grid-template-columns:repeat(7,120px); 
+        grid-template-columns: repeat(7, 1fr); 
+        max-width: 1000px; 
+        width: 100%;
         gap:20px; 
+        margin: 0 auto; 
     } 
-
-    /* --- STILIMI I KANALIT (I Përditësuar me Kërkesë) --- */
+    
+    /* --- STILIMI I KANALIT --- */
     .channel { 
-        width:120px; 
-        height:120px; 
-        /* Ngjyra e Kanaleve (Light Purple me transparencë) */
+        width: auto; 
+        aspect-ratio: 1 / 1; 
         background: rgba(180, 160, 255, 0.2); 
         border-radius:14px; 
         box-shadow:0 6px 20px rgba(0,0,0,.5); 
@@ -211,34 +277,30 @@
         overflow: hidden; 
         padding: 10px; 
         box-sizing: border-box;
-        position: relative; /* E rëndësishme për vendosjen e indikatorit */
+        position: relative; 
     }
 
     .channel:focus, .channel.focused { 
-        /* NDRYSHIM 1: Scale më i madh (1.25) */
         transform: scale(1.25); 
-        /* NDRYSHIM 2: Hiqet borderi i vjetër i poshtëm */
         border: 3px solid transparent; 
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); /* Rritet hija */
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
         outline:none; 
     }
     .channel:active { transform:scale(0.98); } 
 
-    /* NDRYSHIM I RI: Vija e bardhë në fund (Indikatori) */
     .channel-indicator {
         position: absolute;
-        bottom: 5px; /* Ngrihet pak nga fundi i kutisë */
-        left: 50%; /* Qendra horizontale */
+        bottom: 5px; 
+        left: 50%; 
         transform: translateX(-50%);
-        width: 40px; /* Gjatësia e vizës */
-        height: 4px; /* Trashësia e vizës */
-        background-color: transparent; /* Fshehur normalisht */
+        width: 40px; 
+        height: 4px; 
+        background-color: transparent; 
         transition: background-color .1s ease-out;
         border-radius: 2px;
-        z-index: 2; /* Siguron që të jetë mbi çdo gjë tjetër brenda kanalit */
+        z-index: 2; 
     }
 
-    /* Shfaqet vetëm kur është fokusuar */
     .channel:focus .channel-indicator, .channel.focused .channel-indicator {
         background-color: #ffffff;
     }
@@ -256,9 +318,78 @@
         transform: none; 
     }
 
-    /* --- FUNDI I STILIMIT TË KANALIT --- */
+    /* --- PAMJA E KERKIMIT (SEARCH) --- */
+    #searchView {
+        text-align: center;
+        padding-top: 100px;
+    }
 
-    /* PLAYER CONTAINER (pa ndryshime) */
+    #searchBar {
+        width: 80%;
+        max-width: 700px;
+        padding: 15px 25px;
+        font-size: 1.8em;
+        border: none;
+        border-radius: 12px;
+        background: #fff;
+        color: #1e1e1e;
+        outline: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        transition: box-shadow 0.2s;
+    }
+    #searchBar:focus {
+        box-shadow: 0 10px 40px rgba(180, 160, 255, 0.5);
+    }
+    
+    #searchResults {
+        margin-top: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        justify-content: center;
+    }
+    
+    /* --- PAMJA E HOME --- */
+    #homeView {
+        padding-top: 50px;
+    }
+    
+    /* STILIMET E BUTONAVE TE HOME JANE LENE KESHTU, POR BUTONAT HIQEN NE HTML */
+    .home-option-btn {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 25px;
+        background: rgba(180, 160, 255, 0.2);
+        border: 3px solid transparent;
+        border-radius: 14px;
+        color: #fff;
+        font-size: 1.5em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform .1s, background-color .1s, border-color .1s;
+        outline: none;
+        box-shadow: 0 6px 20px rgba(0,0,0,.5); 
+        gap: 20px;
+    }
+    .home-option-btn i {
+        font-size: 1.8em;
+        color: #6246B8;
+    }
+    
+    .home-option-btn:focus, .home-option-btn.focused {
+        transform: scale(1.05);
+        background-color: rgba(65, 105, 225, 0.3);
+        border-color: #4169e1;
+    }
+    
+    .home-option-btn:active {
+        transform: scale(1.0);
+    }
+
+    /* --- PLAYER/INFO BAR STYLING (Pa ndryshime) --- */
     #playerContainer { 
         position:fixed; 
         inset:0; 
@@ -276,8 +407,6 @@
         border:0; 
         pointer-events:none; 
     } 
-
-    /* Info Bar (pa ndryshime) */
     #infoBar {
         position: absolute;
         bottom: 0;
@@ -297,20 +426,16 @@
         z-index: 99999;
         justify-content: center; 
     } 
-
     #infoBar.visible {
         opacity: 1;
         transform: translateY(0%);
     } 
-
     .channel-title {
         font-size: 2.2em;
         font-weight: 700;
         color: #fff;
         line-height: 1;
     } 
-
-    /* Loading/Error Overlay (pa ndryshime) */
     #loadingOverlay {
         position: absolute;
         inset: 0;
@@ -321,30 +446,7 @@
         justify-content: center;
         z-index: 100000; 
     } 
-    #loadingOverlay .message {
-        font-size: 1.5em;
-        font-weight: 500;
-        color: #fff;
-        margin-top: 20px;
-    } 
-    .spinner {
-        border: 5px solid rgba(255, 255, 255, 0.3);
-        border-top: 5px solid #6246B8;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-    } 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    } 
-    .error-text {
-        color: #ff4d4f; 
-        font-weight: bold;
-    } 
-
-    /* --- MENYJA ANËSORE (E Shpejtë - pa ndryshime) --- */
+    /* --- MENYJA ANËSORE E KANALIT (Nuk është sidebar-i) --- */
     #channelMenu {
         position: absolute;
         top: 0;
@@ -362,55 +464,35 @@
         transform: translateX(-100%); 
     } 
 
-    #channelMenu.active {
-        transform: translateX(0);
-    }
-
-    .menu-channel-item {
-        padding: 20px 25px; 
-        color: #fff; 
-        font-size: 1.3em; 
-        font-weight: 500;
-        cursor:pointer;
-        transition: background-color 0.05s, transform 0.05s, box-shadow 0.05s; 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: flex;
-        align-items: center; 
-        gap: 20px; 
-        border-left: 5px solid transparent; 
-    } 
-
-    .menu-channel-number {
-        font-weight: 700; 
-        color: #6246B8; 
-        font-size: 1.5em; 
-        width: 45px; 
-        text-align: right;
-    } 
-
-    .menu-channel-item.focused {
-        background-color: rgba(65, 105, 225, 0.3); 
-        border-left-color: #4169e1; 
-        color: #fff;
-        transform: scale(1.03);
-        box-shadow: 
-            0 0 10px rgba(65, 105, 225, 0.3),
-            5px 0 15px rgba(0, 0, 0, 0.5); 
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    } 
-
-    .menu-channel-item:focus {
-        outline: none; 
-    }
-    /* --- FUNDI I STILIMIT TË MENUSË ANËSORE --- */
 </style>
 </head>
 <body>
     
     <div id="background-image"></div>
+
+    <div id="sidebar">
+        <button class="sidebar-btn" data-view="Search" data-idx="0">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </button>
+        <button class="sidebar-btn" data-view="Home" data-idx="1">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </button>
+        <button class="sidebar-btn" data-view="LiveTV" data-idx="2">
+            <i class="fa-solid fa-tv"></i>
+            <span>Live TV</span>
+        </button>
+        <button class="sidebar-btn" data-view="Favorites" data-idx="3">
+            <i class="fa-solid fa-star"></i>
+            <span>Favorite</span>
+        </button>
+        <button class="sidebar-btn" data-view="Settings" data-idx="4">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </button>
+    </div>
+
     <div id="headerWidget">
         <div id="timeDate">
             <span id="weatherSummary"></span> 
@@ -418,16 +500,45 @@
             <span id="currentDate">--/--</span>
             <span id="weatherCity">Suharekë</span>
         </div> 
-
         <div id="weatherInfo">
-            <div id="forecast7Day" class="forecast-grid">
-            </div>
+            <div id="forecast7Day" class="forecast-grid"></div>
         </div>
     </div>
     
     <div id="mainContent">
-        <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
-        <div class="grid" id="grid" role="grid"></div> 
+        
+        <div id="homeView" class="view-section">
+             <h2>Home</h2>
+             <p style="text-align:center; margin-top: 50px; color: rgba(255, 255, 255, 0.6);">
+                * Funksionalitetet 'Kthehu në ekranin kryesor' dhe 'Mbyll aplikacionin' janë larguar nga kjo pamje siç u kërkua.
+             </p>
+        </div>
+
+        <div id="liveTVView" class="view-section active">
+            <h2>Live TV</h2>
+            <div class="categories" id="categories" role="toolbar" aria-label="Categories"></div>
+            <div class="grid" id="grid" role="grid"></div> 
+        </div>
+
+        <div id="favoritesView" class="view-section">
+            <h2>Favorite</h2>
+            <div class="grid" id="favoritesGrid" role="grid">
+                 <p style="text-align: center; width: 100%; font-size: 1.2em; color: rgba(255, 255, 255, 0.7);">
+                    Për momentin nuk keni kanale të shënuara si të preferuara (favorites).
+                 </p>
+                 </div>
+        </div>
+
+        <div id="searchView" class="view-section">
+            <h2>Kërko Kanale</h2>
+            <input type="text" id="searchBar" placeholder="Shkruaj emrin e kanalit..." tabIndex="0" />
+            <div id="searchResults" class="grid" role="grid"></div>
+        </div>
+
+        <div id="settingsView" class="view-section">
+            <h2>Settings</h2>
+            <p style="text-align: center; font-size: 1.2em; color: rgba(255, 255, 255, 0.7);">Kjo pamje do të zhvillohet më vonë.</p>
+        </div>
     </div> 
 
     <div id="playerContainer">
@@ -445,6 +556,9 @@
 <script>
 // --- data ---
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
+// Shndërruar "LIVE TV" në një listë me emra të kategorive
+const channelSubCategories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"]; 
+
 const channelsByCategory = {
     "LIVE TV": [
         { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "RTK1.xk" },
@@ -456,7 +570,7 @@ const channelsByCategory = {
         { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v2a1/mono.m3u8", channelId: "T7.xk" },
         { name:"TV PRIZRENI", logo:"https://vimg.ipko.tv/logo/color/tvprizreni.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v3a1/mono.ts.m3u8", channelId: "T7.xk" },
         { name:"TV SYRI", logo:"https://vimg.ipko.tv/logo/color/syritv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/xej-xnb-ba0-kup/index.m3u8", channelId: "T7.xk" },
-        { name:"TV ARTA", logo:"https://vimg.ipko.tv/logo/color/tvarta.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/mps-vgx-u9p-qv1/index.m3u8", channelId: "T7.xk" },
+        { name:"TV ARTA", logo:"https://vimg.ko.tv/logo/color/tvarta.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/mps-vgx-u9p-qv1/index.m3u8", channelId: "T7.xk" },
         { name:"EURONEWS ALBANIA", logo:"https://vimg.ipko.tv/logo/color/euronewsalbania.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2dw-zuf-1c9-pxu/index.m3u8", channelId: "A2CNN.xk" },
         { name:"A2 CNN", logo:"https://vimg.ipko.tv/logo/color/a2cnn.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2h7-5bc-xym-0k2/tracks-v2a1/mono.ts.m3u8", channelId: "BBVipKS1.xk" },
         { name:"PRO 1", logo:"https://vimg.ipko.tv/logo/color/pro1.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/nng-gki-l1j-n1z/tracks-v2a1/mono.ts.m3u8", channelId: "BBVipKS1.xk" },
@@ -467,16 +581,16 @@ const channelsByCategory = {
         { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/ae40b0f2-de0d-4483-9fb5-9697cbff13b6_output_0.m3u8", channelId: "BBVipKS2.xk" }
     ],
     "FILMA": [ 
-        { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"", channelId: "C1.xk" },
-        { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"", channelId: "C2.xk" },
-        { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"", channelId: "C3.xk" },
-        { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C4", url:"", channelId: "C4.xk" } 
+        { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"#", channelId: "C1.xk" },
+        { name:"Cinema 2", logo:"https://via.placeholder.com/120x120?text=C2", url:"#", channelId: "C2.xk" },
+        { name:"Cinema 3", logo:"https://via.placeholder.com/120x120?text=C3", url:"#", channelId: "C3.xk" },
+        { name:"Cinema 4", logo:"https://via.placeholder.com/120x120?text=C4", url:"#", channelId: "C4.xk" } 
     ],
     "SPORT": [ 
-        { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S1", url:"", channelId: "S1.xk" },
-        { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S2", url:"", channelId: "S2.xk" },
-        { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S3", url:"", channelId: "S3.xk" },
-        { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=S4", url:"", channelId: "S4.xk" } 
+        { name:"Sport 1", logo:"https://via.placeholder.com/120x120?text=S1", url:"#", channelId: "S1.xk" },
+        { name:"Sport 2", logo:"https://via.placeholder.com/120x120?text=S2", url:"#", channelId: "S2.xk" },
+        { name:"Sport 3", logo:"https://via.placeholder.com/120x120?text=S3", url:"#", channelId: "S3.xk" },
+        { name:"Sport 4", logo:"https://via.placeholder.com/120x120?text=S4", url:"#", channelId: "S4.xk" } 
     ],
     "FEMIJE": [ 
         { name:"DISNEY JUNIOR", logo:"https://via.placeholder.com/120x120?text=K1", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8", channelId: "DISNEY_JR.xk" }, 
@@ -488,39 +602,20 @@ const channelsByCategory = {
         { name:"NAT GEO", logo:"https://via.placeholder.com/120x120?text=D1", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8", channelId: "NATGEO.xk" }, 
         { name:"NAT GEO WILD", logo:"https://via.placeholder.com/120x120?text=D2", url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8", channelId: "NATGEOWILD.xk" }, 
         { name:"HISTORY", logo:"https://via.placeholder.com/120x120?text=D3", url:"https://fl1.moveonjoy.com/history_channel/index.m3u8", channelId: "HISTORY.xk" }, 
-        { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D4", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a", channelId: "CARS_TV.xk" } ]
+        { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D4", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a", channelId: "CARS_TV.xk" } 
+    ]
 }; 
 
-// --- DOM refs ---
-const catWrap = document.getElementById('categories');
-const grid = document.getElementById('grid');
-const playerContainer = document.getElementById('playerContainer');
-let hls = null;
-let currentCategory = 'LIVE TV'; 
-let currentFocusedElement = null; 
-
-// --- focus/navigation state ---
-let focusedArea = 'cats'; 
-let catFocus = 0;
-let gridFocus = 0;
-const GRID_COLS = 7; 
-
-// NDIHMËS PËR MENY & NAVIGIM
-let isMenuVisible = false;
-let menuFocusIndex = 0;
-let currentChannelIndex = 0; 
-let infoBarTimer = null; 
-let digitBuffer = ''; 
-let digitTimer = null; 
-
+// I shënojmë të gjitha kanalet si një listë e vetme
 const allChannelsList = [];
 let channelNumberCounter = 0;
-categories.forEach(categoryName => {
+// Krijojmë listën e përgjithshme, duke caktuar indeksin dhe numrin e kanalit
+Object.keys(channelsByCategory).forEach(categoryName => {
     const list = channelsByCategory[categoryName] || [];
     list.forEach(channel => {
         channel.fullIndex = channelNumberCounter;
         channel.number = channelNumberCounter + 1;
-        channel.category = categoryName; // Ruaj kategorinë
+        channel.category = categoryName; 
         allChannelsList.push(channel);
         channelNumberCounter++;
     });
@@ -528,8 +623,43 @@ categories.forEach(categoryName => {
 const MAX_CHANNEL_INDEX = allChannelsList.length - 1;
 
 
-// --- render UI ---
-categories.forEach((cat,ci)=>{
+// --- DOM refs ---
+const sidebarBtns = document.querySelectorAll('.sidebar-btn');
+const catWrap = document.getElementById('categories');
+const grid = document.getElementById('grid');
+const favoritesGrid = document.getElementById('favoritesGrid');
+const searchResults = document.getElementById('searchResults');
+const searchBar = document.getElementById('searchBar');
+const playerContainer = document.getElementById('playerContainer');
+
+let hls = null;
+let currentView = 'LiveTV'; 
+let currentCategory = 'LIVE TV'; // Nën-kategoria brenda LiveTV-së
+let currentFocusedElement = null; 
+
+// --- focus/navigation state ---
+let focusedArea = 'sidebar'; // 'sidebar', 'cats', 'grid', 'homeOptions', 'searchBar', 'searchResults'
+let sidebarFocus = 2; // Default në LiveTV
+let catFocus = 0;
+let gridFocus = 0;
+const GRID_COLS = 7; 
+
+// Channel/Player state
+let isMenuVisible = false;
+let menuFocusIndex = 0;
+let currentChannelIndex = 0; 
+let infoBarTimer = null; 
+let digitBuffer = ''; 
+let digitTimer = null; 
+
+// LOGJIKA E FAVORITEVE (Për momentin, vetëm një shembull statik)
+// NDRYSHIMI 4: FAVORITES_CHANNELS vendoset në listë BOOSH siç u kërkua.
+const FAVORITES_CHANNELS = []; // LARGOHEN 4 KANALET E SYGJERUARA (allChannelsList.slice(0, 4))
+
+// --- Render UI ---
+
+// 1. RENDERIMI I KATEGORIVE TË KANALEVE (brenda LiveTV)
+channelSubCategories.forEach((cat,ci)=>{
     const btn = document.createElement('button');
     btn.className = 'cat-btn';
     btn.textContent = cat;
@@ -540,229 +670,484 @@ categories.forEach((cat,ci)=>{
     catWrap.appendChild(btn);
 }); 
 
+// 2. FUNKSIONI KRYESOR PËR NDËRRIMIN E PAMJEVE (VIEW)
+function loadView(viewName){
+    
+    // Mbyll shiritin e kërkimit (nëse ishte aktiv)
+    if(viewName !== 'Search') searchBar.value = '';
+    
+    // Fsheh të gjitha pamjet
+    document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+    
+    // Fsheh fokusin e vjetër
+    if (currentFocusedElement) currentFocusedElement.classList.remove('focused');
+    
+    // Caktuam pamjen e re
+    currentView = viewName;
+
+    if (viewName === 'LiveTV') {
+        document.getElementById('liveTVView').classList.add('active');
+        // Rigjenero LiveTV (për të rifreskuar grid-in)
+        loadCategory(currentCategory);
+        focusedArea = 'sidebar';
+        focusCurrent();
+    } else if (viewName === 'Search') {
+        document.getElementById('searchView').classList.add('active');
+        searchResults.innerHTML = '';
+        focusedArea = 'searchBar';
+        // Vendos fokusin në Search Bar
+        searchBar.focus();
+        currentFocusedElement = searchBar;
+    } else if (viewName === 'Favorites') {
+        document.getElementById('favoritesView').classList.add('active');
+        renderFavorites();
+        focusedArea = 'sidebar';
+        focusCurrent();
+    } else if (viewName === 'Home') {
+        document.getElementById('homeView').classList.add('active');
+        focusedArea = 'sidebar';
+        focusCurrent();
+    } else if (viewName === 'Settings') {
+        document.getElementById('settingsView').classList.add('active');
+        focusedArea = 'sidebar';
+        focusCurrent();
+    }
+    
+    // Përditëson fokusin e sidebar-it
+    sidebarBtns.forEach(btn => btn.classList.remove('focused'));
+    const targetBtn = document.querySelector(`.sidebar-btn[data-view="${viewName}"]`);
+    if (targetBtn) {
+        targetBtn.classList.add('focused');
+        sidebarFocus = parseInt(targetBtn.getAttribute('data-idx'));
+    }
+} 
+
+// 3. RENDERIMI I GRIDEVE TË KANALEVE
 function loadCategory(cat){
     currentCategory = cat;
     grid.innerHTML = '';
     
     const list = channelsByCategory[cat] || [];
     list.forEach((ch,idx)=>{
-        const box = document.createElement('button');
-        box.className = 'channel';
-        box.tabIndex = 0;
-        box.setAttribute('data-idx', idx);
-        
-        // Shtohet logo
-        const logo = document.createElement('img');
-        logo.src = ch.logo;
-        logo.alt = ch.name;
-        box.appendChild(logo);
-        
-        // SHTESA E RE: Shtohet elementi i indikatorit (vija e bardhë)
-        const indicator = document.createElement('div');
-        indicator.className = 'channel-indicator';
-        box.appendChild(indicator);
-
-        box.onclick = ()=> openPlayerForChannel(ch);
+        const box = createChannelBox(ch, idx);
         box.onfocus = ()=> { focusedArea = 'grid'; gridFocus = idx; } 
         grid.appendChild(box);
     });
     
-    catFocus = categories.indexOf(cat) >= 0 ? categories.indexOf(cat) : 0;
+    catFocus = channelSubCategories.indexOf(cat) >= 0 ? channelSubCategories.indexOf(cat) : 0;
     gridFocus = 0;
+    
+    // Pas ngarkimit të kategorisë, vendos fokusin te kategori, jo sidebar
     focusedArea = 'cats';
     focusCurrent();
 } 
 
-// NDRYSHIM: Optimizimi i funksionit të fokusit
+function renderFavorites(){
+    favoritesGrid.innerHTML = '';
+    if (FAVORITES_CHANNELS.length === 0) {
+        favoritesGrid.innerHTML = `
+            <p style="text-align: center; width: 100%; font-size: 1.2em; color: rgba(255, 255, 255, 0.7);">
+                Për momentin nuk keni kanale të shënuara si të preferuara (favorites).
+            </p>`;
+        return;
+    }
+    
+    FAVORITES_CHANNELS.forEach((ch, idx) => {
+        const box = createChannelBox(ch, idx);
+        box.onfocus = ()=> { focusedArea = 'favoritesGrid'; gridFocus = idx; }
+        favoritesGrid.appendChild(box);
+    });
+    
+    focusedArea = 'favoritesGrid';
+    gridFocus = 0;
+    focusCurrent();
+}
+
+function renderSearchResults(channels){
+    searchResults.innerHTML = '';
+    if (channels.length === 0) {
+         searchResults.innerHTML = `
+            <p style="text-align: center; width: 100%; font-size: 1.2em; margin-top: 30px; color: rgba(255, 255, 255, 0.7);">
+                Asnjë kanal nuk u gjet.
+            </p>`;
+        return;
+    }
+    
+    channels.forEach((ch, idx) => {
+        const box = createChannelBox(ch, idx);
+        box.onfocus = ()=> { focusedArea = 'searchResults'; gridFocus = idx; }
+        searchResults.appendChild(box);
+    });
+    
+    focusedArea = 'searchResults';
+    gridFocus = 0;
+    focusCurrent();
+}
+
+
+// Funksion ndihmës për të krijuar një Channel Box
+function createChannelBox(ch, idx){
+    const box = document.createElement('button');
+    box.className = 'channel';
+    box.tabIndex = 0;
+    box.setAttribute('data-idx', idx);
+    
+    const logo = document.createElement('img');
+    logo.src = ch.logo;
+    logo.alt = ch.name;
+    box.appendChild(logo);
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'channel-indicator';
+    box.appendChild(indicator);
+
+    box.onclick = ()=> openPlayerForChannel(ch);
+    return box;
+}
+
+
+// 4. LOGJIKA E FOKUSIT DHE NAVIGIMIT
 function focusCurrent(){
     if (currentFocusedElement) {
         currentFocusedElement.classList.remove('focused');
+        // Nëse nuk është searchBar, fsheh fokusin e shfletuesit
+        if(currentFocusedElement.id !== 'searchBar') currentFocusedElement.blur(); 
     }
 
     let targetElement = null;
     
-    if(focusedArea === 'cats'){
+    if (currentView === 'Search' && focusedArea === 'searchBar'){
+        targetElement = searchBar;
+    } else if (focusedArea === 'sidebar') {
+        const btns = document.querySelectorAll('.sidebar-btn');
+        targetElement = btns[sidebarFocus];
+    } else if (focusedArea === 'cats' && currentView === 'LiveTV') {
         const cats = catWrap.querySelectorAll('.cat-btn');
-        if (cats[catFocus]) {
-            targetElement = cats[catFocus];
-        }
-    } else {
+        targetElement = cats[catFocus];
+    } else if (focusedArea === 'grid' && currentView === 'LiveTV') {
         const items = grid.querySelectorAll('.channel');
-        if (items[gridFocus]) {
+        targetElement = items[gridFocus];
+    } else if (focusedArea === 'favoritesGrid' && currentView === 'Favorites') {
+        const items = favoritesGrid.querySelectorAll('.channel');
+        // Sigurohuni që të mos fokusohet në favoriteGrid nëse është bosh (p.sh. fokuso në sidebar)
+        if(items.length === 0) {
+            focusedArea = 'sidebar';
+            sidebarFocus = 3;
+            targetElement = document.querySelector('.sidebar-btn[data-idx="3"]');
+        } else {
             targetElement = items[gridFocus];
         }
+    } else if (focusedArea === 'searchResults' && currentView === 'Search') {
+        const items = searchResults.querySelectorAll('.channel');
+        targetElement = items[gridFocus];
+    } else if (focusedArea === 'homeOptions' && currentView === 'Home') {
+        // Për shkak se butonat e home janë larguar, fokusi duhet të shkojë te Sidebar
+        focusedArea = 'sidebar';
+        sidebarFocus = 1;
+        targetElement = document.querySelector('.sidebar-btn[data-idx="1"]');
     }
     
     if (targetElement) {
         targetElement.classList.add('focused');
         targetElement.focus(); 
         currentFocusedElement = targetElement;
-    }
-} 
-
-// --- WIDGET LOGIC (Ora dhe Moti) --- 
-function getWeatherDescription(code) {
-    if (code === 0) return { description: "Diell i pastër", emoji: "☀️" };
-    if (code === 1) return { description: "Kryesisht diell", emoji: "🌤️" };
-    if (code === 2) return { description: "Pjesërisht i vranët", emoji: "⛅️" };
-    if (code === 3) return { description: "Moti i vranët", emoji: "☁️" };
-    if (code === 45 || code === 48) return { description: "Mjegull", emoji: "🌫️" };
-    if (code >= 51 && code <= 55) return { description: "Shi i lehtë", emoji: "🌦️" };
-    if (code >= 61 && code <= 65) return { description: "Shi i fortë", emoji: "🌧️" };
-    // Përditësimi për borë: përfshin të gjitha kodet e borës (71-77, 85-86) dhe shi/borë të përzier (66-67)
-    if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86) || code === 66 || code === 67) {
-        return { description: "Borë", emoji: "❄️" };
-    }
-    if (code >= 80 && code <= 82) return { description: "Stuhi me shi", emoji: "⛈️" };
-    if (code >= 95 && code <= 99) return { description: "Stuhi", emoji: "🌩️" };
-    if (code >= 50 && code <= 89) {
-        return { description: "I Lagësht/Shi", emoji: "💧" }; 
-    }
-    return { description: "Moti i Panjohur", emoji: "❓" }; 
-} 
-
-function updateClock() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-    const dateString = now.toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long' });
-    
-    document.getElementById('currentTime').textContent = timeString;
-    document.getElementById('currentDate').textContent = dateString;
-} 
-
-async function fetchWeather(lat, lon, cityName) {
-    const weatherSummary = document.getElementById('weatherSummary');
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`; 
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Gabim HTTP: ${response.status}`);
-        }
-        const data = await response.json(); 
-
-        const currentTemp = Math.round(data.current.temperature_2m);
-        const currentCode = data.current.weather_code;
-        const currentWeatherDesc = getWeatherDescription(currentCode);
         
-        weatherSummary.innerHTML = `${currentWeatherDesc.emoji} ${currentTemp}°C`; 
-        
-    } catch (error) {
-        console.error("Gabim në marrjen e motit:", error);
-        weatherSummary.innerHTML = `❓ --°C`;
-    }
-} 
-
-function loadSuharekeWeather() {
-    const suharekeLat = 42.36; 
-    const suharekeLon = 20.84; 
-    const suharekeCity = "Suharekë"; 
-    fetchWeather(suharekeLat, suharekeLon, suharekeCity);
-}
-
-
-// --- INFO BAR, PLAYER, NAVIGATION (pa ndryshime) ---
-function showInfoBar(ch) {
-    const infoBar = document.getElementById('infoBar');
-    const title = infoBar.querySelector('.channel-title');
-
-    if (!infoBar || !title) return; 
-
-    title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
-    infoBar.classList.add('visible'); 
-    
-    if (infoBarTimer) clearTimeout(infoBarTimer); 
-
-    infoBarTimer = setTimeout(() => {
-        infoBar.classList.remove('visible');
-    }, 5000);
-} 
-
-function updateLoadingState(state, channelName = null) {
-    const overlay = document.getElementById('loadingOverlay');
-    const spinner = overlay.querySelector('.spinner');
-    const message = overlay.querySelector('.message'); 
-
-    if (!overlay) return; 
-
-    if (state === 'loading') {
-        spinner.style.display = 'block';
-        message.classList.remove('error-text');
-        message.textContent = 'Po ngarkohet...';
-        overlay.style.display = 'flex';
-    } else if (state === 'error') {
-        spinner.style.display = 'none';
-        message.classList.add('error-text');
-        message.textContent = `Kanali nuk punon: ${channelName || 'Pritet lidhja'}`;
-        overlay.style.display = 'flex';
-    } else if (state === 'hidden') {
-        overlay.style.display = 'none';
-    }
-} 
-
-function centerMenuFocus(menuItems, index) {
-    const channelMenu = document.getElementById('channelMenu');
-    const focusedItem = menuItems[index]; 
-
-    if (!focusedItem || !channelMenu) return; 
-
-    const itemHeight = focusedItem.offsetHeight; 
-    const menuHeight = channelMenu.clientHeight; 
-    const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2); 
-
-    channelMenu.scrollTo({ 
-        top: targetScrollTop, 
-        behavior: 'auto' 
-    });
-} 
-
-function toggleChannelMenu(){
-    const channelMenu = document.getElementById('channelMenu');
-    if (!channelMenu) return; 
-
-    isMenuVisible = !isMenuVisible;
-    
-    if(isMenuVisible) {
-        channelMenu.classList.add('active'); 
-        channelMenu.style.display = 'block';
-    } else {
-        channelMenu.classList.remove('active');
-        channelMenu.style.display = 'none';
-    }
-    
-    if (isMenuVisible) {
-        const items = channelMenu.querySelectorAll('.menu-channel-item');
-        if(items.length > 0) {
-            items.forEach(i => i.classList.remove('focused')); 
-            menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); 
-            items[menuFocusIndex].classList.add('focused');
-            centerMenuFocus(items, menuFocusIndex); 
+        // Scroll në elementin e fokusuar
+        if (focusedArea !== 'sidebar' && focusedArea !== 'searchBar') {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 } 
 
-function switchChannel(ch){
-    if(!ch.url) return;
+// 5. FUNKSIONI KRYESOR I KONTROLLIT
+document.addEventListener('keydown', (e)=>{
     
-    if (ch.fullIndex === currentChannelIndex && isMenuVisible) {
-        toggleChannelMenu(); 
+    if(playerContainer.style.display === 'flex') {
+        // Logjika e navigimit në Player (ArrowUp/Down, Enter/Digits)
+        handlePlayerNavigation(e);
+        return; 
+    }
+
+    // Navigimi kryesor i UI-së
+    const GRID_COLS_CURRENT = GRID_COLS; // 7 kolona
+
+    let prevFocusedArea = focusedArea;
+    
+    if(e.key === 'ArrowUp' || e.key === 'ArrowDown'){
+        e.preventDefault();
+        
+        if (focusedArea === 'sidebar') {
+            const maxIdx = sidebarBtns.length - 1;
+            sidebarFocus = e.key === 'ArrowUp' 
+                           ? Math.max(0, sidebarFocus - 1) 
+                           : Math.min(maxIdx, sidebarFocus + 1);
+        } else if (focusedArea === 'cats') {
+            // Kalimi nga Kategori te Sidebar ose Grid
+            if (e.key === 'ArrowUp') {
+                focusedArea = 'sidebar';
+                sidebarFocus = 2; // Fokus tek LiveTV
+            } else {
+                focusedArea = 'grid';
+            }
+            gridFocus = Math.min(catFocus, grid.querySelectorAll('.channel').length - 1);
+        } else if (focusedArea === 'grid') {
+            if (e.key === 'ArrowUp') {
+                if(gridFocus < GRID_COLS_CURRENT){
+                    focusedArea = 'cats';
+                    catFocus = Math.min(gridFocus, channelSubCategories.length - 1);
+                } else {
+                    gridFocus = gridFocus - GRID_COLS_CURRENT;
+                }
+            } else {
+                const currentItems = grid.querySelectorAll('.channel');
+                const newIndex = gridFocus + GRID_COLS_CURRENT;
+                if (newIndex < currentItems.length) {
+                    gridFocus = newIndex;
+                }
+            }
+        } else if (focusedArea === 'favoritesGrid' || focusedArea === 'searchResults') {
+            const currentGrid = focusedArea === 'favoritesGrid' ? favoritesGrid : searchResults;
+            const currentItems = currentGrid.querySelectorAll('.channel');
+            if (e.key === 'ArrowUp') {
+                if(gridFocus < GRID_COLS_CURRENT){
+                    focusedArea = 'sidebar';
+                    sidebarFocus = currentView === 'Favorites' ? 3 : 0;
+                } else {
+                    gridFocus = gridFocus - GRID_COLS_CURRENT;
+                }
+            } else {
+                const newIndex = gridFocus + GRID_COLS_CURRENT;
+                if (newIndex < currentItems.length) {
+                    gridFocus = newIndex;
+                }
+            }
+        } else if (focusedArea === 'searchBar') {
+            // Nga searchBar te rezultatet ose sidebar
+            if (e.key === 'ArrowDown' && searchResults.querySelectorAll('.channel').length > 0) {
+                focusedArea = 'searchResults';
+                gridFocus = 0;
+            } else {
+                 focusedArea = 'sidebar';
+                 sidebarFocus = 0;
+            }
+        } else if (focusedArea === 'homeOptions') {
+            // Butonat e home u larguan, fokusi shkon ne sidebar
+            focusedArea = 'sidebar';
+            sidebarFocus = 1;
+        }
+
+    } else if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+        e.preventDefault();
+
+        if (focusedArea === 'sidebar') {
+            if (e.key === 'ArrowRight') {
+                // Kalimi nga Sidebar te përmbajtja e pamjes aktive
+                if (currentView === 'LiveTV') {
+                    focusedArea = 'cats';
+                    catFocus = 0;
+                } else if (currentView === 'Search') {
+                    focusedArea = 'searchBar';
+                } else if (currentView === 'Favorites') {
+                    focusedArea = 'favoritesGrid';
+                    gridFocus = 0;
+                } else if (currentView === 'Home') {
+                    // Butonat e home u larguan, fokusi shkon te Home (nuk behet asnje veprim)
+                    // focusedArea = 'homeOptions';
+                    // gridFocus = 0;
+                }
+            }
+        } else if (focusedArea === 'searchBar') {
+             // Kalimi i shiritit të kërkimit (nuk bën asgjë anash, përveç fokusimit në shirit)
+             // ...
+        } else if (focusedArea === 'cats') {
+            const maxIdx = channelSubCategories.length - 1;
+            if (e.key === 'ArrowLeft' && catFocus === 0) {
+                 focusedArea = 'sidebar';
+                 sidebarFocus = 2; // LiveTV
+            } else {
+                catFocus = e.key === 'ArrowLeft' 
+                           ? Math.max(0, catFocus - 1) 
+                           : Math.min(maxIdx, catFocus + 1);
+            }
+        } else if (focusedArea === 'grid' || focusedArea === 'favoritesGrid' || focusedArea === 'searchResults') {
+            const currentGrid = focusedArea === 'grid' ? grid : (focusedArea === 'favoritesGrid' ? favoritesGrid : searchResults);
+            const currentItems = currentGrid.querySelectorAll('.channel');
+            const maxIdx = currentItems.length - 1;
+
+            if (e.key === 'ArrowLeft' && gridFocus % GRID_COLS_CURRENT === 0) {
+                 focusedArea = 'sidebar';
+                 sidebarFocus = currentView === 'LiveTV' ? 2 : (currentView === 'Favorites' ? 3 : 0);
+            } else {
+                gridFocus = e.key === 'ArrowLeft' 
+                           ? Math.max(0, gridFocus - 1) 
+                           : Math.min(maxIdx, gridFocus + 1);
+            }
+        } else if (focusedArea === 'homeOptions') {
+            if(e.key === 'ArrowLeft'){
+                focusedArea = 'sidebar';
+                sidebarFocus = 1; // Home
+            }
+            // Nuk lëviz djathtas
+        }
+    } 
+    
+    if(e.key === 'Enter'){
+        e.preventDefault(); 
+        if (focusedArea === 'sidebar') {
+            document.querySelector(`.sidebar-btn[data-idx="${sidebarFocus}"]`).click();
+        } else if (focusedArea === 'cats') {
+            document.querySelector(`.cat-btn[data-cat="${channelSubCategories[catFocus]}"]`).click();
+        } else if (focusedArea === 'grid' || focusedArea === 'favoritesGrid' || focusedArea === 'searchResults') {
+            currentFocusedElement.click(); 
+        } else if (focusedArea === 'searchBar') {
+            // Fokusimi në search bar, enter nuk bën asgjë
+            if (searchResults.querySelectorAll('.channel').length > 0) {
+                focusedArea = 'searchResults';
+                gridFocus = 0;
+            }
+        } else if (focusedArea === 'homeOptions') {
+            // Logjika e butonave të home është larguar nga HTML
+            // ...
+        }
+    }
+    
+    if(e.key === 'Escape' || e.key === 'Backspace'){
+        // Në pamjet që nuk janë LiveTV/Grid, kthehemi te Sidebar.
+        if(focusedArea !== 'sidebar' && focusedArea !== 'searchBar' && currentView !== 'LiveTV' && currentView !== 'Favorites'){
+            e.preventDefault();
+            focusedArea = 'sidebar';
+            focusCurrent();
+        } else if(focusedArea === 'searchBar'){
+            e.preventDefault();
+            searchBar.value = ''; // Fshijmë tekstin
+            focusedArea = 'sidebar';
+            focusCurrent();
+        } else if (focusedArea === 'cats' || focusedArea === 'grid' || focusedArea === 'favoritesGrid' || focusedArea === 'searchResults') {
+            e.preventDefault();
+            focusedArea = 'sidebar';
+            focusCurrent();
+        }
+    }
+    
+    focusCurrent();
+}); 
+
+// 6. LOGJIKA E PLAYER-IT (E ruajtur nga versioni i mëparshëm)
+function handlePlayerNavigation(e) {
+    // ... (Kodi i navigimit të Playerit si më parë)
+    const channelMenu = document.getElementById('channelMenu');
+    const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
+    const MAX_CHANNEL_INDEX = allChannelsList.length - 1; 
+
+    // LOGJIKA E NDËRRIMIT ME NUMRA
+    if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        
+        if (digitTimer) clearTimeout(digitTimer);
+        
+        if (digitBuffer.length < 3) {
+            digitBuffer += e.key;
+        } else {
+            digitBuffer = e.key;
+        }
+        
+        const infoBar = document.getElementById('infoBar');
+        const title = infoBar.querySelector('.channel-title');
+
+        title.textContent = `Kanali: ${digitBuffer}`;
+        infoBar.classList.add('visible'); 
+
+        if (infoBarTimer) clearTimeout(infoBarTimer);
+        
+        digitTimer = setTimeout(() => {
+            let targetNumber = parseInt(digitBuffer);
+            
+            if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
+                const targetChannel = allChannelsList[targetNumber - 1];
+                switchChannel(targetChannel); 
+            }
+            
+            digitBuffer = '';
+            
+            if (allChannelsList[currentChannelIndex]) {
+                showInfoBar(allChannelsList[currentChannelIndex]); 
+            } else {
+                infoBar.classList.remove('visible');
+            }
+        }, 1000); 
+        
         return; 
     }
     
-    if (isMenuVisible) {
-        toggleChannelMenu(); 
+    // KONTROLLA E MENYSË (Kur menuja është hapur)
+    if(isMenuVisible){
+        if(e.key === 'ArrowUp'){
+            menuItems[menuFocusIndex]?.classList.remove('focused');
+            menuFocusIndex = Math.max(0, menuFocusIndex - 1);
+            menuItems[menuFocusIndex]?.classList.add('focused');
+            centerMenuFocus(menuItems, menuFocusIndex); 
+        } else if(e.key === 'ArrowDown'){
+            menuItems[menuFocusIndex]?.classList.remove('focused');
+            menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
+            menuItems[menuFocusIndex]?.classList.add('focused');
+            centerMenuFocus(menuItems, menuFocusIndex); 
+        } else if(e.key === 'Enter'){
+            const channel = allChannelsList[menuFocusIndex];
+            switchChannel(channel);
+        }
+        return; 
+    } 
+
+    // NDËRRIMI SEKUENCIAL ME UP/DOWN
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        
+        if (digitTimer) clearTimeout(digitTimer);
+        digitBuffer = '';
+        
+        let newIndex = currentChannelIndex;
+        
+        if (e.key === 'ArrowUp') {
+            newIndex = currentChannelIndex > 0 ? currentChannelIndex - 1 : MAX_CHANNEL_INDEX;
+        } else if (e.key === 'ArrowDown') {
+            newIndex = currentChannelIndex < MAX_CHANNEL_INDEX ? currentChannelIndex + 1 : 0;
+        }
+        
+        const nextChannel = allChannelsList[newIndex];
+        currentChannelIndex = newIndex; 
+        openPlayerForChannel(nextChannel, true); 
+        return;
     }
-    
-    currentChannelIndex = ch.fullIndex; 
-    menuFocusIndex = ch.fullIndex; 
 
-    openPlayerForChannel(ch, true);
+
+    // OK/ENTER: HAP MENUNË E KANALIT dhe shfaq Info Bar
+    if(e.key === 'Enter'){
+        if (digitBuffer.length > 0) {
+            let targetNumber = parseInt(digitBuffer);
+            if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
+                const targetChannel = allChannelsList[targetNumber - 1];
+                switchChannel(targetChannel); 
+            }
+            if (digitTimer) clearTimeout(digitTimer);
+            digitBuffer = '';
+        } else {
+            const currentChannel = allChannelsList[currentChannelIndex];
+            showInfoBar(currentChannel);
+            toggleChannelMenu();
+        }
+    } 
+
+    // BACKSPACE/ESCAPE: Mbyll player-in
+    if(e.key === 'Backspace' || e.key === 'Escape'){ 
+        if (digitTimer) clearTimeout(digitTimer); 
+        digitBuffer = '';
+        closePlayer(); 
+        history.back(); 
+    }
 }
-
-
 function openPlayerForChannel(ch, isSwitching = false){
+    // ... (Kodi i openPlayerForChannel si më parë)
     const url = ch.url;
-    if(!url) {
+    if(!url || url === '#') {
         if (!isSwitching) {
             alert(`Kanali "${ch.name}" nuk ka një URL aktive.`);
         } else {
@@ -778,7 +1163,6 @@ function openPlayerForChannel(ch, isSwitching = false){
         currentChannelIndex = ch.fullIndex;
         menuFocusIndex = ch.fullIndex;
     } else {
-        // Fallback për të gjetur indeksin nëse mungon fullIndex
         const foundIndex = allChannelsList.findIndex(channel => channel.url === url);
         if (foundIndex !== -1) {
             currentChannelIndex = foundIndex;
@@ -815,7 +1199,6 @@ function openPlayerForChannel(ch, isSwitching = false){
         updateOrientationClass(); 
     }
 
-    // POPULLO DHE FSHEH MENYNË ANËSORE
     if (!channelMenu) channelMenu = document.getElementById('channelMenu');
     channelMenu.innerHTML = '';
     allChannelsList.forEach((channelData, index) => {
@@ -847,8 +1230,6 @@ function openPlayerForChannel(ch, isSwitching = false){
     channelMenu.classList.remove('active'); 
     channelMenu.style.display = 'none';
 
-
-    // Luaj me hls.js
     if(Hls && Hls.isSupported()){
         hls = new Hls({ maxBufferLength: 10 }); 
         hls.loadSource(url);
@@ -856,7 +1237,6 @@ function openPlayerForChannel(ch, isSwitching = false){
         hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
             video.play().catch(()=>{}); 
         });
-        
         hls.on(Hls.Events.ERROR, function(event, data){
             if (data.fatal) {
                 updateLoadingState('error', ch.name);
@@ -878,9 +1258,9 @@ function openPlayerForChannel(ch, isSwitching = false){
     try{ if(screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape'); }catch(e){} 
     const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
     try{ req && req.call(video).catch(()=>{}); }catch(e){}
-} 
-
+}
 function closePlayer(){
+    // ... (Kodi i closePlayer si më parë)
     document.body.style.padding = '40px';
     document.body.style.overflow = 'auto'; 
     document.getElementById('mainContent').style.display = 'flex'; 
@@ -909,228 +1289,116 @@ function closePlayer(){
     try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
     
     focusCurrent();
-} 
-
-// handle remote arrows / enter / digits
-document.addEventListener('keydown', (e)=>{
-    
-    if(playerContainer.style.display === 'flex'){
-        
-        const channelMenu = document.getElementById('channelMenu');
-        const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
-        const MAX_CHANNEL_INDEX = allChannelsList.length - 1; 
-
-        // LOGJIKA E NDËRRIMIT ME NUMRA
-        if (e.key >= '0' && e.key <= '9') {
-            e.preventDefault();
-            
-            if (digitTimer) clearTimeout(digitTimer);
-            
-            if (digitBuffer.length < 3) {
-                digitBuffer += e.key;
-            } else {
-                digitBuffer = e.key;
-            }
-            
-            const infoBar = document.getElementById('infoBar');
-            const title = infoBar.querySelector('.channel-title');
-
-            title.textContent = `Kanali: ${digitBuffer}`;
-            infoBar.classList.add('visible'); 
-
-            if (infoBarTimer) clearTimeout(infoBarTimer);
-            
-            digitTimer = setTimeout(() => {
-                let targetNumber = parseInt(digitBuffer);
-                
-                if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
-                    const targetChannel = allChannelsList[targetNumber - 1];
-                    switchChannel(targetChannel); 
-                }
-                
-                digitBuffer = '';
-                
-                if (allChannelsList[currentChannelIndex]) {
-                    showInfoBar(allChannelsList[currentChannelIndex]); 
-                } else {
-                    infoBar.classList.remove('visible');
-                }
-            }, 1000); 
-            
-            return; 
-        }
-        
-        // KONTROLLA E MENYSË (Kur menuja është hapur)
-        if(isMenuVisible){
-            if(e.key === 'ArrowUp'){
-                menuItems[menuFocusIndex]?.classList.remove('focused');
-                menuFocusIndex = Math.max(0, menuFocusIndex - 1);
-                menuItems[menuFocusIndex]?.classList.add('focused');
-                centerMenuFocus(menuItems, menuFocusIndex); 
-            } else if(e.key === 'ArrowDown'){
-                menuItems[menuFocusIndex]?.classList.remove('focused');
-                menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
-                menuItems[menuFocusIndex]?.classList.add('focused');
-                centerMenuFocus(menuItems, menuFocusIndex); 
-            } else if(e.key === 'Enter'){
-                const channel = allChannelsList[menuFocusIndex];
-                switchChannel(channel);
-            }
-            return; 
-        } 
-
-        // NDËRRIMI SEKUENCIAL ME UP/DOWN
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-            
-            if (digitTimer) clearTimeout(digitTimer);
-            digitBuffer = '';
-            
-            let newIndex = currentChannelIndex;
-            
-            if (e.key === 'ArrowUp') {
-                newIndex = currentChannelIndex > 0 ? currentChannelIndex - 1 : MAX_CHANNEL_INDEX;
-            } else if (e.key === 'ArrowDown') {
-                newIndex = currentChannelIndex < MAX_CHANNEL_INDEX ? currentChannelIndex + 1 : 0;
-            }
-            
-            const nextChannel = allChannelsList[newIndex];
-            currentChannelIndex = newIndex; 
-            openPlayerForChannel(nextChannel, true); 
-            return;
-        }
+}
 
 
-        // OK/ENTER: HAP MENUNË E KANALIT dhe shfaq Info Bar
-        if(e.key === 'Enter'){
-            if (digitBuffer.length > 0) {
-                let targetNumber = parseInt(digitBuffer);
-                if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
-                    const targetChannel = allChannelsList[targetNumber - 1];
-                    switchChannel(targetChannel); 
-                }
-                if (digitTimer) clearTimeout(digitTimer);
-                digitBuffer = '';
-            } else {
-                const currentChannel = allChannelsList[currentChannelIndex];
-                showInfoBar(currentChannel);
-                toggleChannelMenu();
-            }
-        } 
-
-        // BACKSPACE/ESCAPE: Mbyll player-in
-        if(e.key === 'Backspace' || e.key === 'Escape'){ 
-            if (digitTimer) clearTimeout(digitTimer); 
-            digitBuffer = '';
-            closePlayer(); 
-            history.back(); 
-        }
-        
-        return; 
-    } 
-
-    // KONTROLLAT E NAVIGIMIT TË UI-SË (jashtë player-it)
-    if(e.key === 'ArrowRight'){
-        if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
-        else { 
-            const gridItems = grid.querySelectorAll('.channel');
-            if (gridFocus < gridItems.length - 1) {
-                gridFocus = gridFocus + 1;
-            } else {
-                // ...
-            }
-        }
-    }
-    if(e.key === 'ArrowLeft'){
-        if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
-        else { gridFocus = Math.max(gridFocus - 1, 0); }
-    }
-    if(e.key === 'ArrowDown'){
-        if(focusedArea === 'cats'){
-            focusedArea = 'grid';
-            // Përditëso gridFocus bazuar në pozicionin e kategorisë 
-            gridFocus = Math.min(catFocus, grid.querySelectorAll('.channel').length - 1); 
-        } else {
-            const currentItems = grid.querySelectorAll('.channel');
-            const newIndex = gridFocus + GRID_COLS;
-            if (newIndex < currentItems.length) {
-                gridFocus = newIndex;
-            }
-        }
-    }
-    if(e.key === 'ArrowUp'){
-        if(focusedArea === 'grid'){
-            if(gridFocus < GRID_COLS){ 
-                focusedArea = 'cats';
-                // Përditëso catFocus bazuar në pozicionin e kolonës
-                catFocus = Math.min(gridFocus, categories.length - 1);
-            } else {
-                gridFocus = gridFocus - GRID_COLS;
-            }
-        }
-    } 
-
-    const gridItems = grid.querySelectorAll('.channel');
-    if(gridFocus >= gridItems.length) gridFocus = gridItems.length - 1;
-    if(gridFocus < 0) gridFocus = 0; 
-    
-    if(e.key === 'Enter'){
-        if(focusedArea === 'cats'){
-            loadCategory(categories[catFocus]);
-        } else {
-            grid.querySelectorAll('.channel')[gridFocus]?.click();
-        }
-    }
-    
-    // BACKSPACE/ESCAPE: KTHEHU NË FAQEN KRYESORE NGA GRIDI
-    if(e.key === 'Escape' || e.key === 'Backspace'){
-        // Vetëm parandalon veprimin bazë të shfletuesit për escape/backspace
-        e.preventDefault();
+// 7. KERKIMI
+searchBar.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    if (query.length < 2) {
+        searchResults.innerHTML = '';
         return;
     }
+    
+    const results = allChannelsList.filter(ch => ch.name.toLowerCase().includes(query));
+    renderSearchResults(results);
+});
 
 
-    focusCurrent();
-}); 
-
-
-// handle history/back
-window.addEventListener('popstate', (e)=>{
-    if(playerContainer.style.display === 'flex'){
-        closePlayer();
+// 8. WIDGET LOGIC (Ora dhe Moti)
+// ... (Kodi i updateClock, getWeatherDescription, fetchWeather, loadSuharekeWeather)
+function getWeatherDescription(code) {
+    if (code === 0) return { description: "Diell i pastër", emoji: "☀️" };
+    if (code === 1) return { description: "Kryesisht diell", emoji: "🌤️" };
+    if (code === 2) return { description: "Pjesërisht i vranët", emoji: "⛅️" };
+    if (code === 3) return { description: "Moti i vranët", emoji: "☁️" };
+    if (code === 45 || code === 48) return { description: "Mjegull", emoji: "🌫️" };
+    if (code >= 51 && code <= 55) return { description: "Shi i lehtë", emoji: "🌦️" };
+    if (code >= 61 && code <= 65) return { description: "Shi i fortë", emoji: "🌧️" };
+    if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86) || code === 66 || code === 67) {
+        return { description: "Borë", emoji: "❄️" };
     }
-}); 
+    if (code >= 80 && code <= 82) return { description: "Stuhi me shi", emoji: "⛈️" };
+    if (code >= 95 && code <= 99) return { description: "Stuhi", emoji: "🌩️" };
+    if (code >= 50 && code <= 89) {
+        return { description: "I Lagësht/Shi", emoji: "💧" }; 
+    }
+    return { description: "Moti i Panjohur", emoji: "❓" }; 
+} 
+function updateClock() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    const dateString = now.toLocaleDateString('sq-AL', { weekday: 'long', day: 'numeric', month: 'long' });
+    
+    document.getElementById('currentTime').textContent = timeString;
+    document.getElementById('currentDate').textContent = dateString;
+} 
+async function fetchWeather(lat, lon, cityName) {
+    const weatherSummary = document.getElementById('weatherSummary');
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`; 
 
-window.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' || e.key === 'Backspace'){
-        if(playerContainer.style.display === 'flex' && !isMenuVisible){
-            if(window.history.state && window.history.state.player){
-                 history.back(); 
-            } else {
-                closePlayer();
-            }
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Gabim HTTP: ${response.status}`);
         }
+        const data = await response.json(); 
+
+        const currentTemp = Math.round(data.current.temperature_2m);
+        const currentCode = data.current.weather_code;
+        const currentWeatherDesc = getWeatherDescription(currentCode);
+        
+        weatherSummary.innerHTML = `${currentWeatherDesc.emoji} ${currentTemp}°C`; 
+        
+    } catch (error) {
+        console.error("Gabim në marrjen e motit:", error);
+        weatherSummary.innerHTML = `❓ --°C`;
     }
-}); 
+} 
+function loadSuharekeWeather() {
+    const suharekeLat = 42.36; 
+    const suharekeLon = 20.84; 
+    const suharekeCity = "Suharekë"; 
+    fetchWeather(suharekeLat, suharekeLon, suharekeCity);
+}
 
 function updateOrientationClass(){
     const w = window.innerWidth, h = window.innerHeight;
     if(w>h) { playerContainer.classList.add('video-landscape'); playerContainer.classList.remove('video-portrait'); }
     else { playerContainer.classList.add('video-portrait'); playerContainer.classList.remove('video-landscape'); }
 }
-window.addEventListener('resize', updateOrientationClass);
-window.addEventListener('orientationchange', updateOrientationClass); 
 
-// initial load
-loadCategory(currentCategory); 
 
-// INICIALIZIMI I WIDGET-IT TË MOTIT/ORËS
-updateClock(); 
-loadSuharekeWeather(); 
+// 9. INICIALIZIMI DHE KONTROLLI I WIDGET-IT
+window.onload = function() {
+    // Inicializimi i ngarkimit - Fillojmë në LiveTV dhe kategorinë LIVE TV
+    loadView('LiveTV');
+    updateClock(); 
+    loadSuharekeWeather();
+    
+    // Asocionimi i butonave të sidebarit me funksionin loadView
+    sidebarBtns.forEach(btn => {
+        const viewName = btn.getAttribute('data-view');
+        btn.onclick = () => loadView(viewName);
+        btn.onfocus = () => { focusedArea = 'sidebar'; sidebarFocus = parseInt(btn.getAttribute('data-idx')); };
+    });
+    
+    focusCurrent(); // Vendos fokusin fillestar
 
-// Përditësojmë Orën çdo minutë (60000ms)
-setInterval(updateClock, 60000); 
-// Përditësojmë Motin çdo 10 minuta (600000ms)
-setInterval(loadSuharekeWeather, 600000); 
+    // Përditësojmë Orën çdo minutë (60000ms)
+    setInterval(updateClock, 60000); 
+    // Përditësojmë Motin çdo 10 minuta (600000ms)
+    setInterval(loadSuharekeWeather, 600000); 
+
+    window.addEventListener('resize', updateOrientationClass);
+    window.addEventListener('orientationchange', updateOrientationClass); 
+    
+    // Rotacioni fillestar
+    try{ 
+        if(screen.orientation && screen.orientation.lock) 
+            screen.orientation.lock('landscape').catch(()=>{}); 
+    }catch(e){}
+};
 
 </script>
 </body>
