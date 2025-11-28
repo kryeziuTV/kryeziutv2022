@@ -2,9 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Optimizuar për Performancë & Mobile) - V21</title>
+<title>TV App UI - Versioni Statik (Optimizuar me Orientim Global) - V23</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMD/CDQd/xGZaKzV8tqL9T+qYf+bO/8gJ1L8q23v4B5B4/0J5H5L5+2H5V5Z5W5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
     /* --- STILIMET KRYESORE PËR TV (Default) --- */
@@ -13,10 +14,9 @@
         font-family:'Rubik',sans-serif; 
         color:#fff; 
         margin:0; 
-        touch-action: pan-y; /* Përmirëson scroll-in në pajisjet me prekje */
+        touch-action: pan-y; 
     } 
     
-    /* SFONDI STATIK I IMZHIT */
     #background-image {
         position: fixed;
         right: 0;
@@ -33,7 +33,6 @@
         filter: brightness(0.7) blur(2px); 
     }
 
-    /* SHTRESA BLUR-UAR */
     #blur-overlay {
         position: fixed;
         inset: 0;
@@ -105,7 +104,7 @@
         align-items: center; 
         padding: 40px; 
         margin-top: 20px; 
-        width: 100%; /* Siguron që të shfrytëzohet e gjithë gjerësia */
+        width: 100%; 
         box-sizing: border-box;
     } 
 
@@ -116,8 +115,8 @@
         margin-bottom:40px; 
         justify-content: center; 
         width: 100%; 
-        overflow-x: auto; /* Mundëson scroll horizontal në telefon nëse ka shumë kategori */
-        padding-bottom: 10px; /* Për të shmangur prerjen e hijes (shadow) */
+        overflow-x: auto; 
+        padding-bottom: 10px; 
     } 
     .cat-btn { 
         will-change: transform, box-shadow; 
@@ -131,11 +130,11 @@
         box-shadow:0 6px 15px rgba(0,0,0,.4); 
         transition:.2s transform, .2s box-shadow; 
         border: 3px solid transparent; 
-        flex-shrink: 0; /* Parandalon tkurrjen e butonave */
+        flex-shrink: 0; 
     }
     .cat-btn:focus, .cat-btn.focused { 
         background: #6246B8; 
-        transform: scale(1.05); /* Vetëm Scale (shpejtësi) */
+        transform: scale(1.05); 
         box-shadow: 
             0 0 10px 5px rgba(255, 255, 255, 0.3), 
             0 8px 30px rgba(0,0,0,.5);
@@ -144,14 +143,13 @@
     }
     .cat-btn:active { transform:scale(0.98); } 
 
-    /* RREGULLIMI KRYESOR I GRILËS PËR TV (Standard) */
     .grid { 
         display:grid; 
-        grid-template-columns:repeat(7,120px); /* 7 kolona fikse */
+        grid-template-columns:repeat(7,120px); 
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (Optimizuar) --- */
+    /* --- STILIMI I KANALIT --- */
     .channel { 
         will-change: transform, box-shadow;
         width:120px; 
@@ -195,12 +193,34 @@
         transform: none; 
     }
     
+    /* --- BUTONI I RI I ORIENTIMIT (LANDSCAPE GLOBAL) --- */
+    #orientationToggle {
+        position: fixed;
+        top: 20px;
+        right: 20px; /* Vendosur lart djathtas */
+        z-index: 10000; /* Sipër të gjitha UI-ve (përveç player-it) */
+        background: rgba(98, 70, 184, 0.8); 
+        border: none;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 1.5em;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        transition: background 0.2s, transform 0.2s;
+    }
+
+    #orientationToggle:hover {
+        background: #6246B8;
+        transform: scale(1.05);
+    }
+    
+
     /* --- MEDIA QUERY PËR PAJISJET CELULARE (Gjerësi Më E Vogël Se 800px) --- */
     @media (max-width: 800px) {
         
         /* 1. OPTIMIZIMI I ORËS/MOTIT PËR EKRAN TË VOGËL */
         #headerWidget {
-            /* Zhvendoset në të majtë lart për të mos zënë hapësirën e navigimit */
             bottom: auto;
             top: 20px;
             right: auto;
@@ -213,15 +233,17 @@
             padding: 8px 15px; 
             min-width: 140px; 
             align-items: flex-start;
+            pointer-events: auto; /* Kthyer në auto për të mos bllokuar butonat e playerit */
         }
         
-        #weatherSummary {
-            justify-content: flex-start;
-            font-size: 1.2em;
+        /* Pozicionimi i butonit në telefon */
+        #orientationToggle {
+            top: 20px;
+            right: 20px;
         }
-        
+
         #currentTime {
-            font-size: 2em; /* Zvogëlon madhësinë e orës */
+            font-size: 2em; 
         }
         
         #currentDate {
@@ -230,12 +252,12 @@
         }
         
         #mainContent {
-            padding: 120px 20px 20px 20px; /* Shton padding lart për të shmangur widget-in */
+            padding: 120px 20px 20px 20px; 
         }
         
         /* 2. OPTIMIZIMI I KATEGORIVE */
         .categories {
-            justify-content: flex-start; /* Rreshton kategoritë në të majtë */
+            justify-content: flex-start; 
         }
         
         .cat-btn {
@@ -244,40 +266,28 @@
             border-radius: 8px;
         }
 
-        /* 3. OPTIMIZIMI I GRILËS PËR EKRAN TË VOGËL (Pika Kryesore) */
+        /* 3. OPTIMIZIMI I GRILËS PËR EKRAN TË VOGËL */
         .grid { 
             display: grid; 
-            /* Grid Fleksibël: Lejon 2 deri në 4 kolona, secila gjerësi minimale 80px */
             grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); 
-            gap: 15px; /* Zvogëlon hapësirën */
+            gap: 15px; 
             width: 100%;
         } 
         
         /* 4. OPTIMIZIMI I KANALIT */
         .channel { 
-            width: auto; /* Lejon grilën të menaxhojë gjerësinë */
-            height: 80px; /* Zvogëlon lartësinë */
+            width: auto; 
+            height: 80px; 
             padding: 8px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,.3);
         }
         
-        /* Heq efektet 3D për shpejtësi maksimale në telefon */
         .cat-btn:focus, .cat-btn.focused, .channel:focus, .channel.focused { 
-            transform: scale(1.05); /* Mban vetëm pop-up (2D) */
-            transition: .1s transform; /* Bën tranzicionin më të shpejtë */
+            transform: scale(1.05); 
+            transition: .1s transform; 
         }
         
-        /* 5. PLAYER-I I VOGËL */
-        #infoBar {
-            height: 40px; 
-            padding: 5px 20px;
-        }
-        .channel-title {
-            font-size: 1.5em;
-        } 
-
-        /* Fsheh Menynë Anësore, pasi në telefon nuk është e nevojshme (përdorim Back) */
         #channelMenu {
             width: 100vw; 
             background: rgba(0, 0, 0, 1);
@@ -285,13 +295,10 @@
             display: none !important;
         }
         
-        /* Nëse player-i është në shfaqje, fshihet widget-i lart */
         #playerContainer.video-portrait + #headerWidget {
             display: none !important;
         }
     }
-
-    /* --- PJESA TJETËR E KODIT E PAPREKUR (Logjika e Luajtësit) --- */
     
     /* PLAYER CONTAINER */
     #playerContainer { 
@@ -312,7 +319,7 @@
         pointer-events:none; 
     } 
 
-    /* Info Bar */
+    /* Info Bar (pa ndryshim) */
     #infoBar {
         position: absolute;
         bottom: 0;
@@ -345,7 +352,7 @@
         line-height: 1;
     } 
 
-    /* Loading/Error Overlay */
+    /* Loading/Error Overlay (pa ndryshim) */
     #loadingOverlay {
         position: absolute;
         inset: 0;
@@ -379,7 +386,7 @@
         font-weight: bold;
     } 
 
-    /* --- MENYJA ANËSORE (E dizajnuar për navigim TV) --- */
+    /* --- MENYJA ANËSORE (pa ndryshim) --- */
     #channelMenu {
         position: absolute;
         top: 0;
@@ -395,7 +402,7 @@
         z-index: 100001; 
         scroll-behavior: auto; 
         transform: translateX(-100%); 
-        transition: transform 0.2s ease-out; /* Shtohet tranzicion i butë */
+        transition: transform 0.2s ease-out; 
     } 
 
     #channelMenu.active {
@@ -449,6 +456,10 @@
     
     <div id="background-image"></div>
     <div id="blur-overlay"></div>
+    
+    <button id="orientationToggle" onclick="toggleOrientation()" title="Kliko për të detyruar orientimin Landscape">
+        <i class="fas fa-mobile-alt"></i> 
+    </button>
     
     <div id="headerWidget">
         <div id="timeDate">
@@ -539,7 +550,7 @@ let currentCategory = 'LIVE TV';
 let focusedArea = 'cats'; 
 let catFocus = 0;
 let gridFocus = 0;
-const GRID_COLS = 7; // Ruhet për llogaritjen e navigimit d-pad
+const GRID_COLS = 7; 
 let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
 
 
@@ -550,6 +561,7 @@ let currentChannelIndex = 0;
 let infoBarTimer = null; 
 let digitBuffer = ''; 
 let digitTimer = null; 
+let isLandscapeLocked = false; // Shtimi i ri për orientimin
 
 const allChannelsList = [];
 let channelNumberCounter = 0;
@@ -572,7 +584,7 @@ categories.forEach((cat,ci)=>{
     btn.className = 'cat-btn';
     btn.textContent = cat;
     btn.setAttribute('data-cat',cat);
-    btn.tabIndex = isTouchDevice ? -1 : 0; // Vetëm TV/d-pad duhet të fokusohet
+    btn.tabIndex = isTouchDevice ? -1 : 0; 
     btn.onclick = ()=> loadCategory(cat);
     btn.onfocus = ()=> { focusedArea = 'cats'; catFocus = ci; } 
     catWrap.appendChild(btn);
@@ -585,7 +597,7 @@ function loadCategory(cat){
     list.forEach((ch,idx)=>{
         const box = document.createElement('button');
         box.className = 'channel';
-        box.tabIndex = isTouchDevice ? -1 : 0; // Vetëm TV/d-pad duhet të fokusohet
+        box.tabIndex = isTouchDevice ? -1 : 0; 
         box.setAttribute('data-idx', idx);
         
         // Shtohet logo
@@ -603,14 +615,12 @@ function loadCategory(cat){
     gridFocus = 0;
     focusedArea = 'cats';
     
-    // Fokusohen automatikisht vetëm pajisjet me d-pad
     if (!isTouchDevice) {
         focusCurrent();
     }
 } 
 
 function focusCurrent(){
-    // Ky funksion fokusohet vetëm me navigimin e d-pad, jo me prekje
     if (isTouchDevice) return; 
 
     catWrap.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('focused'));
@@ -632,7 +642,6 @@ function focusCurrent(){
 } 
 
 // --- WIDGET LOGIC (Ora dhe Moti) --- 
-
 function getWeatherDescription(code) {
     if (code === 0) return { description: "Diell i pastër", emoji: "☀️" };
     if (code === 1) return { description: "Kryesisht diell", emoji: "🌤️" };
@@ -694,8 +703,45 @@ function loadSuharekeWeather() {
     fetchWeather(suharekeLat, suharekeLon);
 }
 
+// --- FUNKSIONI I RI I BUTONIT TË ORIENTIMIT ---
+function toggleOrientation() {
+    isLandscapeLocked = !isLandscapeLocked;
+    const button = document.getElementById('orientationToggle');
+    const icon = button.querySelector('i');
 
-// --- INFO BAR, PLAYER, NAVIGATION (Optimizuar) ---
+    // Kërkohet që ikona të kthehet 90 gradë
+    icon.classList.remove('fa-rotate-90'); 
+    
+    try {
+        if (screen.orientation && screen.orientation.lock && screen.orientation.unlock) {
+            if (isLandscapeLocked) {
+                // Kërkohet Landscape
+                screen.orientation.lock('landscape').catch(e => {
+                    console.warn("Nuk mund të bllokohet Landscape:", e);
+                    isLandscapeLocked = false; 
+                });
+                icon.classList.add('fa-rotate-90');
+                button.title = 'Kliko për orientim Auto/Portret';
+                button.style.background = '#008000'; // Tregues vizual (Jeshil)
+            } else {
+                // Lirohet orientimi
+                screen.orientation.unlock();
+                icon.classList.remove('fa-rotate-90');
+                button.title = 'Kliko për të detyruar orientimin Landscape';
+                button.style.background = 'rgba(98, 70, 184, 0.8)';
+            }
+        } else {
+            alert("Pajisja juaj ose shfletuesi nuk mbështet bllokimin e orientimit të ekranit.");
+            isLandscapeLocked = false;
+        }
+    } catch (e) {
+        alert("Gabim në orientimin e ekranit. Sigurohu që je në Fullscreen ose ka të drejta.");
+        isLandscapeLocked = false;
+    }
+}
+
+
+// --- PLAYER FUNCTIONALITY ---
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
@@ -751,6 +797,8 @@ function centerMenuFocus(menuItems, index) {
 } 
 
 function toggleChannelMenu(){
+    if (isTouchDevice) return; 
+    
     const channelMenu = document.getElementById('channelMenu');
     if (!channelMenu) return; 
 
@@ -800,7 +848,6 @@ document.addEventListener('keydown', (e)=>{
         const menuItems = channelMenu ? channelMenu.querySelectorAll('.menu-channel-item') : [];
         const MAX_CHANNEL_INDEX = allChannelsList.length - 1; 
 
-        // IGOJ LOGJIKËN E TELEFONIT: Ky kod është vetëm për TV/D-Pad
         if (isTouchDevice) return;
 
 
@@ -999,12 +1046,11 @@ function openPlayerForChannel(ch, isSwitching = false){
         video = document.createElement('video');
         video.id = 'tvplayer';
         video.autoplay = true;
-        video.controls = isTouchDevice ? true : false; // Kontrollat aktive në telefon
+        video.controls = isTouchDevice ? true : false; 
         video.muted = false;
         video.setAttribute('playsinline','');
         playerContainer.insertBefore(video, document.getElementById('infoBar')); 
 
-        // Menua anësore krijohet vetëm nëse nuk ekziston
         if (!channelMenu) {
             channelMenu = document.createElement('div');
             channelMenu.id = 'channelMenu';
@@ -1046,7 +1092,6 @@ function openPlayerForChannel(ch, isSwitching = false){
     
     isMenuVisible = false;
     channelMenu.classList.remove('active'); 
-    // Në telefon, menua mbetet e fshehur
     if (isTouchDevice) channelMenu.style.display = 'none';
     else channelMenu.style.display = 'block';
 
@@ -1078,17 +1123,12 @@ function openPlayerForChannel(ch, isSwitching = false){
         updateLoadingState('error', ch.name);
     } 
 
+    // Në TV, kërko Fullscreen automatikisht (pa orientim të detyruar, sepse e menaxhon butoni)
     try{ 
-        if(screen.orientation && screen.orientation.lock) {
-            // Tentojmë të mbajmë peizazh në TV, por e lëmë të lirë në telefon për përshtatshmëri
-            if (!isTouchDevice) screen.orientation.lock('landscape'); 
+        if(!isTouchDevice){
+            const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
+            req && req.call(video).catch(()=>{}); 
         }
-    }catch(e){} 
-    
-    const req = video.requestFullscreen || video.webkitRequestFullscreen || video.msRequestFullscreen;
-    try{ 
-        // Në telefon, lejohet që videoja të luhet brenda faqes
-        if (!isTouchDevice) req && req.call(video).catch(()=>{}); 
     }catch(e){}
 } 
 
@@ -1118,9 +1158,7 @@ function closePlayer(){
     
     playerContainer.style.display = 'none';
     
-    try{ 
-        if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); 
-    }catch(e){}
+    // Nuk lirojmë orientimin këtu, e menaxhon butoni i ri
     
     if (!isTouchDevice) {
         focusCurrent();
