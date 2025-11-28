@@ -42,7 +42,7 @@
         z-index: -1; 
     } 
 
-    /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË TË DJATHTË - Përditësimi i kërkuar) --- */
+    /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË TË DJATHTË) --- */
     #headerWidget {
         position: fixed;
         bottom: 20px; 
@@ -60,19 +60,19 @@
         pointer-events: none; 
     } 
 
-    /* KARTELA KRYESORE E WIDGET-IT (TANI E VETME DHE E PA NDARË) */
+    /* KARTELA KRYESORE E WIDGET-IT */
     #timeDate {
         display: flex;
         flex-direction: column;
-        align-items: flex-end; /* Rreshton të gjithë fëmijët në të djathtë */
+        align-items: flex-end; 
         
         /* KUFIZUESI KRYESOR ME NGJYRËN E KANALEVE */
-        background: rgba(180, 160, 255, 0.2); /* Ngjyra e Kanaleve (Light Purple me transparencë) */
+        background: rgba(180, 160, 255, 0.2); 
         
-        padding: 10px 20px; /* Shton padding të mjaftueshëm rreth elementëve */
-        border-radius: 14px; /* E njëjta rreze si butonat e kanaleve */
+        padding: 10px 20px; 
+        border-radius: 14px; 
         min-width: 200px; 
-        box-shadow: 0 6px 20px rgba(0,0,0,.5); /* Hija nga butonat e kanaleve */
+        box-shadow: 0 6px 20px rgba(0,0,0,.5); 
         position: relative; 
     }
     
@@ -84,9 +84,9 @@
         font-size: 1.4em; 
         font-weight: 500; 
         color: rgba(255, 255, 255, 0.9); 
-        margin-bottom: 5px; /* Hapësirë poshtë motit */
-        padding: 0; /* Heqet paddingu i mëparshëm */
-        background: none; /* Heqet sfondi i mëparshëm */
+        margin-bottom: 5px; 
+        padding: 0; 
+        background: none; 
         border-radius: 0;
         min-width: auto; 
         text-align: right;
@@ -98,8 +98,8 @@
         font-weight: 700; 
         line-height: 1;
         margin: 0;
-        padding: 0; /* Heqet paddingu i mëparshëm */
-        background: none; /* Heqet sfondi i mëparshëm */
+        padding: 0; 
+        background: none; 
         border-radius: 0;
         box-shadow: none;
         text-align: right; 
@@ -109,10 +109,10 @@
     #currentDate {
         font-size: 1em; 
         font-weight: 400; 
-        margin-top: 5px; /* Hapësirë minimale poshtë orës */
+        margin-top: 5px; 
         line-height: 1.2;
         color: rgba(255, 255, 255, 0.8); 
-        background: none; /* Heqet sfondi i mëparshëm */
+        background: none; 
         padding: 0; 
         border-radius: 0;
         text-align: right; 
@@ -141,7 +141,7 @@
         margin-top: 20px; 
     } 
 
-    /* KATEGORITË & GRIDI I KANALEVE (pa ndryshime) */
+    /* KATEGORITË & GRIDI I KANALEVE (I Përditësuar për Shpejtësi) */
     .categories { 
         display:flex; 
         gap:20px; 
@@ -159,12 +159,14 @@
         font-weight: 600; 
         cursor:pointer; 
         box-shadow:0 6px 20px rgba(0,0,0,.45); 
-        transition:.2s cubic-bezier(0,-0.5,0,3); 
+        /* NDRYSHIM: Tranzicion më i thjeshtë */
+        transition: .15s ease-out; 
         border: 3px solid transparent; 
     }
     .cat-btn:focus, .cat-btn.focused { 
         background: #6246B8; 
-        transform: scale(1.05) perspective(1000px) rotateX(3deg); 
+        /* NDRYSHIM: Transformim më i thjeshtë */
+        transform: scale(1.05); 
         box-shadow: 
             0 0 15px 8px rgba(255, 255, 255, 0.4), 
             0 12px 40px rgba(0,0,0,.6); 
@@ -179,7 +181,7 @@
         gap:20px; 
     } 
 
-    /* --- STILIMI I KANALIT (pa ndryshime) --- */
+    /* --- STILIMI I KANALIT (I Përditësuar me Kërkesë) --- */
     .channel { 
         width:120px; 
         height:120px; 
@@ -192,7 +194,8 @@
         justify-content:center; 
         align-items:center; 
         cursor:pointer; 
-        transition:.15s cubic-bezier(0, -0.5, 0, 3); 
+        /* NDRYSHIM: Tranzicion më i shpejtë, shtohet border-color */
+        transition: transform .1s ease-out, box-shadow .1s ease-out, border-color .1s ease-out; 
         border: 3px solid transparent; 
         overflow: hidden; 
         padding: 10px; 
@@ -201,15 +204,17 @@
     }
     
     .channel:focus, .channel.focused { 
-        /* EFEKTI I RI: Vetëm Ngritje (Pop-up) dhe Border i Hollë Vjollcë */
-        transform: scale(1.05); 
+        /* NDRYSHIM I MADH: Scale më i theksuar */
+        transform: scale(1.15); /* Zmadhimi me 15% */
         
-        box-shadow: 
-            0 0 0 3px #6246B8, 
-            0 8px 25px rgba(0, 0, 0, 0.5); 
+        /* NDRYSHIM I MADH: Shtohet borderi i poshtëm Light Purple */
+        border: 3px solid transparent; 
+        border-bottom: 5px solid #b4a0ff; /* Light Purple */
+        
+        /* HIJA E PËRMBYLLUR */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); 
         
         outline:none; 
-        border: 3px solid transparent; 
     }
     .channel:active { transform:scale(0.98); } 
 
@@ -218,7 +223,7 @@
         max-height: 90%; 
         object-fit: contain; 
         filter: saturate(1); 
-        transition: filter 0.15s, transform 0.15s; 
+        transition: filter 0.1s, transform 0.1s; 
     } 
     
     .channel:focus img, .channel.focused img { 
@@ -472,6 +477,7 @@ const grid = document.getElementById('grid');
 const playerContainer = document.getElementById('playerContainer');
 let hls = null;
 let currentCategory = 'LIVE TV'; 
+let currentFocusedElement = null; // Mbajtja e elementit aktual të fokusuar
 
 // --- focus/navigation state ---
 let focusedArea = 'cats'; 
@@ -541,22 +547,31 @@ function loadCategory(cat){
     focusCurrent();
 } 
 
+// NDRYSHIM: Optimizimi i funksionit të fokusit
 function focusCurrent(){
-    catWrap.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('focused'));
-    grid.querySelectorAll('.channel').forEach(item => item.classList.remove('focused'));
+    // Hiq fokusin nga elementi i mëparshëm
+    if (currentFocusedElement) {
+        currentFocusedElement.classList.remove('focused');
+    }
+
+    let targetElement = null;
     
     if(focusedArea === 'cats'){
         const cats = catWrap.querySelectorAll('.cat-btn');
         if (cats[catFocus]) {
-            cats[catFocus].classList.add('focused');
-            cats[catFocus].focus(); 
+            targetElement = cats[catFocus];
         }
     } else {
         const items = grid.querySelectorAll('.channel');
         if (items[gridFocus]) {
-            items[gridFocus].classList.add('focused');
-            items[gridFocus].focus(); 
+            targetElement = items[gridFocus];
         }
+    }
+    
+    if (targetElement) {
+        targetElement.classList.add('focused');
+        targetElement.focus(); 
+        currentFocusedElement = targetElement;
     }
 } 
 
@@ -768,6 +783,7 @@ document.addEventListener('keydown', (e)=>{
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
             
+            // Kohëzgjatja e pritjes për numra e reduktuar në 1000ms për reagim më të shpejtë
             digitTimer = setTimeout(() => {
                 let targetNumber = parseInt(digitBuffer);
                 
@@ -783,7 +799,7 @@ document.addEventListener('keydown', (e)=>{
                 } else {
                     infoBar.classList.remove('visible');
                 }
-            }, 1500); 
+            }, 1000); 
             
             return; 
         }
@@ -859,7 +875,14 @@ document.addEventListener('keydown', (e)=>{
     // KONTROLLAT E NAVIGIMIT TË UI-SË (jashtë player-it)
     if(e.key === 'ArrowRight'){
         if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
-        else { gridFocus = gridFocus + 1; }
+        else { 
+            const gridItems = grid.querySelectorAll('.channel');
+            if (gridFocus < gridItems.length - 1) {
+                gridFocus = gridFocus + 1;
+            } else {
+                // Opsional: Kthehu në fillim të rreshtit ose lëviz majtas
+            }
+        }
     }
     if(e.key === 'ArrowLeft'){
         if(focusedArea === 'cats') { catFocus = Math.max(catFocus - 1, 0); }
@@ -868,7 +891,7 @@ document.addEventListener('keydown', (e)=>{
     if(e.key === 'ArrowDown'){
         if(focusedArea === 'cats'){
             focusedArea = 'grid';
-            gridFocus = catFocus; 
+            gridFocus = Math.min(catFocus, grid.querySelectorAll('.channel').length - 1); 
         } else {
             gridFocus = gridFocus + GRID_COLS;
         }
@@ -989,7 +1012,8 @@ function openPlayerForChannel(ch, isSwitching = false){
 
     // Luaj me hls.js
     if(Hls && Hls.isSupported()){
-        hls = new Hls({ maxBufferLength: 30 });
+        // Reduktuar maxBufferLength për përdorim më të ulët të kujtesës dhe ngarkim më të shpejtë
+        hls = new Hls({ maxBufferLength: 10 }); 
         hls.loadSource(url);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
