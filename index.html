@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V22</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=1920, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
 <style>
@@ -55,12 +55,10 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end; 
-        /* NDRYSHIM: Larguar sfondi transparent */
         background: none; 
         padding: 10px 20px; 
         border-radius: 14px; 
         min-width: 200px; 
-        /* NDRYSHIM: Larguar hija */
         box-shadow: none; 
         position: relative; 
     }
@@ -129,7 +127,6 @@
     /* KATEGORITË & GRIDI I KANALEVE */
     .categories { 
         display:flex; 
-        /* NDRYSHIM: Kthyer në gap (20px) për ndarje të qartë */
         gap: 20px; 
         margin-bottom:40px; 
         justify-content: center; 
@@ -141,16 +138,15 @@
     .cat-btn { 
         background: none; 
         color:#fff; 
-        /* NDRYSHIM: Madhësia pak më e madhe e tekstit */
         padding:15px 28px; 
         font-size: 1.3em; 
         font-weight: 600; 
         cursor:pointer; 
-        transition: transform .15s ease-out; /* Shtuar transform transition */
+        transition: transform .15s ease-out; 
         border: none; 
         border-radius: 0;
         position: relative; 
-        margin: 0; /* Hequr margin për të parandaluar hapësirat e dyfishta me gap */
+        margin: 0; 
         outline: none;
     }
 
@@ -172,7 +168,6 @@
     .cat-btn:focus, .cat-btn.focused { 
         background: none; 
         color: #fff;
-        /* NDRYSHIM: Shtuar efekti i pop-up si te kanalet */
         transform: scale(1.05); 
         box-shadow: none; 
     }
@@ -183,16 +178,26 @@
 
     .cat-btn:active { transform:scale(0.98); } 
 
+    /* NDRYSHIM I RËNDËSISHËM: 
+       Përdorim 'repeat(auto-fit, minmax(120px, 1fr))' ose 'repeat(7, 1fr)' 
+       me 'max-width' për të siguruar që grida të mos jetë shumë e gjerë në ekranet e mëdha.
+       Përdorimi i '1fr' për madhësinë e kolonës e bën atë adaptive brenda hapësirës së vënë.
+    */
     .grid { 
         display:grid; 
-        grid-template-columns:repeat(7,120px); 
+        /* NDRYSHIM: Përdorim repeat(7, 1fr) për të siguruar 7 kolona responsive */
+        grid-template-columns: repeat(7, 1fr); 
+        /* NDRYSHIM: Përdorim max-width për të mbajtur gridën kompakte si një 'desktop view' */
+        max-width: 1000px; /* Mund ta rregulloni këtë vlerë në varësi të shkallës së dëshiruar */
+        width: 100%;
         gap:20px; 
     } 
-
-    /* --- STILIMI I KANALIT (I Përditësuar me Kërkesë) --- */
+    /* Ndryshim i mundshëm në madhësinë e kanalit për t'u shkallëzuar me 1fr */
     .channel { 
-        width:120px; 
-        height:120px; 
+        width: auto; /* Lëreni automatikisht të përshtatet me 1fr */
+        /* Përdorim aspect-ratio për të siguruar formën katrore */
+        aspect-ratio: 1 / 1; 
+        
         /* Ngjyra e Kanaleve (Light Purple me transparencë) */
         background: rgba(180, 160, 255, 0.2); 
         border-radius:14px; 
@@ -207,34 +212,30 @@
         overflow: hidden; 
         padding: 10px; 
         box-sizing: border-box;
-        position: relative; /* E rëndësishme për vendosjen e indikatorit */
+        position: relative; 
     }
 
     .channel:focus, .channel.focused { 
-        /* NDRYSHIM 1: Scale më i madh (1.25) */
         transform: scale(1.25); 
-        /* NDRYSHIM 2: Hiqet borderi i vjetër i poshtëm */
         border: 3px solid transparent; 
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); /* Rritet hija */
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); 
         outline:none; 
     }
     .channel:active { transform:scale(0.98); } 
 
-    /* NDRYSHIM I RI: Vija e bardhë në fund (Indikatori) */
     .channel-indicator {
         position: absolute;
-        bottom: 5px; /* Ngrihet pak nga fundi i kutisë */
-        left: 50%; /* Qendra horizontale */
+        bottom: 5px; 
+        left: 50%; 
         transform: translateX(-50%);
-        width: 40px; /* Gjatësia e vizës */
-        height: 4px; /* Trashësia e vizës */
-        background-color: transparent; /* Fshehur normalisht */
+        width: 40px; 
+        height: 4px; 
+        background-color: transparent; 
         transition: background-color .1s ease-out;
         border-radius: 2px;
-        z-index: 2; /* Siguron që të jetë mbi çdo gjë tjetër brenda kanalit */
+        z-index: 2; 
     }
 
-    /* Shfaqet vetëm kur është fokusuar */
     .channel:focus .channel-indicator, .channel.focused .channel-indicator {
         background-color: #ffffff;
     }
@@ -594,6 +595,9 @@ function focusCurrent(){
         targetElement.classList.add('focused');
         targetElement.focus(); 
         currentFocusedElement = targetElement;
+        
+        // Scroll në elementin e fokusuar (siguron që nuk shfaqet gjysma)
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 } 
 
