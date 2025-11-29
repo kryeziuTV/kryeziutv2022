@@ -2,9 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V24 (Përditësuar me Meny Instant)</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V25 (Përditësuar me Rotacion & Meny Instant)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
     /* --- STILIMET KRYESORE --- */
@@ -341,65 +342,62 @@
         position: fixed; 
         inset: 0; /* Mbulon gjithë ekranin e player-it */
         
-        /* Glassmorphism Effect */
-        background: rgba(0, 0, 0, 0.8); /* Hije e errët transparente */
-        backdrop-filter: blur(0); /* Largohet blur-i për shpejtësi */
+        /* NDRYSHIMI: Hije pak më e lehtë (0.8 -> 0.7) */
+        background: rgba(0, 0, 0, 0.7); /* Hije e errët transparente, më e lehtë */
+        backdrop-filter: blur(0); 
         -webkit-backdrop-filter: blur(0);
         
-        /* Heq borderin dhe box-shadow */
         border: none; 
         box-shadow: none; 
 
         overflow-y: auto; 
         overflow-x: hidden;
-        display: none; /* Default fshehur */
+        display: none; 
         z-index: 100001; 
         
-        /* ANULOHET TRANZICIONI PËR EFEKT TË MENJËHERSHËM (INSTANT) */
         transition: opacity 0.1s ease-out; 
         
-        /* Këto sigurojnë qendrëzimin e listës së kanaleve */
         display: flex; 
         flex-direction: column;
-        align-items: center; /* Qendërzo horizontalisht */
-        justify-content: center; /* Qendërzo vertikalisht (për kanale të pakta) */
+        align-items: center; 
+        justify-content: center; 
         opacity: 0;
         pointer-events: none;
     } 
 
     #channelMenu.active {
-        opacity: 1; /* Shfaqet menjëherë */
+        opacity: 1; 
         pointer-events: auto;
     }
 
     /* KONTEJNERI I LISTËS SË KANALEVE BRENDA OVERLAY-T */
     .menu-channel-list-wrapper {
-        width: 380px; /* Gjerësia fikse e listës së elementeve */
-        max-height: 90vh; /* Lartësia maksimale e listës */
+        width: 380px; 
+        max-height: 90vh; 
         overflow-y: auto;
         padding: 20px 0;
-        background: none; /* Asnjë sfond në listë, vetëm sfondi i overlay-t e mbulon */
+        background: none; 
         
         /* Stilim minimal për scrollbar */
-        scrollbar-width: none; /* Për Firefox */
-        -ms-overflow-style: none;  /* Për IE dhe Edge */
+        scrollbar-width: none; 
+        -ms-overflow-style: none;  
     }
     .menu-channel-list-wrapper::-webkit-scrollbar {
-        display: none; /* Për Chrome, Safari, Opera */
+        display: none; 
     }
 
     .menu-channel-item {
-        /* Hiqet stili i butonit, bëhet i ngjashëm me një rresht */
         background: none; 
         border: none; 
         outline: none;
         
         padding: 15px 25px; 
         color: #fff; 
-        font-size: 1.6em; /* Zmadhohet teksti */
+        font-size: 1.6em; 
         font-weight: 600; 
         cursor:pointer;
-        transition: background-color 0.05s, transform 0.05s, border-left-color 0.05s; 
+        /* Heqim tranzicionin e transform për shpejtësi maksimale */
+        transition: background-color 0.05s, border-left-color 0.05s; 
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -409,8 +407,8 @@
         
         /* Indikatori i fokusit (vija e majtë) */
         border-left: 5px solid transparent; 
-        box-shadow: none; /* Hiqet hija */
-        transform: none; /* Hiqet scale */
+        box-shadow: none; 
+        transform: none; 
     } 
 
     .menu-channel-number {
@@ -428,8 +426,8 @@
 
     /* FOKUSI I RI: VETËM VIZA E BARDHË DHE ZBARDHJA E TEKSTIT */
     .menu-channel-item.focused {
-        background-color: rgba(255, 255, 255, 0.1); /* Hije e lehtë në sfond kur fokusohet */
-        border-left-color: #ffffff; /* Vija e theksuar e bardhë në fokus */
+        background-color: rgba(255, 255, 255, 0.1); 
+        border-left-color: #ffffff; 
         color: #fff;
         transform: none; 
         box-shadow: none; 
@@ -445,6 +443,41 @@
     }
     /* --- FUNDI I STILIMIT TË MENUSË ANËSORE --- */
     
+    
+    /* --- BUTONI I ROTACIONIT (Ekrani i Vogël) --- */
+    #rotateButton {
+        position: absolute;
+        top: 20px; 
+        right: 20px; 
+        background: rgba(0, 0, 0, 0.5); 
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+        display: none; /* Default fshehur, shfaqet me media query */
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 100000; /* Mbi video, poshtë menusë */
+        transition: opacity 0.3s ease;
+        opacity: 0; 
+        pointer-events: none;
+    }
+
+    #rotateButton.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Shfaqet vetëm në ekrane të vogla (p.sh. telefona) */
+    @media (max-width: 768px) {
+        #rotateButton {
+            display: flex;
+        }
+    }
+
     /* --- NDËRFAQJA E KONFIRMIMIT TË DALJES (MODAL) --- */
     #exitConfirmModal {
         position: fixed;
@@ -454,7 +487,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        z-index: 100002; /* Mbi menynë */
+        z-index: 100002; 
     }
 
     .modal-content {
@@ -491,11 +524,11 @@
     }
 
     .modal-btn.yes {
-        background-color: #ff4d4f; /* E kuqe për PO (Dalje) */
+        background-color: #ff4d4f; 
         color: #fff;
     }
     .modal-btn.no {
-        background-color: #4169e1; /* Blu për JO (Anulim) */
+        background-color: #4169e1; 
         color: #fff;
     }
 
@@ -514,7 +547,7 @@
     /* Për ekrane më të vogla se 1024px (Tableta, Laptopë të vegjël) */
     @media (max-width: 1024px) {
         .grid {
-            grid-template-columns: repeat(5, 120px); /* Më pak kolona */
+            grid-template-columns: repeat(5, 120px); 
             gap: 15px;
         }
         #mainContent {
@@ -536,7 +569,7 @@
     /* Për ekrane më të vogla se 600px (Telefonat) */
     @media (max-width: 600px) {
         .grid {
-            grid-template-columns: repeat(3, 100px); /* Edhe më pak kolona */
+            grid-template-columns: repeat(3, 100px); 
             gap: 10px;
         }
         .channel {
@@ -545,7 +578,7 @@
             border-radius: 10px;
         }
         .channel:focus, .channel.focused { 
-            transform: scale(1.15); /* Zmadhim më i vogël në telefona */
+            transform: scale(1.15); 
         }
         #headerWidget {
             bottom: 10px; 
@@ -604,6 +637,11 @@
     </div> 
 
     <div id="playerContainer">
+        
+        <button id="rotateButton" aria-label="Rotate Screen">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        
         <div id="loadingOverlay">
             <div class="spinner"></div>
             <div class="message">Po ngarkohet...</div>
@@ -682,6 +720,7 @@ const channelsByCategory = {
 const catWrap = document.getElementById('categories');
 const grid = document.getElementById('grid');
 const playerContainer = document.getElementById('playerContainer');
+const rotateButton = document.getElementById('rotateButton'); // Referenca e re
 const exitModal = document.getElementById('exitConfirmModal');
 const exitYesBtn = document.getElementById('exitYes');
 const exitNoBtn = document.getElementById('exitNo');
@@ -689,6 +728,7 @@ let hls = null;
 let currentCategory = 'LIVE TV'; 
 let currentFocusedElement = null; 
 let exitModalActive = false; 
+let rotationTimer = null; // Timer i ri për fshehjen e butonit të rrotullimit
 
 // --- focus/navigation state ---
 let focusedArea = 'cats'; 
@@ -874,7 +914,46 @@ function loadSuharekeWeather() {
 }
 
 
-// --- INFO BAR, PLAYER, NAVIGATION ---
+// --- INFO BAR, PLAYER, NAVIGATION, ROTATE ---
+
+function showRotateButton() {
+    if (window.innerWidth <= 768) { // Shfaqet vetëm në ekrane të vogla
+        rotateButton.classList.add('visible');
+        if (rotationTimer) clearTimeout(rotationTimer);
+        rotationTimer = setTimeout(() => {
+            rotateButton.classList.remove('visible');
+        }, 3000); // Fshihet pas 3 sekondave
+    }
+}
+
+function toggleScreenOrientation() {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+
+    if (screen.orientation && screen.orientation.lock) {
+        const currentOrientation = screen.orientation.type;
+        let newOrientation = 'landscape';
+        
+        // Përcakto orientimin e ri bazuar në atë aktual
+        if (currentOrientation.includes('landscape')) {
+            newOrientation = 'portrait';
+        } else if (currentOrientation.includes('portrait')) {
+            newOrientation = 'landscape';
+        }
+
+        screen.orientation.lock(newOrientation)
+            .then(() => {
+                console.log(`Ekrani u kyç në orientimin: ${newOrientation}`);
+            })
+            .catch((error) => {
+                console.warn("Nuk mund të kyçej orientimi (Në disa shfletues nuk mbështetet):", error);
+            });
+    } else {
+        alert("Orientimi i ekranit nuk mbështetet në këtë shfletues.");
+    }
+}
+rotateButton.onclick = toggleScreenOrientation;
+
 function showInfoBar(ch) {
     const infoBar = document.getElementById('infoBar');
     const title = infoBar.querySelector('.channel-title');
@@ -883,11 +962,13 @@ function showInfoBar(ch) {
 
     title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
     infoBar.classList.add('visible'); 
+    showRotateButton(); // Shfaq butonin e rrotullimit kur shfaqet info bar
     
     if (infoBarTimer) clearTimeout(infoBarTimer); 
 
     infoBarTimer = setTimeout(() => {
         infoBar.classList.remove('visible');
+        rotateButton.classList.remove('visible');
     }, 5000);
 } 
 
@@ -903,13 +984,16 @@ function updateLoadingState(state, channelName = null) {
         message.classList.remove('error-text');
         message.textContent = 'Po ngarkohet...';
         overlay.style.display = 'flex';
+        rotateButton.classList.add('visible'); // Mbaje butonin e rotacionit aktiv gjatë ngarkimit
     } else if (state === 'error') {
         spinner.style.display = 'none';
         message.classList.add('error-text');
         message.textContent = `Kanali nuk punon: ${channelName || 'Pritet lidhja'}`;
         overlay.style.display = 'flex';
+        showRotateButton();
     } else if (state === 'hidden') {
         overlay.style.display = 'none';
+        rotateButton.classList.remove('visible');
     }
 } 
 
@@ -923,9 +1007,10 @@ function centerMenuFocus(menuItems, index) {
     const menuHeight = channelMenuWrapper.clientHeight; 
     const targetScrollTop = focusedItem.offsetTop - (menuHeight / 2) + (itemHeight / 2); 
 
+    // NDRYSHIMI: Përdorim 'auto' për lëvizje të menjëhershme ose 'smooth' vetëm në hapjen fillestare
     channelMenuWrapper.scrollTo({ 
         top: targetScrollTop, 
-        behavior: 'smooth' 
+        behavior: 'auto' 
     });
 } 
 
@@ -938,11 +1023,10 @@ function toggleChannelMenu(){
     isMenuVisible = !isMenuVisible;
     
     if(isMenuVisible) {
-        channelMenu.style.display = 'flex'; // Shfaq menjëherë
+        channelMenu.style.display = 'flex'; 
         channelMenu.classList.add('active'); 
     } else {
         channelMenu.classList.remove('active');
-        // Përdor setTimeout për të lejuar tranzicionin e opacity para se ta fsheh plotësisht
         setTimeout(() => {
             if (!channelMenu.classList.contains('active')) {
                  channelMenu.style.display = 'none';
@@ -957,7 +1041,11 @@ function toggleChannelMenu(){
             menuFocusIndex = Math.min(Math.max(0, currentChannelIndex), items.length - 1); 
             items[menuFocusIndex].classList.add('focused');
             items[menuFocusIndex].focus(); 
-            centerMenuFocus(items, menuFocusIndex); 
+            // Këtu përdorim scrollTO me behavior: 'smooth' VETËM në hapjen fillestare
+            document.querySelector('.menu-channel-list-wrapper').scrollTo({
+                top: items[menuFocusIndex].offsetTop - (document.querySelector('.menu-channel-list-wrapper').clientHeight / 2) + (items[menuFocusIndex].offsetHeight / 2),
+                behavior: 'smooth'
+            });
         }
     } else {
         const video = document.getElementById('tvplayer');
@@ -1046,7 +1134,6 @@ function openPlayerForChannel(ch, isSwitching = false){
     if (!channelMenu) channelMenu = document.getElementById('channelMenu');
     channelMenu.innerHTML = '';
     
-    // Krijojmë një wrapper për të qendërzuar listën
     const listWrapper = document.createElement('div');
     listWrapper.className = 'menu-channel-list-wrapper';
 
@@ -1081,7 +1168,7 @@ function openPlayerForChannel(ch, isSwitching = false){
         listWrapper.appendChild(item);
     });
     
-    channelMenu.appendChild(listWrapper); // Shto wrapper-in e ri
+    channelMenu.appendChild(listWrapper); 
 
     isMenuVisible = false;
     channelMenu.classList.remove('active'); 
@@ -1141,6 +1228,10 @@ function closePlayer(){
         clearTimeout(infoBarTimer); 
         document.getElementById('infoBar').classList.remove('visible');
     }
+    if (rotationTimer) {
+        clearTimeout(rotationTimer); 
+        rotateButton.classList.remove('visible');
+    }
     if (digitTimer) clearTimeout(digitTimer); 
     digitBuffer = '';
     
@@ -1197,25 +1288,35 @@ function handleSwipe() {
 }
 
 function setupSwipeDetection() {
-    const videoElement = document.getElementById('tvplayer');
-    if (!videoElement) return;
+    // Shtojmë touch listener në të gjithë player containerin kur është aktiv
+    const container = document.getElementById('playerContainer');
+    if (!container) return; 
 
-    videoElement.addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-    }, false);
-
-    videoElement.addEventListener('touchmove', e => {
-        // Kontroll i thjeshtë për të siguruar që është një rrëshqitje horizontale
-        const diffX = e.changedTouches[0].screenX - touchstartX;
-        const diffY = e.changedTouches[0].screenY - e.changedTouches[0].screenY;
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-            e.preventDefault(); // Parandalon scroll-in vertikal gjatë swipe horizontal
+    container.addEventListener('touchstart', e => {
+        if (!isMenuVisible) {
+            touchstartX = e.changedTouches[0].screenX;
         }
     }, false);
 
-    videoElement.addEventListener('touchend', e => {
-        touchendX = e.changedTouches[0].screenX;
-        handleSwipe();
+    container.addEventListener('touchmove', e => {
+        const diffX = e.changedTouches[0].screenX - touchstartX;
+        const diffY = e.changedTouches[0].screenY - e.changedTouches[0].screenY;
+        if (Math.abs(diffX) > Math.abs(diffY) && !isMenuVisible) {
+            e.preventDefault(); 
+        }
+    }, false);
+
+    container.addEventListener('touchend', e => {
+        if (!isMenuVisible) {
+            touchendX = e.changedTouches[0].screenX;
+            handleSwipe();
+        } else {
+             // Kur menuja është e hapur, një tap jashtë menuwrapper-it e mbyll menunë
+            if (e.target.id === 'channelMenu') {
+                toggleChannelMenu();
+            }
+        }
+        
     }, false);
 }
 
@@ -1269,6 +1370,7 @@ document.addEventListener('keydown', (e)=>{
 
             title.textContent = `Kanali: ${digitBuffer}`;
             infoBar.classList.add('visible'); 
+            showRotateButton(); // Shfaq butonin e rotacionit me info barin e numrit
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
             
@@ -1286,6 +1388,7 @@ document.addEventListener('keydown', (e)=>{
                     showInfoBar(allChannelsList[currentChannelIndex]); 
                 } else {
                     infoBar.classList.remove('visible');
+                    rotateButton.classList.remove('visible');
                 }
             }, 1000); 
             
@@ -1299,12 +1402,14 @@ document.addEventListener('keydown', (e)=>{
                 menuFocusIndex = Math.max(0, menuFocusIndex - 1);
                 menuItems[menuFocusIndex]?.classList.add('focused');
                 menuItems[menuFocusIndex]?.focus(); 
+                // NDRYSHIM: Përdorim 'auto' për scroll të menjëhershëm gjatë mbajtjes shtypur
                 centerMenuFocus(menuItems, menuFocusIndex); 
             } else if(e.key === 'ArrowDown'){
                 menuItems[menuFocusIndex]?.classList.remove('focused');
                 menuFocusIndex = Math.min(MAX_CHANNEL_INDEX, menuFocusIndex + 1);
                 menuItems[menuFocusIndex]?.classList.add('focused');
                 menuItems[menuFocusIndex]?.focus(); 
+                // NDRYSHIM: Përdorim 'auto' për scroll të menjëhershëm gjatë mbajtjes shtypur
                 centerMenuFocus(menuItems, menuFocusIndex); 
             } else if(e.key === 'Enter'){
                 const channel = allChannelsList[menuFocusIndex];
@@ -1364,20 +1469,33 @@ document.addEventListener('keydown', (e)=>{
             showExitConfirmModal(); 
         }
         
+        // SHIGJETA MAJTAS/DJATHTAS: Shfaq Info Bar (dhe butonin e rotacionit)
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+             const currentChannel = allChannelsList[currentChannelIndex];
+             if (currentChannel) {
+                showInfoBar(currentChannel);
+             }
+             e.preventDefault();
+        }
+        
         return; 
     } 
 
     // 3. KONTROLLAT E NAVIGIMIT TË UI-SË (jashtë player-it)
-    
-    if (window.innerWidth <= 1024) return;
     
     // Logjika e navigimit me shigjeta (për TV/Desktop)
     if(e.key === 'ArrowRight'){
         if(focusedArea === 'cats') { catFocus = Math.min(catFocus + 1, categories.length - 1); }
         else { 
             const gridItems = grid.querySelectorAll('.channel');
-            if (gridFocus < gridItems.length - 1) {
-                gridFocus = gridFocus + 1;
+            const cols = parseInt(window.getComputedStyle(grid).gridTemplateColumns.split(' ').length);
+            // Kjo pjesë bëhet aktive vetëm në ekrane të mëdha
+            if(window.innerWidth > 1024) { 
+                if (gridFocus < gridItems.length - 1) {
+                    gridFocus = gridFocus + 1;
+                }
+            } else {
+                 gridFocus = gridFocus + 1;
             }
         }
     }
