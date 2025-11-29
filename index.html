@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V22</title>
+<title>TV App UI - Versioni Statik (Me EPG) - V22.1</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
@@ -340,7 +340,7 @@
         font-weight: bold;
     } 
 
-    /* --- MENYJA ANËSORE (E Shpejtë - pa ndryshime) --- */
+    /* --- MENYJA ANËSORE (E Shpejtë - STILIMET PËR EPG) --- */
     #channelMenu {
         position: absolute;
         top: 0;
@@ -363,9 +363,10 @@
     }
 
     .menu-channel-item {
-        padding: 20px 25px; 
+        /* NDRYSHIM PËR EPG: Rritet Padding-u Për Të Akumuluar EPG-në */
+        padding: 15px 25px; 
         color: #fff; 
-        font-size: 1.3em; 
+        font-size: 1.3em; /* Mbetet kështu */
         font-weight: 500;
         cursor:pointer;
         transition: background-color 0.05s, transform 0.05s, box-shadow 0.05s; 
@@ -376,7 +377,17 @@
         align-items: center; 
         gap: 20px; 
         border-left: 5px solid transparent; 
+        /* NDRYSHIM PËR EPG: Kalon në Flex Column për Kanalin dhe EPG-në */
+        flex-direction: column;
+        align-items: flex-start;
     } 
+
+    .menu-channel-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+    }
 
     .menu-channel-number {
         font-weight: 700; 
@@ -384,8 +395,31 @@
         font-size: 1.5em; 
         width: 45px; 
         text-align: right;
+        flex-shrink: 0; /* Parandalon tkurrjen e numrit */
     } 
+    
+    .menu-channel-name {
+        /* NDRYSHIM PËR EPG */
+        font-size: 1.3em;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
+    /* NDRYSHIM PËR EPG: Stili i EPG-së */
+    .menu-epg-info {
+        width: 100%;
+        /* NDRYSHIM PËR EPG: Teksti i EPG-së */
+        font-size: 0.95em;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.7); 
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 5px;
+    }
+    
     .menu-channel-item.focused {
         background-color: rgba(65, 105, 225, 0.3); 
         border-left-color: #4169e1; 
@@ -439,6 +473,8 @@
     </div> 
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
 <script>
 // --- data ---
 const categories = ["LIVE TV","FILMA","SPORT","FEMIJE","DOKU"];
@@ -465,7 +501,7 @@ const channelsByCategory = {
         { name:"KLAN PLUS", logo:"https://vimg.ipko.tv/logo/color/klanplus.png", url:"http://178.33.34.186:15151/live/klanplusott/playlist.m3u8", channelId: "Klan.Plus.al" },
         { name:"RTSH 1", logo:"https://vimg.ipko.tv/logo/color/rtsh1.png", url:"http://178.33.34.186:15151/live/rtsh1ott/playlist.m3u8", channelId: "Klan.Tv.al" },        
         { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"https://cdn-1.bbvipal4.xyz/memfs/ae40b0f2-de0d-4483-9fb5-9697cbff13b6_output_0.m3u8", channelId: "BBVipKS2.al" },
-        { name:"DUKAGJINI TV", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"http://amdcam.tibo.tv:8081/yWbXvr1S/dukagjini_720p/playlist.m3u8", channelId: "BBVipKS2.al" }
+        { name:"DUKAGJINI TV", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"http://amdcam.tibo.tv:8081/yWbXvr1S/dukagjini_720p/playlist.m3u8", channelId: "DUKAGJINI.al" }
     ],
     "FILMA": [ 
         { name:"Cinema 1", logo:"https://via.placeholder.com/120x120?text=C1", url:"", channelId: "C1.xk" },
@@ -491,6 +527,11 @@ const channelsByCategory = {
         { name:"HISTORY", logo:"https://via.placeholder.com/120x120?text=D3", url:"https://fl1.moveonjoy.com/history_channel/index.m3u8", channelId: "HISTORY.xk" }, 
         { name:"CARS TV", logo:"https://via.placeholder.com/120x120?text=D4", url:"http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5c12ba66eae03059cbdc77f2/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=6c2ac636-30d3-11ef-9cf5-e9ddff8ff496&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=2f9bce8e-d9f8-4cf4-8b83-367dc559496a", channelId: "CARS_TV.xk" } ]
 }; 
+
+// --- NDRYSHIM PËR EPG ---
+const EPG_URL = "https://epgshare01.online/epgshare01/epg_ripper_AL1.xml.gz";
+let epgData = {}; // Objekti për të ruajtur të dhënat e EPG-së: { channelId: [program1, program2, ...] }
+// --- FUND NDRYSHIM PËR EPG ---
 
 // --- DOM refs ---
 const catWrap = document.getElementById('categories');
@@ -527,6 +568,147 @@ categories.forEach(categoryName => {
     });
 });
 const MAX_CHANNEL_INDEX = allChannelsList.length - 1;
+
+
+// --- NDRYSHIM PËR EPG: Funksionet e EPG-së ---
+
+/**
+ * Konverton formatin e kohës YYYYMMDDHHMMSS +/- TZh TZM në një objekt Date.
+ * EPG-ja përdor formatin YYYYMMDDHHMMSS +0000.
+ */
+function parseEPGTime(timeStr) {
+    // Shembull: 20240501103000 +0200
+    // Pjesa e parë (data/ora): 20240501103000
+    // Pjesa e dytë (offset): +0200 (ose vetëm offset, në këtë EPG nuk ka TimeZone sepse është +0000)
+    
+    // Nxjerrim komponentët
+    const year = timeStr.substring(0, 4);
+    const month = timeStr.substring(4, 6);
+    const day = timeStr.substring(6, 8);
+    const hour = timeStr.substring(8, 10);
+    const minute = timeStr.substring(10, 12);
+    const second = timeStr.substring(12, 14);
+
+    // Krijojmë një string ISO: YYYY-MM-DDTHH:MM:SSZ (Z-ja tregon UTC, duke e supozuar si +0000)
+    const isoString = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+    return new Date(isoString);
+}
+
+/**
+ * Formatimi i orës për shfaqje.
+ */
+function formatTime(date) {
+    if (!(date instanceof Date) || isNaN(date)) return '--:--';
+    return date.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+}
+
+/**
+ * Gjen programin aktual për një channelId.
+ * @param {string} channelId - ID e kanalit.
+ * @returns {object|null} Programi aktual ose null.
+ */
+function getCurrentProgram(channelId) {
+    const programs = epgData[channelId];
+    if (!programs || programs.length === 0) return null;
+
+    const now = new Date();
+    
+    // Programet janë të renditura kronologjikisht
+    for (const program of programs) {
+        const start = program.start;
+        const stop = program.stop;
+
+        // Kontrollo nëse ora aktuale është midis start dhe stop
+        if (now >= start && now < stop) {
+            return program;
+        }
+    }
+    
+    // Nëse nuk ka program aktual, ktheje atë që vjen më pas (nëse ka)
+    for (const program of programs) {
+        if (now < program.start) {
+            return program;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Merr, dekompreson dhe analizon skedarin EPG XML.
+ */
+async function fetchAndParseEPG() {
+    try {
+        updateLoadingState('loading', 'Po ngarkohet EPG-ja...');
+        
+        // 1. Merr skedarin .gz
+        const response = await fetch(EPG_URL);
+        if (!response.ok) {
+            throw new Error(`Gabim HTTP në marrjen e EPG: ${response.status}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+
+        // 2. Dekompreso me JSZip
+        const zip = new JSZip();
+        const decompressed = await zip.loadAsync(arrayBuffer);
+        
+        // Përdoret vetëm skedari i parë nëse janë më shumë se një (XMLTV standard)
+        const xmlFileName = Object.keys(decompressed.files).find(name => name.endsWith('.xml') || name.endsWith('.xmltv'));
+        if (!xmlFileName) {
+            throw new Error("Skedari XML nuk u gjet brenda skedarit .gz.");
+        }
+        const xmlText = await decompressed.file(xmlFileName).async("string");
+
+        // 3. Analizo XML-në
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+        
+        // Kujdes: Analizimi i madh mund të bllokojë UI-në, por e bëjmë thjesht
+        const programs = xmlDoc.querySelectorAll('programme');
+        const newEpgData = {};
+
+        programs.forEach(programElement => {
+            const channelId = programElement.getAttribute('channel');
+            const startStr = programElement.getAttribute('start');
+            const stopStr = programElement.getAttribute('stop');
+            const titleElement = programElement.querySelector('title');
+            
+            if (channelId && startStr && stopStr && titleElement) {
+                const title = titleElement.textContent;
+                const start = parseEPGTime(startStr);
+                const stop = parseEPGTime(stopStr);
+                
+                if (isNaN(start) || isNaN(stop)) return; // Kalo nëse ka gabim në datë
+                
+                const programData = {
+                    title: title,
+                    start: start,
+                    stop: stop
+                };
+
+                if (!newEpgData[channelId]) {
+                    newEpgData[channelId] = [];
+                }
+                newEpgData[channelId].push(programData);
+            }
+        });
+        
+        // Rendit programet sipas kohës së fillimit
+        for (const id in newEpgData) {
+            newEpgData[id].sort((a, b) => a.start - b.start);
+        }
+
+        epgData = newEpgData;
+        console.log(`EPG u ngarkua me sukses. ${Object.keys(epgData).length} kanale me programe.`);
+        updateLoadingState('hidden');
+
+    } catch (error) {
+        console.error("Gabim fatal në ngarkimin/analizimin e EPG-së:", error);
+        updateLoadingState('error', `Gabim EPG: ${error.message}`);
+    }
+}
+
+// --- FUND NDRYSHIM PËR EPG ---
 
 
 // --- render UI ---
@@ -669,7 +851,15 @@ function showInfoBar(ch) {
 
     if (!infoBar || !title) return; 
 
-    title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}`;
+    const currentProgram = getCurrentProgram(ch.channelId);
+    let epgInfo = '';
+    if (currentProgram) {
+        const start = formatTime(currentProgram.start);
+        const stop = formatTime(currentProgram.stop);
+        epgInfo = ` | ${start} - ${stop}: ${currentProgram.title}`;
+    }
+
+    title.textContent = `${ch.number || currentChannelIndex + 1} | ${ch.name}${epgInfo}`;
     infoBar.classList.add('visible'); 
     
     if (infoBarTimer) clearTimeout(infoBarTimer); 
@@ -679,7 +869,7 @@ function showInfoBar(ch) {
     }, 5000);
 } 
 
-function updateLoadingState(state, channelName = null) {
+function updateLoadingState(state, customMessage = null) {
     const overlay = document.getElementById('loadingOverlay');
     const spinner = overlay.querySelector('.spinner');
     const message = overlay.querySelector('.message'); 
@@ -689,12 +879,12 @@ function updateLoadingState(state, channelName = null) {
     if (state === 'loading') {
         spinner.style.display = 'block';
         message.classList.remove('error-text');
-        message.textContent = 'Po ngarkohet...';
+        message.textContent = customMessage || 'Po ngarkohet...';
         overlay.style.display = 'flex';
     } else if (state === 'error') {
         spinner.style.display = 'none';
         message.classList.add('error-text');
-        message.textContent = `Kanali nuk punon: ${channelName || 'Pritet lidhja'}`;
+        message.textContent = customMessage || `Kanali nuk punon: ${channelName || 'Pritet lidhja'}`;
         overlay.style.display = 'flex';
     } else if (state === 'hidden') {
         overlay.style.display = 'none';
@@ -724,6 +914,9 @@ function toggleChannelMenu(){
     isMenuVisible = !isMenuVisible;
     
     if(isMenuVisible) {
+        // NDRYSHIM PËR EPG: Rindërto menunë kur hapet (për të rifreskuar EPG-në)
+        renderChannelMenu(); 
+        
         channelMenu.classList.add('active'); 
         channelMenu.style.display = 'block';
     } else {
@@ -741,6 +934,62 @@ function toggleChannelMenu(){
         }
     }
 } 
+
+// NDRYSHIM PËR EPG: Funksioni i rindërtimit të menusë
+function renderChannelMenu() {
+    const channelMenu = document.getElementById('channelMenu');
+    if (!channelMenu) return; 
+    
+    channelMenu.innerHTML = '';
+    
+    allChannelsList.forEach((channelData, index) => {
+        const item = document.createElement('div');
+        item.className = 'menu-channel-item';
+        
+        // --- Koka e Kanalit (Numri + Emri) ---
+        const header = document.createElement('div');
+        header.className = 'menu-channel-header';
+        
+        const channelNumber = document.createElement('span');
+        channelNumber.className = 'menu-channel-number';
+        channelNumber.textContent = channelData.number;
+        
+        const channelName = document.createElement('span');
+        channelName.className = 'menu-channel-name';
+        channelName.textContent = channelData.name;
+        
+        header.appendChild(channelNumber);
+        header.appendChild(channelName);
+        item.appendChild(header);
+        
+        // --- EPG Info ---
+        const epgInfo = document.createElement('div');
+        epgInfo.className = 'menu-epg-info';
+        
+        const currentProgram = getCurrentProgram(channelData.channelId);
+        if (currentProgram) {
+            const start = formatTime(currentProgram.start);
+            const stop = formatTime(currentProgram.stop);
+            epgInfo.textContent = `${start} - ${stop} | ${currentProgram.title}`;
+        } else {
+            epgInfo.textContent = 'EPG: Informacioni mungon.';
+        }
+        item.appendChild(epgInfo);
+        // --- Fund EPG Info ---
+        
+        item.setAttribute('data-url', channelData.url);
+        item.setAttribute('data-index', index);
+        item.tabIndex = 0; 
+        
+        if (index === currentChannelIndex) {
+            item.classList.add('focused');
+        }
+        
+        item.onclick = () => switchChannel(channelData); 
+        channelMenu.appendChild(item);
+    });
+}
+
 
 function switchChannel(ch){
     if(!ch.url) return;
@@ -767,7 +1016,7 @@ function openPlayerForChannel(ch, isSwitching = false){
         if (!isSwitching) {
             alert(`Kanali "${ch.name}" nuk ka një URL aktive.`);
         } else {
-            updateLoadingState('error', ch.name);
+            updateLoadingState('error', `Kanali nuk punon: ${ch.name}`);
         }
         return;
     }
@@ -817,33 +1066,8 @@ function openPlayerForChannel(ch, isSwitching = false){
     }
 
     // POPULLO DHE FSHEH MENYNË ANËSORE
-    if (!channelMenu) channelMenu = document.getElementById('channelMenu');
-    channelMenu.innerHTML = '';
-    allChannelsList.forEach((channelData, index) => {
-        const item = document.createElement('div');
-        item.className = 'menu-channel-item';
-        
-        const channelNumber = document.createElement('span');
-        channelNumber.className = 'menu-channel-number';
-        channelNumber.textContent = channelData.number;
-        
-        const channelName = document.createElement('span');
-        channelName.textContent = channelData.name;
-        
-        item.appendChild(channelNumber);
-        item.appendChild(channelName);
-        
-        item.setAttribute('data-url', channelData.url);
-        item.setAttribute('data-index', index);
-        item.tabIndex = 0; 
-        
-        if (index === currentChannelIndex) {
-            item.classList.add('focused');
-        }
-        
-        item.onclick = () => switchChannel(channelData); 
-        channelMenu.appendChild(item);
-    });
+    // NDRYSHIM PËR EPG: Thirr funksionin e ri të renderimit të menusë
+    renderChannelMenu();
     isMenuVisible = false;
     channelMenu.classList.remove('active'); 
     channelMenu.style.display = 'none';
@@ -856,6 +1080,8 @@ function openPlayerForChannel(ch, isSwitching = false){
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, function(){ 
             video.play().catch(()=>{}); 
+            // Përditëso shiritin e informacionit me EPG sapo të fillojë luajtja
+            showInfoBar(ch); 
         });
         
         hls.on(Hls.Events.ERROR, function(event, data){
@@ -867,6 +1093,8 @@ function openPlayerForChannel(ch, isSwitching = false){
     } else {
         video.src = url;
         video.play().catch(()=>{});
+        // Përditëso shiritin e informacionit me EPG sapo të fillojë luajtja
+        video.onloadeddata = () => showInfoBar(ch); 
     } 
 
     video.onplaying = () => {
@@ -935,8 +1163,15 @@ document.addEventListener('keydown', (e)=>{
             
             const infoBar = document.getElementById('infoBar');
             const title = infoBar.querySelector('.channel-title');
-
-            title.textContent = `Kanali: ${digitBuffer}`;
+            
+            // NDRYSHIM PËR EPG: Përditëso mesazhin me numrin dhe emrin e kanalit
+            const targetNumber = parseInt(digitBuffer);
+            let tempMessage = `Kanali: ${digitBuffer}`;
+            if (targetNumber > 0 && targetNumber <= allChannelsList.length) {
+                tempMessage = `${targetNumber} | ${allChannelsList[targetNumber - 1].name}`;
+            }
+            
+            title.textContent = tempMessage;
             infoBar.classList.add('visible'); 
 
             if (infoBarTimer) clearTimeout(infoBarTimer);
@@ -1131,6 +1366,12 @@ loadSuharekeWeather();
 setInterval(updateClock, 60000); 
 // Përditësojmë Motin çdo 10 minuta (600000ms)
 setInterval(loadSuharekeWeather, 600000); 
+
+// --- NDRYSHIM PËR EPG: Ngarko EPG-në fillimisht dhe çdo orë ---
+fetchAndParseEPG();
+// Përditëso EPG-në çdo orë (3600000ms) për të siguruar informacion aktual
+setInterval(fetchAndParseEPG, 3600000); 
+// --- FUND NDRYSHIM PËR EPG ---
 
 </script>
 </body>
