@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V21</title>
+<title>TV App UI - Versioni Statik (Pa EPG, Më Shpejtë) - V22</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
@@ -29,13 +29,8 @@
         background-image: url("https://i.imgur.com/yeiw0tZ.jpeg");
         background-size: cover;
         background-position: center;
-        /* HEQUR: blur(2px) */
         filter: brightness(0.7); 
     }
-
-    /* SHTRESA BLUR-UAR - E LARGUR PLOTËSISHT */
-    /* U LARGUA: #blur-overlay stili */
-
 
     /* --- WIDGET I ORËS DHE MOTIT (POSHTË NË TË DJATHTË) --- */
     #headerWidget {
@@ -55,17 +50,18 @@
         pointer-events: none; 
     } 
 
-    /* KARTELA KRYESORE E WIDGET-IT */
+    /* KARTELA KRYESORE E WIDGET-IT - TANI PA SFOND DHE HIJE */
     #timeDate {
         display: flex;
         flex-direction: column;
         align-items: flex-end; 
-        /* KUFIZUESI KRYESOR ME NGJYRËN E KANALEVE */
-        background: rgba(180, 160, 255, 0.2); 
+        /* NDRYSHIM: Larguar sfondi transparent */
+        background: none; 
         padding: 10px 20px; 
         border-radius: 14px; 
         min-width: 200px; 
-        box-shadow: 0 6px 20px rgba(0,0,0,.5); 
+        /* NDRYSHIM: Larguar hija */
+        box-shadow: none; 
         position: relative; 
     }
 
@@ -127,35 +123,34 @@
         align-items: center; 
         padding: 40px; 
         background: none; 
-        /* KATEGORITË KALUAN LART */
         margin-top: 20px; 
     } 
 
     /* KATEGORITË & GRIDI I KANALEVE */
     .categories { 
         display:flex; 
-        gap: 0; /* Larguar gap-i per butona te bashkuar */
+        /* NDRYSHIM: Kthyer në gap (20px) për ndarje të qartë */
+        gap: 20px; 
         margin-bottom:40px; 
         justify-content: center; 
         width: 100%; 
-        /* Shtohet Padding lart, për të zhvendosur kategoritë lart */
         padding-top: 0; 
     } 
 
     /* STILIMI I RI PËR KATEGORITË */
     .cat-btn { 
-        /* HEQUR background, box-shadow, border */
         background: none; 
         color:#fff; 
+        /* NDRYSHIM: Madhësia pak më e madhe e tekstit */
         padding:15px 28px; 
-        font-size: 1.2em; 
+        font-size: 1.3em; 
         font-weight: 600; 
         cursor:pointer; 
-        transition: color .15s ease-out; 
-        border: none; /* Hequr border-i */
+        transition: transform .15s ease-out; /* Shtuar transform transition */
+        border: none; 
         border-radius: 0;
-        position: relative; /* E rëndësishme për ::after */
-        margin: 0 10px; /* Ndarje minimale mes butonave */
+        position: relative; 
+        margin: 0; /* Hequr margin për të parandaluar hapësirat e dyfishta me gap */
         outline: none;
     }
 
@@ -173,19 +168,20 @@
         transition: width 0.1s ease-out;
     }
 
-    /* STILIMI I FOKUSIT (VETËM VIZA POSHTË DHE NGJYRA) */
+    /* STILIMI I FOKUSIT (VETËM VIZA POSHTË DHE SCALE UP) */
     .cat-btn:focus, .cat-btn.focused { 
-        background: none; /* Sigurohu që të jetë transparent */
+        background: none; 
         color: #fff;
-        transform: none; /* Larguar efekti pop-up */
-        box-shadow: none; /* Larguar hija */
+        /* NDRYSHIM: Shtuar efekti i pop-up si te kanalet */
+        transform: scale(1.05); 
+        box-shadow: none; 
     }
     
     .cat-btn:focus::after, .cat-btn.focused::after {
-        width: 30px; /* Gjatësia e vizës kur është fokusuar */
+        width: 30px; 
     }
 
-    .cat-btn:active { transform:none; } /* Larguar efekti aktiv */
+    .cat-btn:active { transform:scale(0.98); } 
 
     .grid { 
         display:grid; 
@@ -411,6 +407,7 @@
 <body>
     
     <div id="background-image"></div>
+    
     <div id="headerWidget">
         <div id="timeDate">
             <span id="weatherSummary"></span> 
@@ -1091,7 +1088,6 @@ document.addEventListener('keydown', (e)=>{
 
     focusCurrent();
 }); 
-
 
 // handle history/back
 window.addEventListener('popstate', (e)=>{
