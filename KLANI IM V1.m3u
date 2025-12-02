@@ -1,0 +1,65 @@
+#EXTM3U
+#EXTINF:-1,Klan TV
+http://188.172.107.157:15152/live/klanhdott/playlist.m3u8
+#EXTINF:-1,Klan Plus
+http://188.172.107.157:15152/live/klanplusott/playlist.m3u8
+#EXTINF:-1,RTSH Shqip
+http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8
+#EXTINF:-1,RTSH Plus
+http://188.172.107.157:15152/live/rtshplusott/playlist.m3u8
+#EXTINF:-1,RTSH Femije
+http://188.172.107.157:15152/live/rtshfemijeott/playlist.m3u8
+#EXTINF:-1,RTSH Film
+http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8
+#EXTINF:-1,ABC
+http://188.172.107.157:15152/live/abcnewsott/playlist.m3u8
+#EXTINF:-1,RTV Ora
+http://188.172.107.157:15152/live/rtvoraott/playlist.m3u8
+#EXTINF:-1,Scan TV
+http://188.172.107.157:15152/live/scanott/playlist.m3u8
+#EXTINF:-1,Syri TV
+http://188.172.107.157:15152/live/syritvott/playlist.m3u8
+#EXTINF:-1,MCN TV
+http://188.172.107.157:15152/live/mcnpp1/playlist.m3u8
+#EXTINF: 1,RTK 1
+http://188.172.107.157:15152/live/rtk1/playlist.m3u8
+#EXTINF:-1,RTSH 1
+http://188.172.107.157:15152/live/rtsh1ott/playlist.m3u8
+#EXTINF:-1,RTSH 2 HD
+http://188.172.107.157:15152/live/rtsh2/playlist.m3u8
+#EXTINF:-1,Klan Macedonia
+http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8
+#EXTINF:-1,Teuta TV
+http://188.172.107.157:15152/live/rtvteutaott/playlist.m3u8
+#EXTINF:-1,BBF
+http://188.172.107.157:15152/live/bbfott/playlist.m3u8
+#EXTINF:-1,Klan Music HD
+http://188.172.107.157:15152/live/klanmusicott/playlist.m3u8
+#EXTINF:-1,Folklorit
+http://188.172.107.157:15152/live/folklorit/playlist.m3u8
+#EXTINF:-1,INTV HD
+http://188.172.107.157:15152/live/intvpp1/playlist.m3u8
+#EXTINF:-1,RTSH Sport
+http://188.172.107.157:15152/live/rtshsport/playlist.m3u8
+#EXTINF:-1,FSHF TV HD
+http://188.172.107.157:15152/live/fshfott/playlist.m3u8
+#EXTINF:-1,Partizani TV
+http://138.201.120.59:1935/partizanitv/partizanitv/playlist.m3u8
+#EXTINF:-1,CNA TV
+http://188.172.107.157:15152/live/cnaott/playlist.m3u8
+#EXTINF:-1,Euronews Albania
+http://188.172.107.157:15152/live/euronewsott/playlist.m3u8
+#EXTINF:-1,Fax News
+http://188.172.107.157:15152/live/faxnewsott/playlist.m3u8
+#EXTINF:-1,Klan News
+http://188.172.107.157:15152/live/klannewsott/playlist.m3u8
+#EXTINF:-1,News 24
+http://188.172.107.157:15152/live/news24ott/playlist.m3u8
+#EXTINF:-1,Ora News
+http://188.172.107.157:15152/live/oranewspp1/playlist.m3u8
+#EXTINF:-1,Report TV HD
+http://188.172.107.157:15152/live/reportott/playlist.m3u8
+#EXTINF:-1,Klan Radio
+http://188.172.107.157:15152/live/klanmusicradio1/playlist.m3u8
+#EXTINF:-1,Folklorit
+http://95.107.165.101:5000/live/folklorit/playlist.m3u8
