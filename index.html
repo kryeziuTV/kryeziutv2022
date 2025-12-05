@@ -16,7 +16,7 @@
       --purple-accent: #A020F0; 
       --selection-bg: rgba(160, 32, 240, 0.3); 
       --solid-black: #000000;
-      --white-accent: #FFFFFF; /* Ngjyra e re e kategorisë */
+      --white-accent: #FFFFFF; /* Ngjyra e re e kategorise */
   }
   
   /* --- Stilet Baze --- */
@@ -48,18 +48,41 @@
   }
   #loadingOverlay.show { display: flex; }
   
-  /* Spinner */
-  .spinner {
-    border: 8px solid rgba(255, 255, 255, 0.3);
-    border-top: 8px solid var(--purple-accent); 
-    border-radius: 50%;
-    width: 60px; height: 60px;
-    animation: spin 1s linear infinite; margin-bottom: 20px;
+  /* --- Loader/Spinner --- */
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  /* NDRYSHIMI KRYESOR: Kufiri lart me ngjyrë vjollcë */
+  border-top: 3px solid #A020F0; 
+  /* Kufiri poshtë me ngjyrë të bardhë për efektin e dyfishtë */
+  border-bottom: 3px solid #A020F0; 
+  border-right: 3px solid transparent;
+  border-left: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
   }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
   }
+}
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  /* --- Fundi i ZEVENDESIMIT --- */
+
 
   /* --- Channel Info Overlay --- */
   #channelOverlay {
@@ -102,15 +125,15 @@
     transform: translateX(0); 
   }
   
-  /* Stili i kategorive (NDRYSHUAR: Vija dhe teksti i bardhë) */
+  /* Stili i kategorive (NDRYSHUAR: Vija dhe teksti i bardhe) */
   .category-title {
-      color: var(--white-accent); /* NGJYRA E RE: Bardhë */
+      color: var(--white-accent); /* NGJYRA E RE: Bardhe */
       font-size: 1.1em;
       font-weight: 700;
       padding: 5px 20px 5px; 
       margin-top: 10px; 
       text-transform: uppercase;
-      border-bottom: 2px solid var(--white-accent); /* NGJYRA E RE: Bardhë */
+      border-bottom: 2px solid var(--white-accent); /* NGJYRA E RE: Bardhe */
   }
 
   .menu-item {
@@ -136,7 +159,7 @@
     border-left-color: var(--purple-accent); 
   }
   
-  /* Stili i logos së menusë */
+  /* Stili i logos se menuse */
   .menu-logo {
     width: 38px; height: 38px; 
     object-fit: contain; margin-right: 15px;
@@ -144,7 +167,7 @@
     background: rgba(255, 255, 255, 0.3); 
   }
 
-  /* Stili i numrit të kanalit */
+  /* Stili i numrit te kanalit */
   .menu-number {
     font-size: 1.1em; 
     color: var(--purple-accent); 
@@ -170,7 +193,7 @@
 </div>
 
 <div id="loadingOverlay">
-    <div class="spinner"></div>
+    <div class="loader"></div>
     <div id="loadingText"></div>
 </div>
 
@@ -266,7 +289,7 @@
   };
 
   const channels = Object.values(categorizedChannels).flat();
-  // STRUKTURA E RE: Harta për të gjetur shpejt indeksin e parë të çdo kategorie
+  // STRUKTURA E RE: Harta per te gjetur shpejt indeksin e pare te edo kategorie
   const categoryStartIndices = {};
   let tempIndex = 0;
   for (const category in categorizedChannels) {
@@ -274,7 +297,7 @@
       tempIndex += categorizedChannels[category].length;
   }
 
-  // --- Funksioni për Gjetjen e Kategorisë nga Indeksi ---
+  // --- Funksioni per Gjetjen e Kategorise nga Indeksi ---
   function findCategoryAndCategoryIndex(globalIndex) {
       let startIndex = 0;
       let prevCategory = null;
@@ -348,7 +371,7 @@
           }).catch(error => {
               console.warn("Autoplay was prevented. Waiting for user interaction.", error);
               hideLoading();
-              showOverlay({ name: "KLIKO PËR TË LUAR", logo: channels[currentChannelIndex].logo }); 
+              showOverlay({ name: "Shtyp OK per te vazhduar", logo: channels[currentChannelIndex].logo }); 
           });
       });
 
@@ -356,7 +379,7 @@
           if (data.fatal) {
               hideLoading();
               console.error(`HLS Fatal Error: ${data.type} - ${data.details}`);
-              loadingText.textContent = `Gabim fatal: Nuk u ngarkua ${channelName}.`;
+              loadingText.textContent = `Gabim: Nuk u ngarkua ${channelName}.`;
               loadingOverlay.classList.add('show');
               setTimeout(hideLoading, 5000);
           }
@@ -369,7 +392,7 @@
         videoPlayer.play().then(hideLoading).catch(e => {
             console.warn("Autoplay was prevented on native player. User must interact.", e);
             hideLoading();
-            showOverlay({ name: "KLIKO PËR TË LUAR", logo: channels[currentChannelIndex].logo });
+            showOverlay({ name: "Shtyp OK per te vazhduar", logo: channels[currentChannelIndex].logo });
         });
       });
     } else {
@@ -399,7 +422,7 @@
     });
     
     if (items[menuSelectedIndex]) {
-      // NAVIGIM I SHPEJTË
+      // NAVIGIM I SHPEJTE
       items[menuSelectedIndex].scrollIntoView({ block: 'center', behavior: 'auto' });
     }
   }
@@ -408,7 +431,7 @@
     if (index < 0) index = channels.length - 1;
     if (index >= channels.length) index = 0;
     
-    // NUK RINGARKOHET KANALI I NJEJTË
+    // NUK RINGARKOHET KANALI I NJEJTE
     if (index === currentChannelIndex) {
         if (isMenuOpen || channelNumberString !== '') {
             toggleMenu(false); 
@@ -431,7 +454,7 @@
   }
   
   function showOverlay(channel) {
-    // Kur kërkohet për të fshehur, fshijmë gjithashtu numrin e kanalit
+    // Kur kerkohet per te fshehur, fshijme gjithashtu numrin e kanalit
     if (channel === null) {
       overlay.classList.remove('show');
       numberDisplay.classList.remove('show');
@@ -459,7 +482,7 @@
     
     numberDisplay.textContent = channelNumberString; 
     numberDisplay.classList.add('show');
-    // Sigurohuni që overlay i kanalit është i fshehur kur shfaqet numri
+    // Sigurohuni qe overlay i kanalit eshte i fshehur kur shfaqet numri
     showOverlay(null); 
 
     channelNumberTimeout = setTimeout(() => {
@@ -480,7 +503,7 @@
     }, CHANNEL_INPUT_DELAY);
   }
 
-  // --- Inicializimi i Menusë dhe Logicës ---
+  // --- Inicializimi i Menuse dhe Logices ---
 
   function initializeMenu() {
     sideMenu.innerHTML = ''; 
@@ -549,16 +572,16 @@
   currentChannelIndex = getStartingChannelIndex();
   initializeMenu();
 
-  // LOGJIKA E RE E NGARKIMIT: Shfaq vetëm overlay-n dhe prit ndërveprimin
+  // LOGJIKA E RE E NGARKIMIT: Shfaq vetem overlay-n dhe prit nderveprimin
   if (currentChannelIndex >= 0) {
-      // Shfaq overlay-n e kanalit të fundit
+      // Shfaq overlay-n e kanalit te fundit
       showOverlay(channels[currentChannelIndex]); 
       
-      // Inicializo player-in, por vetëm për të parë nëse Autoplay dështon
+      // Inicializo player-in, por vetem per te pare nese Autoplay deshton
       currentChannelIndex = getStartingChannelIndex();
       initializePlayer(channels[currentChannelIndex].url, channels[currentChannelIndex].name);
 
-      // Shto event listener për të luajtur videon pas ndërveprimit
+      // Shto event listener per te luajtur videon pas nderveprimit
       document.body.addEventListener('click', attemptPlayAndFullscreen);
       window.addEventListener('keydown', attemptPlayAndFullscreen);
       document.body.addEventListener('touchstart', attemptPlayAndFullscreen);
@@ -571,9 +594,9 @@
       window.removeEventListener('keydown', attemptPlayAndFullscreen);
       document.body.removeEventListener('touchstart', attemptPlayAndFullscreen);
 
-      // Kjo kërkohet si ndërveprimi i parë.
+      // Kjo kerkohet si nderveprimi i pare.
       videoPlayer.play().then(() => {
-        showOverlay(channels[currentChannelIndex]); // Fshijmë ndoshta overlay-n "KLIKO PËR TË LUAR"
+        showOverlay(channels[currentChannelIndex]); // Fshijme ndoshta overlay-n "Shtyp OK per te vazhduar"
       }).catch(e => {
         console.warn("Play failed even after user interaction (might be a specific browser policy).");
       });
@@ -584,7 +607,7 @@
       }
   }
 
-  // Event listeners for Fullscreen (nëse ndërveprimi i parë nuk ishte klik/play)
+  // Event listeners for Fullscreen (nese nderveprimi i pare nuk ishte klik/play)
   document.body.addEventListener('touchstart', attemptFullscreen);
   window.addEventListener('keydown', attemptFullscreen);
 
@@ -625,14 +648,14 @@
                 const prevCategoryKey = categoryKeys[currentInfo.categoryIndex - 1];
                 menuSelectedIndex = categoryStartIndices[prevCategoryKey];
             } else {
-                // Nëse jemi te kategoria e parë, shko tek kategoria e fundit
+                // Nese jemi te kategoria e pare, shko tek kategoria e fundit
                 const lastCategoryKey = categoryKeys[categoryKeys.length - 1];
                 menuSelectedIndex = categoryStartIndices[lastCategoryKey];
             }
             updateMenuSelection();
         }
         else if (e.key === 'ArrowRight') {
-            // NDRYSHIMI KRYESOR 2: Shko tek kategoria pasardhëse
+            // NDRYSHIMI KRYESOR 2: Shko tek kategoria pasardhese
             const currentInfo = findCategoryAndCategoryIndex(menuSelectedIndex);
             const categoryKeys = Object.keys(categorizedChannels);
 
@@ -640,7 +663,7 @@
                 const nextCategoryKey = categoryKeys[currentInfo.categoryIndex + 1];
                 menuSelectedIndex = categoryStartIndices[nextCategoryKey];
             } else {
-                // Nëse jemi te kategoria e fundit, shko tek kategoria e parë
+                // Nese jemi te kategoria e fundit, shko tek kategoria e pare
                 const firstCategoryKey = categoryKeys[0];
                 menuSelectedIndex = categoryStartIndices[firstCategoryKey];
             }
