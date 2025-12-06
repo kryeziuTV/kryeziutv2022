@@ -108,7 +108,7 @@
     color: var(--purple-accent); font-size: 4em; font-weight: 700;
     background: rgba(0,0,0,0.8);
     padding: 10px 25px; border-radius: 10px;
-    opacity: 0; transition: opacity 0.2s ease;
+    opacity: 30; transition: opacity 0.2s ease;
     pointer-events: none; z-index: 20;
   }
   #channelInputDisplay.show { opacity: 1; }
@@ -169,7 +169,7 @@
     width: 38px; height: 38px; 
     object-fit: contain; margin-right: 15px;
     border-radius: 5px; 
-    background: rgba(255, 255, 255, 0.3); 
+    background: rgba(255, 255, 255, 0.1); 
   }
 
   /* Stili i numrit te kanalit */
@@ -216,7 +216,7 @@
   // --- STRUKTURA E KANALEVE ---
   const categorizedChannels = {
     "KOMBETARE": [
-        { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "RTK.1.al" },
+        { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "RTK.1.al" },
         { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", channelId: "RTK.3.al" },
         { name:"RTV 21", logo:"https://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", channelId: "RTV.21.al" },
         { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", channelId: "KTV.al" },
@@ -225,7 +225,7 @@
         { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v2a1/mono.m3u8", channelId: "T7.al" },
         { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/0nj-g63-92x-few/tracks-v2a1/mono.ts.m3u8", channelId: "ATV.al" },
         { name:"KLAN TV", logo:"https://vimg.ipko.tv/logo/color/klanalbania.png", url:"http://188.172.107.157:15152/live/klanhdott/playlist.m3u8", channelId: "Klan.Tv.al" },
-        { name:"VIZION PLUS", logo:"https://vimg.ipko.tv/logo/color/vizionplus.png", url:"https://anywhere.pwisetthon.com/tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8", channelId: "Vizion.Plus.al" },
+        { name:"VIZION PLUS", logo:"https://vimg.ipko.tv/logo/color/vizionplus.png", url:"http://tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8", channelId: "Vizion.Plus.al" },
         { name:"KLAN PLUS", logo:"https://vimg.ipko.tv/logo/color/klanplus.png", url:"http://188.172.107.157:15152/live/klanplusott/playlist.m3u8", channelId: "Klan.Plus.al" },
         { name:"RTSH 1", logo:"https://vimg.ipko.tv/logo/color/rtsh1.png", url:"http://188.172.107.157:15152/live/rtsh1ott/playlist.m3u8", channelId: "Klan.Tv.al" },        
         { name:"EURONEWS ALBANIA", logo:"https://vimg.ipko.tv/logo/color/euronewsalbania.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2dw-zuf-1c9-pxu/index.m3u8", channelId: "Euronews.Albania.al" },
