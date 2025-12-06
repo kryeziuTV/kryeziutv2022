@@ -69,15 +69,6 @@
   }
 } 
 
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
   @keyframes rotation {
     0% {
       transform: rotate(0deg);
@@ -105,7 +96,7 @@
   /* --- Channel Number Input Display --- */
   #channelInputDisplay {
     position: absolute; bottom: 20px; left: 20px; top: auto;
-    color: var(--white-accent); font-size: 4em; font-weight: 500;
+    color: var(--white-accent); font-size: 1.5em; font-weight: 300;
     background: rgba(0,0,0,0.3);
     padding: 10px 25px; border-radius: 10px;
     opacity: 0.4; transition: opacity 0.2s ease;
@@ -328,7 +319,7 @@
   let menuSelectedIndex = 0; 
   let hls = null; 
 
-  const MAX_DIGITS = 3; 
+  const MAX_DIGITS = 3; // RREGULLIMI: Vlera tashmë është 3
   const CHANNEL_INPUT_DELAY = 1000; 
   let channelNumberString = '';
   let channelNumberTimeout = null;
@@ -411,13 +402,11 @@
     sideMenu.classList.toggle('open', isMenuOpen);
     
     if (isMenuOpen) {
+      // Fshijme numrin kur hapet menuja
+      clearChannelInput(); 
       menuSelectedIndex = currentChannelIndex;
       updateMenuSelection();
-    } else {
-      clearTimeout(channelNumberTimeout);
-      channelNumberString = '';
-      numberDisplay.classList.remove('show');
-    }
+    } 
   }
 
   function updateMenuSelection() {
@@ -431,6 +420,15 @@
       items[menuSelectedIndex].scrollIntoView({ block: 'center', behavior: 'auto' });
     }
   }
+  
+  // Funksion i ri per pastrimin e numrit te kanalit
+  function clearChannelInput() {
+      clearTimeout(channelNumberTimeout);
+      channelNumberString = '';
+      numberDisplay.classList.remove('show');
+      numberDisplay.textContent = '';
+  }
+
 
   function loadChannel(index) {
     if (index < 0) index = channels.length - 1;
@@ -442,12 +440,14 @@
             toggleMenu(false); 
         }
         showOverlay(channels[currentChannelIndex]);
+        clearChannelInput(); // Pastro inputin e numrit
         return;
     }
     
     currentChannelIndex = index;
     localStorage.setItem(LAST_CHANNEL_KEY, currentChannelIndex.toString()); 
-
+    clearChannelInput(); // Pastro inputin e numrit pas ndërrimit të kanalit
+    
     initializePlayer(channels[currentChannelIndex].url, channels[currentChannelIndex].name);
     
     showOverlay(channels[currentChannelIndex]);
@@ -462,7 +462,6 @@
     // Kur kerkohet per te fshehur, fshijme gjithashtu numrin e kanalit
     if (channel === null) {
       overlay.classList.remove('show');
-      numberDisplay.classList.remove('show');
       clearTimeout(overlay._timeout);
       return;
     }
@@ -476,36 +475,39 @@
     }, 3000);
   }
 
-function handleNumberKey(digit) {
-    // Fshihet menjeherë çdo shfaqje e vjetër
-    clearTimeout(channelNumberTimeout);
-    numberDisplay.classList.remove("show");
+  function handleNumberKey(digit) {
+    if (isMenuOpen && !channelNumberString) return; 
 
-    // Fillojmë nga fillimi
-    channelNumberString = digit;
-    numberDisplay.textContent = channelNumberString;
-    numberDisplay.classList.add("show");
+    clearTimeout(channelNumberTimeout); 
 
-    // Fshijmë overlay të kanalit kur shfaqet numri
-    showOverlay(null);
+    if (channelNumberString.length < MAX_DIGITS) {
+        channelNumberString += digit;
+    }
+    
+    numberDisplay.textContent = channelNumberString; 
+    numberDisplay.classList.add('show');
+    // Sigurohuni qe overlay i kanalit eshte i fshehur kur shfaqet numri
+    showOverlay(null); 
 
-    // Pas 1 sekonde ekzekutohet ndërrimi i kanalit
     channelNumberTimeout = setTimeout(() => {
-        let channelNumber = parseInt(channelNumberString, 10);
-        const targetIndex = channelNumber - 1;
+      let channelNumber = parseInt(channelNumberString, 10);
+      const targetIndex = channelNumber - 1;
 
-        if (targetIndex >= 0 && targetIndex < channels.length) {
-            loadChannel(targetIndex);
-        } else {
-            numberDisplay.textContent = ``;
-        }
+      if (targetIndex >= 0 && targetIndex < channels.length) {
+        loadChannel(targetIndex);
+      } else {
+        numberDisplay.textContent = `Kanali ${channelNumber} nuk gjendet!`;
+        // E leme per 1.5 sekonda qe te shihet mesazhi i gabimit
+        setTimeout(() => {
+            clearChannelInput();
+        }, 1500); 
+      }
 
-        // Fshihet menjëherë pas nisjes së ndërrimit
-        numberDisplay.classList.remove("show");
-        channelNumberString = '';
-
+      // stringu pastrohet gjithsesi, por shfaqja ne ekran mund te mbetet per pak
+      channelNumberString = '';
+      
     }, CHANNEL_INPUT_DELAY);
-}
+  }
 
   // --- Inicializimi i Menuse dhe Logices ---
 
