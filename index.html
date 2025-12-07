@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Live TV Player with Channel Navigation (Hls.js) - Optimized UX and Error Recovery</title>
+<title>Live TV Player with Channel Navigation (Hls.js) - Optimized UX</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -45,8 +45,6 @@
     display: none; 
     flex-direction: column; justify-content: center; align-items: center;
     color: white; font-size: 1.2em; z-index: 50; 
-    text-align: center; /* Shtuar per qenderzim */
-    padding: 20px;
   }
   #loadingOverlay.show { display: flex; }
   
@@ -320,8 +318,6 @@
   let isMenuOpen = false;
   let menuSelectedIndex = 0; 
   let hls = null; 
-  let stallTimeout = null; // SHTESË: Variabël për timeout-in e ngrirjes
-  const STALL_RINGARKIMI_VONESA = 5000; // SHTESË: 5 sekonda vonese para ringarkimit
 
   const MAX_DIGITS = 3; // RREGULLIMI: Vlera tashmë është 3
   const CHANNEL_INPUT_DELAY = 1000; 
@@ -341,7 +337,7 @@
   // --- Funksionet Kryesore ---
 
   function showLoading(channelName) {
-      loadingText.textContent = `Duke ngarkuar: ${channelName}`;
+      loadingText.textContent = ` ${channelName}`;
       loadingOverlay.classList.add('show');
   }
 
@@ -353,21 +349,12 @@
     hideLoading(); 
     showLoading(channelName);
     
-    // Fshijme cdo timeout stall-i qe mund te kete mbetur nga kanali i meparshem
-    clearTimeout(stallTimeout);
-    
     if (hls) {
         hls.destroy(); 
     }
 
     if (Hls.isSupported()) {
-      // SHTESË: Konfigurimi i ri për stabilitet
-      hls = new Hls({
-          maxBufferLength: 8, // Maksimumi 8 sekonda buffer
-          liveSyncDurationCount: 3, 
-          liveMaxLatencyDuration: 10 
-      });
-
+      hls = new Hls();
       hls.attachMedia(videoPlayer);
       hls.on(Hls.Events.MEDIA_ATTACHED, function () {
         hls.loadSource(url);
@@ -384,36 +371,17 @@
           });
       });
 
-      // SHTESË KRYESORE: MENAXHIMI I GABIMEVE
       hls.on(Hls.Events.ERROR, function (event, data) {
           if (data.fatal) {
               hideLoading();
               console.error(`HLS Fatal Error: ${data.type} - ${data.details}`);
-              loadingText.textContent = `Gabim fatal: Po provohet ringarkimi i kanalit ${channels[currentChannelIndex].name}...`;
+              loadingText.textContent = `Gabim: Nuk u ngarkua ${channelName}.`;
               loadingOverlay.classList.add('show');
-              
-              switch (data.type) {
-                  case Hls.ErrorTypes.NETWORK_ERROR:
-                      console.log("Network error detected, trying to recover.");
-                      setTimeout(() => hls.startLoad(), 2000); // Prit 2s dhe provo ringarkimin
-                      break;
-                  case Hls.ErrorTypes.MEDIA_ERROR:
-                      console.log("Media error detected, trying to recover.");
-                      hls.recoverMediaError();
-                      break;
-                  default:
-                      console.log("Other fatal error, reloading channel.");
-                      // Nese eshte nje gabim total, ringarko gjithe player-in pas 3 sekondash
-                      setTimeout(() => {
-                          loadChannel(currentChannelIndex); 
-                      }, 3000);
-                      break;
-              }
+              setTimeout(hideLoading, 5000);
           }
       });
       
     } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-      // Logjika per player-in nativ (iOS, Safari)
       videoPlayer.src = url;
       videoPlayer.muted = false;
       videoPlayer.addEventListener('loadedmetadata', function() {
@@ -467,9 +435,7 @@
     if (index >= channels.length) index = 0;
     
     // NUK RINGARKOHET KANALI I NJEJTE
-    if (index === currentChannelIndex && !hls) {
-         // Kjo mund te ndodhe vetem ne rastin e ringarkimit per shkak te gabimit
-    } else if (index === currentChannelIndex) {
+    if (index === currentChannelIndex) {
         if (isMenuOpen || channelNumberString !== '') {
             toggleMenu(false); 
         }
@@ -659,33 +625,6 @@
         window.removeEventListener('keydown', attemptFullscreen);
     }
   }
-
-  // SHTESË: Mekanizmi i rikthimit të ngrirjes (stalled)
-  videoPlayer.addEventListener('stalled', () => {
-    console.warn("Video stalled event triggered. Possible freeze detected.");
-    
-    clearTimeout(stallTimeout);
-    
-    // Njofto përdoruesin
-    showOverlay({ name: "Rifillimi po provohet...", logo: channels[currentChannelIndex].logo }); 
-
-    stallTimeout = setTimeout(() => {
-        // Kontrolloni nëse është akoma i ngrirë pas vonesës
-        if (videoPlayer.paused || videoPlayer.readyState < 3) { 
-            console.error("Stall persists, forcing channel reload.");
-            loadChannel(currentChannelIndex); 
-        } else {
-            // Nese filloi perseri vetvetiu, anulo ringarkimin
-            console.log("Stall recovered automatically.");
-        }
-    }, STALL_RINGARKIMI_VONESA);
-  });
-
-  // Pastro timeout-in e stall-it nese videoja rinis
-  videoPlayer.addEventListener('playing', () => {
-      clearTimeout(stallTimeout);
-  });
-
 
   window.addEventListener('keydown', (e) => {
     
