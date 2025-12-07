@@ -11,42 +11,46 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* --- Tema: Purple Accent Color --- */
+  [span_0](start_span)/* --- Tema: Purple Accent Color ---[span_0](end_span)*/
   :root {
-      --purple-accent: #A020F0; 
-      --selection-bg: rgba(160, 32, 240, 0.3); 
+      --purple-accent: #A020F0;
+[span_1](start_span) --selection-bg: rgba(160, 32, 240, 0.3);[span_1](end_span) 
       --solid-black: #000000;
       --white-accent: #FFFFFF; /* Ngjyra e re e kategorise */
   }
   
   /* --- Stilet Baze --- */
   html, body {
-    margin: 0; padding: 0; 
+    margin: 0;
+[span_2](start_span) padding: 0; 
     width: 100%; height: 100%; 
     background: var(--solid-black); 
     overflow: hidden;
-    font-family: 'Poppins', Arial, sans-serif; 
-  }
+    font-family: 'Poppins', Arial, sans-serif;
+[span_2](end_span) }
   #tvplayer {
     position: absolute; top: 0; left: 0;
     width: 100% !important; height: 100% !important;
-  }
+[span_3](start_span) }
   #tvplayer video {
     width: 100% !important; height: 100% !important;
     background: var(--solid-black);
-    object-fit: cover !important; 
-  }
+    object-fit: cover !important;
+[span_3](end_span) }
   
   /* --- Loading Overlay Stilet --- */
   #loadingOverlay {
-    position: absolute; top: 0; left: 0;
+    position: absolute;
+[span_4](start_span) top: 0; left: 0;
     width: 100%; height: 100%;
     background: var(--solid-black); 
     display: none; 
     flex-direction: column; justify-content: center; align-items: center;
-    color: white; font-size: 1.2em; z-index: 50; 
+    color: white;
+[span_4](end_span) font-size: 1.2em; z-index: 50; 
   }
-  #loadingOverlay.show { display: flex; }
+  #loadingOverlay.show { display: flex;
+[span_5](start_span) }
   
   /* --- Loader/Spinner --- */
 .loader {
@@ -54,11 +58,11 @@
   height: 48px;
   border-radius: 50%;
   display: inline-block;
-  border-top: 3px solid #A020F0;
+[span_5](end_span) border-top: 3px solid #A020F0;
   border-right: 3px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
-}
+[span_6](start_span) }
 
 @keyframes rotation {
   0% {
@@ -66,74 +70,82 @@
   }
   100% {
     transform: rotate(360deg);
-  }
+[span_6](end_span) }
 } 
 
   @keyframes rotation {
     0% {
       transform: rotate(0deg);
-    }
+[span_7](start_span) }
     100% {
       transform: rotate(360deg);
-    }
+[span_7](end_span) }
   }
   /* --- Fundi i ZEVENDESIMIT --- */
 
 
   /* --- Channel Info Overlay --- */
   #channelOverlay {
-    position: absolute; bottom: 20px; left: 20px; top: auto; 
+    position: absolute;
+[span_8](start_span) bottom: 20px; left: 20px; top: auto; 
     display: flex; align-items: center; gap: 15px;
     background: rgba(0,0,0,0.7);
     border-radius: 8px; padding: 10px 15px;
-    opacity: 0; transition: opacity 0.5s ease;
+[span_8](end_span) opacity: 0; transition: opacity 0.5s ease;
     pointer-events: none; max-width: 400px; z-index: 10;
   }
-  #channelOverlay.show { opacity: 1; }
+  #channelOverlay.show { opacity: 1;
+[span_9](start_span) }
   #channelLogo { width: 55px; height: 55px; object-fit: contain; border-radius: 6px; }
-  #channelName { color: white; font-size: 1.4em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #channelName { color: white; font-size: 1.4em;
+[span_9](end_span) font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* --- Channel Number Input Display --- */
   #channelInputDisplay {
-    position: absolute; bottom: 20px; left: 20px; top: auto;
+    position: absolute;
+[span_10](start_span) bottom: 20px; left: 20px; top: auto;
     color: var(--white-accent); font-size: 1.5em; font-weight: 300;
     background: rgba(0,0,0,0.3);
     padding: 10px 25px; border-radius: 10px;
-    opacity: 0.4; transition: opacity 0.2s ease;
+[span_10](end_span) opacity: 0.4; transition: opacity 0.2s ease;
     pointer-events: none; z-index: 20;
   }
-  #channelInputDisplay.show { opacity: 1; }
+  #channelInputDisplay.show { opacity: 1;
+[span_11](start_span) }
   
   /* --- Side Menu Styles (Optimizuar) --- */
   #sideMenu {
-    position: absolute; top: 0; left: 0;
+    position: absolute;
+[span_11](end_span) top: 0; left: 0;
     height: 100%; width: 350px;
     background: rgba(0, 0, 0, 0.95);
     transform: translateX(-100%);
-    transition: transform 0.2s ease-out; 
-    z-index: 60; 
+    transition: transform 0.2s ease-out;
+[span_12](start_span) z-index: 60; 
     padding-top: 10px; 
     overflow-y: auto;
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.7);
     display: flex; flex-direction: column;
-  }
+[span_12](end_span) }
   #sideMenu.open { 
-    transform: translateX(0); 
-  }
+    transform: translateX(0);
+[span_13](start_span) }
   
   /* Stili i kategorive (NDRYSHUAR: Vija dhe teksti i bardhe) */
   .category-title {
-      color: var(--white-accent); /* NGJYRA E RE: Bardhe */
+      color: var(--white-accent);
+[span_13](end_span) /* NGJYRA E RE: Bardhe */
       font-size: 1.1em;
       font-weight: 700;
-      padding: 5px 20px 5px; 
-      margin-top: 10px; 
+      padding: 5px 20px 5px;
+[span_14](start_span) margin-top: 10px; 
       text-transform: uppercase;
       border-bottom: 2px solid var(--white-accent); /* NGJYRA E RE: Bardhe */
   }
 
   .menu-item {
-    display: flex; align-items: center;
+    display: flex;
+[span_14](end_span) align-items: center;
     padding: 8px 20px; 
     cursor: pointer;
     border-left: 6px solid transparent;
@@ -141,44 +153,45 @@
     color: #ccc;
     min-height: 55px; 
     font-weight: 400;
-  }
+[span_15](start_span) }
   
   .menu-item.selected {
     background: var(--selection-bg); 
     color: white;
-    border-left-color: var(--purple-accent); 
-  }
+    border-left-color: var(--purple-accent);
+[span_15](end_span) }
   
   .menu-item:hover {
     background: rgba(255, 255, 255, 0.1); 
     color: white;
-    border-left-color: var(--purple-accent); 
-  }
+    border-left-color: var(--purple-accent);
+[span_16](start_span) }
   
   /* Stili i logos se menuse */
   .menu-logo {
-    width: 38px; height: 38px; 
+    width: 38px;
+[span_16](end_span) height: 38px; 
     object-fit: contain; margin-right: 15px;
     border-radius: 5px; 
-    background: rgba(255, 255, 255, 0.1); 
-  }
+    background: rgba(255, 255, 255, 0.1);
+[span_17](start_span) }
 
   /* Stili i numrit te kanalit */
   .menu-number {
     font-size: 1.1em; 
-    color: var(--purple-accent); 
-    margin-right: 15px;
+    color: var(--purple-accent);
+[span_17](end_span) margin-right: 15px;
     width: 35px; text-align: right;
     font-weight: 600;
   }
   .menu-item.selected .menu-number {
-    color: white; 
-  }
+    color: white;
+[span_18](start_span) }
   .menu-name {
     font-size: 1.1em; 
     font-weight: 600;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+[span_18](end_span) }
 </style>
 
 </head>
@@ -210,26 +223,30 @@
         { name:"RTK 1", logo:"https://vimg.ipko.tv/logo/color/rtk1.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", channelId: "RTK.1.al" },
         { name:"RTK 3", logo:"https://vimg.ipko.tv/logo/color/rtk3.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", channelId: "RTK.3.al" },
         { name:"RTV 21", logo:"https://vimg.ipko.tv/logo/color/rtv21.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", channelId: "RTV.21.al" },
-        { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", channelId: "KTV.al" },
+   
+[span_19](start_span)      { name:"KTV", logo:"https://vimg.ipko.tv/logo/color/ktv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", channelId: "KTV.al" },
         { name:"DUKAGJINI TV", logo:"https://vimg.ipko.tv/logo/color/tvdukagjini.png", url:"http://amdcam.tibo.tv:8081/yWbXvr1S/dukagjini_720p/playlist.m3u8", channelId: "Dukagjini.al" },
         { name:"PRO 1", logo:"https://vimg.ipko.tv/logo/color/pro1.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/nng-gki-l1j-n1z/tracks-v2a1/mono.ts.m3u8", channelId: "PRO1.al" },
         { name:"T7", logo:"https://vimg.ipko.tv/logo/color/t7.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-livestream-specific/1z8-byc-4ee-lc9/tracks-v2a1/mono.m3u8", channelId: "T7.al" },
         { name:"ATV", logo:"https://vimg.ipko.tv/logo/color/atv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/0nj-g63-92x-few/tracks-v2a1/mono.ts.m3u8", channelId: "ATV.al" },
         { name:"KLAN TV", logo:"https://vimg.ipko.tv/logo/color/klanalbania.png", url:"http://188.172.107.157:15152/live/klanhdott/playlist.m3u8", channelId: "Klan.Tv.al" },
         { name:"VIZION PLUS", logo:"https://vimg.ipko.tv/logo/color/vizionplus.png", url:"https://anywhere.pwisetthon.com/tringliveviz.akamaized.net/delta/105/out/u/qwaszxerdfcvrtryuy.m3u8", channelId: "Vizion.Plus.al" },
-        { name:"KLAN PLUS", logo:"https://vimg.ipko.tv/logo/color/klanplus.png", url:"http://188.172.107.157:15152/live/klanplusott/playlist.m3u8", channelId: "Klan.Plus.al" },
+ 
+[span_19](end_span)        { name:"KLAN PLUS", logo:"https://vimg.ipko.tv/logo/color/klanplus.png", url:"http://188.172.107.157:15152/live/klanplusott/playlist.m3u8", channelId: "Klan.Plus.al" },
         { name:"RTSH 1", logo:"https://vimg.ipko.tv/logo/color/rtsh1.png", url:"http://188.172.107.157:15152/live/rtsh1ott/playlist.m3u8", channelId: "Klan.Tv.al" },        
         { name:"EURONEWS ALBANIA", logo:"https://vimg.ipko.tv/logo/color/euronewsalbania.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2dw-zuf-1c9-pxu/index.m3u8", channelId: "Euronews.Albania.al" },
         { name:"A2 CNN", logo:"https://vimg.ipko.tv/logo/color/a2cnn.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/2h7-5bc-xym-0k2/tracks-v2a1/mono.ts.m3u8", channelId: "A2.CNN.al" },
         { name:"BESA", logo:"https://vimg.ipko.tv/logo/color/besa.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/ehn-g2o-v7w-nh4/tracks-v2a1/mono.ts.m3u8", channelId: "PRO1.al" },
         { name:"TV PRIZRENI", logo:"https://vimg.ipko.tv/logo/color/tvprizreni.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/5m0-cok-g5z-1xi/tracks-v2a1/mono.ts.m3u8", channelId: "TV.Prizreni.al" },
-        { name:"TV SYRI", logo:"https://vimg.ipko.tv/logo/color/tvsyrivision.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/xej-xnb-ba0-kup/index.m3u8", channelId: "Syri.TV.al" },
+    
+[span_20](start_span)     { name:"TV SYRI", logo:"https://vimg.ipko.tv/logo/color/tvsyrivision.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/xej-xnb-ba0-kup/index.m3u8", channelId: "Syri.TV.al" },
         { name:"TEUTA TV", logo:"https://klaniim.al/images/kanale/teuta-tv.png", url:"http://188.172.107.157:15152/live/rtvteutaott/playlist.m3u8", channelId: "" },
         { name:"RTK 4", logo:"https://vimg.ipko.tv/logo/color/rtk4.png", url:"http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/rtk4/tracks-v4a1/mono.ts.m3u8", channelId: "RTK.4.al" },
         { name:"TV NEWS", logo:"https://i.imgur.com/qrtP0Sy.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/js0-h8f-ifx-29f/tracks-v2a1/mono.ts.m3u8", channelId: "TV.NEWS.al" },
         { name:"RTSH SHQIP", logo:"https://klaniim.al/images/kanale/rtsh-shqip.png", url:"http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8", channelId: "" },
         { name:"RTSH FILM", logo:"https://i.imgur.com/wooqMHn.png", url:"http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", channelId: "" },
-        { name:"KLAN MACEDONIA", logo:"https://klaniim.al/images/kanale/klan-macedonia.png", url:"http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", channelId: "" },
+        { name:"KLAN MACEDONIA", logo:"https://klaniim.al/images/kanale/klan-macedonia.png", url:"http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", channelId: 
+[span_20](end_span) "" },
         { name:"BB VIP KS 2", logo:"https://upload.wikimedia.org/wikipedia/commons/e/e7/Big_Brother_VIP_Kosova_logo.png", url:"http://51.15.10.229/bigBrotherAlb2/index.m3u8", channelId: "BBVipKS2.al" }
     ],
     "FEMIJE": [ 
@@ -237,7 +254,8 @@
         { name:"DISNEY JUNIOR", logo:"https://i.imgur.com/5AEnwiA.png", url:"https://fl1.moveonjoy.com/DISNEY_JR/index.m3u8", channelId: "" }, 
         { name:"CARTOON NETWORK", logo:"https://i.imgur.com/3NejOQN.png", url:"http://fl2.moveonjoy.com/CARTOON_NETWORK/index.m3u8", channelId: "" }, 
         { name:"DISNEY XD", logo:"https://i.imgur.com/Od3fHCN.png", url:"http://fl7.moveonjoy.com/DISNEY_XD/index.m3u8", channelId: "" }, 
-        { name:"NICKELODEON", logo:"https://i.imgur.com/zYzBTy8.png", url:"https://fl31.moveonjoy.com/NICKELODEON/index.m3u8", channelId: "" }, 
+        
+[span_21](start_span) { name:"NICKELODEON", logo:"https://i.imgur.com/zYzBTy8.png", url:"https://fl31.moveonjoy.com/NICKELODEON/index.m3u8", channelId: "" }, 
         { name:"NICKTOONS", logo:"https://i.imgur.com/ZuSzmgZ.png", url:"https://fl1.moveonjoy.com/NICKTOONS/index.m3u8", channelId: "" }, 
         { name:"BOOMERANG", logo:"https://i.imgur.com/XbntL39.png", url:"http://fl1.moveonjoy.com/BOOMERANG/index.m3u8", channelId: "" }, 
         { name:"DIY", logo:"https://i.imgur.com/vsBHA5P.png", url:"http://143.244.60.30/DIY/index.m3u8", channelId: "" },
@@ -245,20 +263,23 @@
     ],
     "DOKUMENTARE": [ 
         { name:"NAT GEO", logo:"https://i.imgur.com/YdECPSQ.png", url:"https://fl1.moveonjoy.com/National_Geographic/index.m3u8", channelId: "" }, 
-        { name:"NAT GEO WILD", logo:"https://i.imgur.com/9ERI044.png", url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8", channelId: "" }, 
+        
+[span_21](end_span) { name:"NAT GEO WILD", logo:"https://i.imgur.com/9ERI044.png", url:"https://fl1.moveonjoy.com/Nat_Geo_Wild/index.m3u8", channelId: "" }, 
         { name:"HISTORY", logo:"https://i.imgur.com/coc0bDx.png", url:"https://fl1.moveonjoy.com/history_channel/index.m3u8", channelId: "" }, 
         { name:"ANIMAL PLANET", logo:"https://i.imgur.com/vvuqgj2.png", url:"http://fl2.moveonjoy.com/Animal_Planet/index.m3u8", channelId: "" }, 
         { name:"TRAVEL CHANNEL", logo:"https://i.imgur.com/MiWIGxs.png", url:"https://fl31.moveonjoy.com/Travel_Channel/index.m3u8", channelId: "" }, 
         { name:"LOVE NATURE", logo:"https://i.imgur.com/uGEmBLm.png", url:"http://fl1.moveonjoy.com/LOVE_NATURE/index.m3u8", channelId: "" },      
         { name:"DISCOVERY CHANNEL", logo:"https://i.imgur.com/HdzY1vv.png", url:"https://fl31.moveonjoy.com/Discovery_Channel/index.m3u8", channelId: "" },
-        { name:"DISCOVERY LIFE", logo:"", url:"https://fl31.moveonjoy.com/DISCOVERY_LIFE/index.m3u8", channelId: "" },
+        
+[span_22](start_span) { name:"DISCOVERY LIFE", logo:"", url:"https://fl31.moveonjoy.com/DISCOVERY_LIFE/index.m3u8", channelId: "" },
         { name:"CRIME INVESTIGATION", logo:"", url:"https://fl31.moveonjoy.com/Crime_and_Investigation_Network/index.m3u8", channelId: "" },
         { name:"WORLD FISHING NETWORK", logo:"", url:"https://fl31.moveonjoy.com/WORLD_FISHING_NETWORK/index.m3u8", channelId: "" },
         { name:"OUTDOOR CHANNEL", logo:"", url:"http://fl61.moveonjoy.com/OUTDOOR_CHANNEL/index.m3u8", channelId: "" },
         { name:"COOKING CHANNEL", logo:"", url:"https://fl61.moveonjoy.com/COOKING_CHANNEL/index.m3u8", channelId: "" }
     ],
     "MUZIKE": [        
-        { name:"ZICO TV", logo:"https://vimg.ipko.tv/logo/color/zicotv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/j3a-n14-2pf-g3s/tracks-v2a1/mono.ts.m3u8", channelId: "Zico.TV.al" },
+        { name:"ZICO TV", logo:"https://vimg.ipko.tv/logo/color/zicotv.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/j3a-n14-2pf-g3s/tracks-v2a1/mono.ts.m3u8", channelId: "Zico.TV.al" 
+[span_22](end_span) },
         { name:"BBF", logo:"https://klaniim.al/images/kanale/bbf-tv.png", url:"http://188.172.107.157:15152/live/bbfott/playlist.m3u8", channelId: "" },
         { name:"KLAN MUSIC", logo:"https://vimg.ipko.tv/logo/color/klanmusic.png", url:"http://188.172.107.157:15152/live/klanmusicott/playlist.m3u8", channelId: "" },
         { name:"IN TV", logo:"https://i.imgur.com/Lngw7AF.png", url:"http://188.172.107.157:15152/live/intvpp1/playlist.m3u8", channelId: "" },
@@ -267,164 +288,192 @@
     ],
     "LAJME": [ 
         { name:"TV ARTA", logo:"https://vimg.ipko.tv/logo/color/tvarta.png", url:"http://gjirafa-video-live.gjirafa.net/gjvideo-live/mps-vgx-u9p-qv1/index.m3u8", channelId: "TV.Arta.al" },
-        { name:"ABC", logo:"https://klaniim.al/images/kanale/abc.png", url:"http://188.172.107.157:15152/live/abcnewsott/playlist.m3u8", channelId: "" },
+  
+[span_23](start_span)       { name:"ABC", logo:"https://klaniim.al/images/kanale/abc.png", url:"http://188.172.107.157:15152/live/abcnewsott/playlist.m3u8", channelId: "" },
         { name:"RTV ORA", logo:"https://klaniim.al/images/kanale/rtv-ora.png", url:"http://188.172.107.157:15152/live/rtvoraott/playlist.m3u8", channelId: "" },
         { name:"SCAN TV", logo:"https://klaniim.al/images/kanale/scan-tv.png", url:"http://188.172.107.157:15152/live/scanott/playlist.m3u8", channelId: "" },
         { name:"SYRI TV", logo:"https://vimg.ipko.tv/logo/color/syritv.png", url:"http://188.172.107.157:15152/live/syritvott/playlist.m3u8", channelId: "" },
         { name:"MCN", logo:"https://klaniim.al/images/kanale/mcn-tv.png", url:"http://188.172.107.157:15152/live/mcnpp1/playlist.m3u8", channelId: "" },
         { name:"RTSH 2", logo:"https://klaniim.al/images/kanale/rtsh-2.png", url:"http://188.172.107.157:15152/live/rtsh2/playlist.m3u8", channelId: "" },
-        { name:"CNA TV", logo:"https://klaniim.al/images/kanale/cna.png", url:"http://188.172.107.157:15152/live/cnaott/playlist.m3u8", channelId: "" },
+        { name:"CNA TV", logo:"https://klaniim.al/images/kanale/cna.png", url:"http://188.172.107.157:15152/live/cnaott/playlist.m3u8", channelId: 
+[span_23](end_span) "" },
         { name:"FAX NEWS", logo:"https://vimg.ipko.tv/logo/color/faxnews.png", url:"http://188.172.107.157:15152/live/faxnewsott/playlist.m3u8", channelId: "" },
         { name:"KLAN NEWS", logo:"https://vimg.ipko.tv/logo/color/klannews.png", url:"http://188.172.107.157:15152/live/klannewsmob/playlist.m3u8", channelId: "" },
         { name:"NEWS 24", logo:"https://klaniim.al/images/kanale/news-24.png", url:"http://188.172.107.157:15152/live/news24mob/playlist.m3u8", channelId: "" },
         { name:"ORA NEWS", logo:"https://klaniim.al/images/kanale/ora-news-tv.png", url:"http://188.172.107.157:15152/live/oranewspp1/playlist.m3u8", channelId: "" },
         { name:"REPORT TV", logo:"https://klaniim.al/images/kanale/report-tv.png", url:"http://188.172.107.157:15152/live/reportmob/playlist.m3u8", channelId: "" },
         { name:"FSHF TV", logo:"https://i.imgur.com/ul0aKfn.png", url:"http://188.172.107.157:15152/live/fshfott/playlist.m3u8", channelId: "" },
-        { name:"RTSH SPORT", logo:"https://i.imgur.com/HDmLovn.png", url:"http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", channelId: "" }
+        { 
+[span_24](start_span) name:"RTSH SPORT", logo:"https://i.imgur.com/HDmLovn.png", url:"http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", channelId: "" }
     ]
   };
 
   const channels = Object.values(categorizedChannels).flat();
-  // STRUKTURA E RE: Harta per te gjetur shpejt indeksin e pare te edo kategorie
+[span_24](end_span) // STRUKTURA E RE: Harta per te gjetur shpejt indeksin e pare te edo kategorie
   const categoryStartIndices = {};
-  let tempIndex = 0;
+[span_25](start_span) let tempIndex = 0;
   for (const category in categorizedChannels) {
       categoryStartIndices[category] = tempIndex;
-      tempIndex += categorizedChannels[category].length;
+[span_25](end_span) tempIndex += categorizedChannels[category].length;
   }
 
   // --- Funksioni per Gjetjen e Kategorise nga Indeksi ---
   function findCategoryAndCategoryIndex(globalIndex) {
       let startIndex = 0;
-      let prevCategory = null;
+[span_26](start_span) let prevCategory = null;
       for (const category in categorizedChannels) {
           const categoryLength = categorizedChannels[category].length;
-          if (globalIndex >= startIndex && globalIndex < startIndex + categoryLength) {
+[span_26](end_span) if (globalIndex >= startIndex && globalIndex < startIndex + categoryLength) {
               const categoryIndex = Object.keys(categorizedChannels).indexOf(category);
-              return { 
+[span_27](start_span) return { 
                   categoryName: category,
                   categoryIndex: categoryIndex,
                   startIndex: startIndex 
               };
-          }
+[span_27](end_span) }
           startIndex += categoryLength;
           prevCategory = category;
-      }
+[span_28](start_span) }
       return { categoryName: null, categoryIndex: -1, startIndex: -1 };
-  }
+[span_28](end_span) }
 
 
   let currentChannelIndex = 0;
   let isMenuOpen = false;
   let menuSelectedIndex = 0; 
-  let hls = null; 
-
-  const MAX_DIGITS = 3; // RREGULLIMI: Vlera tashmë është 3
+  let hls = null;
+[span_29](start_span) const MAX_DIGITS = 3; // RREGULLIMI: Vlera tashmë është 3
   const CHANNEL_INPUT_DELAY = 1000; 
   let channelNumberString = '';
-  let channelNumberTimeout = null;
+[span_29](end_span) let channelNumberTimeout = null;
   const LAST_CHANNEL_KEY = 'last_tv_channel_index'; 
 
   const videoPlayer = document.getElementById('videoPlayer');
   const overlay = document.getElementById('channelOverlay');
   const overlayLogo = document.getElementById('channelLogo');
-  const overlayName = document.getElementById('channelName');
+[span_30](start_span) const overlayName = document.getElementById('channelName');
   const numberDisplay = document.getElementById('channelInputDisplay');
   const sideMenu = document.getElementById('sideMenu');
   const loadingOverlay = document.getElementById('loadingOverlay'); 
-  const loadingText = document.getElementById('loadingText');     
-
-  // --- Funksionet Kryesore ---
+  const loadingText = document.getElementById('loadingText');
+[span_30](end_span) // --- Funksionet Kryesore ---
 
   function showLoading(channelName) {
       loadingText.textContent = ` ${channelName}`;
       loadingOverlay.classList.add('show');
-  }
+[span_31](start_span) }
 
   function hideLoading() {
       loadingOverlay.classList.remove('show');
-  }
+[span_31](end_span) }
 
   function initializePlayer(url, channelName) {
     hideLoading(); 
     showLoading(channelName);
-    
-    if (hls) {
-        hls.destroy(); 
-    }
+[span_32](start_span) if (hls) {
+        hls.destroy();
+[span_32](end_span) }
 
     if (Hls.isSupported()) {
-      hls = new Hls();
+      // 💡 FIX 1: Konfigurimi i Hls.js per qendrueshmeri
+      const hlsConfig = {
+          liveSyncDurationCount: 3, 
+          liveMaxLatencyDuration: 15, 
+          lowBufferWatchdog: 3, 
+          maxBufferLength: 60,
+          // Mund te shtoni gjithashtu: startPosition: -1
+      };
+      
+      hls = new Hls(hlsConfig);
+      // Fund i FIX 1
+      
       hls.attachMedia(videoPlayer);
-      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+[span_33](start_span) hls.on(Hls.Events.MEDIA_ATTACHED, function () {
         hls.loadSource(url);
       });
-      
-      hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+[span_33](end_span) hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
           videoPlayer.muted = false; 
           videoPlayer.play().then(() => {
               hideLoading(); 
           }).catch(error => {
               console.warn("Autoplay was prevented. Waiting for user interaction.", error);
               hideLoading();
-              showOverlay({ name: "Shtyp OK per te vazhduar", logo: channels[currentChannelIndex].logo }); 
+         
+[span_34](start_span)      showOverlay({ name: "Shtyp OK per te vazhduar", logo: channels[currentChannelIndex].logo }); 
           });
       });
-
+      // Kjo ishte linja 68 e kodit origjinal
+      
       hls.on(Hls.Events.ERROR, function (event, data) {
           if (data.fatal) {
               hideLoading();
               console.error(`HLS Fatal Error: ${data.type} - ${data.details}`);
-              loadingText.textContent = `Gabim: Nuk u ngarkua ${channelName}.`;
+              
+              // 💡 FIX 2: Logjika e rikuperimit
+              if (data.type === Hls.ErrorTypes.NETWORK_ERROR || data.details.includes('manifestLoadError')) {
+                   loadingText.textContent = `Gabim Rrjeti: Duke u riloaduar ${channelName}.`;
+              } else {
+                   loadingText.textContent = `Gabim Fatal: ${channelName}. Duke u riloaduar...`;
+              }
               loadingOverlay.classList.add('show');
-              setTimeout(hideLoading, 5000);
+              
+              // Shkaterro instancen aktuale dhe provo ngarkimin e kanalit pas 2 sekondash
+              hls.destroy();
+              hls = null; // Sigurohuni qe instanca te jete null para rinisjes
+              setTimeout(() => {
+                  loadChannel(currentChannelIndex); 
+              }, 2000); 
+              // Fund i FIX 2
+  
+[span_34](end_span)         } else {
+            // Log non-fatal errors
+            console.warn(`HLS Non-Fatal Error: ${data.type} - ${data.details}`);
           }
       });
       
-    } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+[span_35](start_span) } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
       videoPlayer.src = url;
       videoPlayer.muted = false;
-      videoPlayer.addEventListener('loadedmetadata', function() {
+[span_35](end_span) videoPlayer.addEventListener('loadedmetadata', function() {
         videoPlayer.play().then(hideLoading).catch(e => {
             console.warn("Autoplay was prevented on native player. User must interact.", e);
             hideLoading();
             showOverlay({ name: "Shtyp OK per te vazhduar", logo: channels[currentChannelIndex].logo });
         });
       });
-    } else {
+[span_36](start_span) } else {
         console.error("HLS is not supported in this browser.");
         hideLoading();
-    }
+[span_36](end_span) }
   }
 
   function toggleMenu(force) {
     isMenuOpen = force !== undefined ? force : !isMenuOpen;
-    sideMenu.classList.toggle('open', isMenuOpen);
+[span_37](start_span) sideMenu.classList.toggle('open', isMenuOpen);
     
     if (isMenuOpen) {
       // Fshijme numrin kur hapet menuja
-      clearChannelInput(); 
-      menuSelectedIndex = currentChannelIndex;
+      clearChannelInput();
+[span_37](end_span) menuSelectedIndex = currentChannelIndex;
       updateMenuSelection();
     } 
   }
 
   function updateMenuSelection() {
     const items = sideMenu.querySelectorAll('.menu-item');
-    items.forEach((item, index) => {
+[span_38](start_span) items.forEach((item, index) => {
       item.classList.toggle('selected', index === menuSelectedIndex);
     });
-    
-    if (items[menuSelectedIndex]) {
+[span_38](end_span) if (items[menuSelectedIndex]) {
       // NAVIGIM I SHPEJTE
       items[menuSelectedIndex].scrollIntoView({ block: 'center', behavior: 'auto' });
-    }
+[span_39](start_span) }
   }
   
   // Funksion i ri per pastrimin e numrit te kanalit
   function clearChannelInput() {
       clearTimeout(channelNumberTimeout);
-      channelNumberString = '';
+[span_39](end_span) channelNumberString = '';
       numberDisplay.classList.remove('show');
       numberDisplay.textContent = '';
   }
@@ -432,37 +481,35 @@
 
   function loadChannel(index) {
     if (index < 0) index = channels.length - 1;
-    if (index >= channels.length) index = 0;
+[span_40](start_span) if (index >= channels.length) index = 0;
     
     // NUK RINGARKOHET KANALI I NJEJTE
-    if (index === currentChannelIndex) {
-        if (isMenuOpen || channelNumberString !== '') {
-            toggleMenu(false); 
-        }
+    if (index === currentChannelIndex && channelNumberString === '' && !isMenuOpen) {
+        // Kontroll shtese per te mos e therritur rikuperimin nese thirret nga gabimi fatal
+        // Perndryshe thjesht shfaq overlay
         showOverlay(channels[currentChannelIndex]);
-        clearChannelInput(); // Pastro inputin e numrit
-        return;
+[span_40](end_span) return;
     }
     
     currentChannelIndex = index;
     localStorage.setItem(LAST_CHANNEL_KEY, currentChannelIndex.toString()); 
-    clearChannelInput(); // Pastro inputin e numrit pas ndërrimit të kanalit
+    clearChannelInput();
+[span_41](start_span) // Pastro inputin e numrit pas ndërrimit të kanalit
     
     initializePlayer(channels[currentChannelIndex].url, channels[currentChannelIndex].name);
     
     showOverlay(channels[currentChannelIndex]);
-
-    menuSelectedIndex = currentChannelIndex;
+[span_41](end_span) menuSelectedIndex = currentChannelIndex;
     if (isMenuOpen) {
         updateMenuSelection();
-    }
+[span_42](start_span) }
   }
   
   function showOverlay(channel) {
     // Kur kerkohet per te fshehur, fshijme gjithashtu numrin e kanalit
     if (channel === null) {
       overlay.classList.remove('show');
-      clearTimeout(overlay._timeout);
+[span_42](end_span) clearTimeout(overlay._timeout);
       return;
     }
     
@@ -470,26 +517,24 @@
     overlayName.textContent = channel.name;
     overlay.classList.add('show');
     clearTimeout(overlay._timeout);
-    overlay._timeout = setTimeout(() => {
+[span_43](start_span) overlay._timeout = setTimeout(() => {
       overlay.classList.remove('show');
     }, 3000);
-  }
+[span_43](end_span) }
 
   function handleNumberKey(digit) {
     if (isMenuOpen && !channelNumberString) return; 
 
-    clearTimeout(channelNumberTimeout); 
-
-    if (channelNumberString.length < MAX_DIGITS) {
+    clearTimeout(channelNumberTimeout);
+[span_44](start_span) if (channelNumberString.length < MAX_DIGITS) {
         channelNumberString += digit;
-    }
+[span_44](end_span) }
     
     numberDisplay.textContent = channelNumberString; 
     numberDisplay.classList.add('show');
-    // Sigurohuni qe overlay i kanalit eshte i fshehur kur shfaqet numri
-    showOverlay(null); 
-
-    channelNumberTimeout = setTimeout(() => {
+[span_45](start_span) // Sigurohuni qe overlay i kanalit eshte i fshehur kur shfaqet numri
+    showOverlay(null);
+[span_45](end_span) channelNumberTimeout = setTimeout(() => {
       let channelNumber = parseInt(channelNumberString, 10);
       const targetIndex = channelNumber - 1;
 
@@ -499,7 +544,8 @@
         numberDisplay.textContent = `Kanali ${channelNumber} nuk gjendet!`;
         // E leme per 1.5 sekonda qe te shihet mesazhi i gabimit
         setTimeout(() => {
-            clearChannelInput();
+   
+[span_46](start_span)          clearChannelInput();
         }, 1500); 
       }
 
@@ -507,19 +553,18 @@
       channelNumberString = '';
       
     }, CHANNEL_INPUT_DELAY);
-  }
+[span_46](end_span) }
 
   // --- Inicializimi i Menuse dhe Logices ---
 
   function initializeMenu() {
-    sideMenu.innerHTML = ''; 
-
-    let globalChannelIndex = 0; 
+    sideMenu.innerHTML = '';
+[span_47](start_span) let globalChannelIndex = 0; 
 
     for (const category in categorizedChannels) {
       const title = document.createElement('div');
       title.classList.add('category-title');
-      title.textContent = category;
+[span_47](end_span) title.textContent = category;
       sideMenu.appendChild(title);
 
       categorizedChannels[category].forEach((channel) => {
@@ -532,7 +577,8 @@
           <img class="menu-logo" src="${channel.logo}" alt="${channel.name} Logo" onerror="this.style.opacity='0.5';"/>
           <span class="menu-name">${channel.name}</span>
         `;
-        
+ 
+[span_48](start_span)        
         item.addEventListener('click', () => {
           const clickedIndex = parseInt(item.getAttribute('data-index'), 10);
           loadChannel(clickedIndex); 
@@ -542,33 +588,32 @@
         sideMenu.appendChild(item);
         globalChannelIndex++;
       });
-    }
+[span_48](end_span) }
   }
   
   function getStartingChannelIndex() {
       const storedIndex = localStorage.getItem(LAST_CHANNEL_KEY);
-      const index = parseInt(storedIndex, 10);
+[span_49](start_span) const index = parseInt(storedIndex, 10);
       
       if (!isNaN(index) && index >= 0 && index < channels.length) {
           return index;
-      }
+[span_49](end_span) }
       return 0; 
   }
   
   function enterFullscreen() {
-    const el = document.documentElement; 
-    
-    if (el.requestFullscreen) {
+    const el = document.documentElement;
+[span_50](start_span) if (el.requestFullscreen) {
       el.requestFullscreen();
     } else if (el.webkitRequestFullscreen) {
       el.webkitRequestFullscreen();
-    } else if (el.msRequestFullscreen) {
+[span_50](end_span) } else if (el.msRequestFullscreen) {
       el.msRequestFullscreen();
-    }
+[span_51](start_span) }
     
     if (document.body.requestFullscreen) {
          document.body.requestFullscreen({ navigationUI: "hide" }).catch(err => console.log("Fullscreen request failed:", err));
-    }
+[span_51](end_span) }
   }
 
 
@@ -577,19 +622,17 @@
 
   currentChannelIndex = getStartingChannelIndex();
   initializeMenu();
-
-  // LOGJIKA E RE E NGARKIMIT: Shfaq vetem overlay-n dhe prit nderveprimin
+[span_52](start_span) // LOGJIKA E RE E NGARKIMIT: Shfaq vetem overlay-n dhe prit nderveprimin
   if (currentChannelIndex >= 0) {
       // Shfaq overlay-n e kanalit te fundit
-      showOverlay(channels[currentChannelIndex]); 
-      
-      // Inicializo player-in, por vetem per te pare nese Autoplay deshton
+      showOverlay(channels[currentChannelIndex]);
+[span_52](end_span) // Inicializo player-in, por vetem per te pare nese Autoplay deshton
       currentChannelIndex = getStartingChannelIndex();
-      initializePlayer(channels[currentChannelIndex].url, channels[currentChannelIndex].name);
+[span_53](start_span) initializePlayer(channels[currentChannelIndex].url, channels[currentChannelIndex].name);
 
       // Shto event listener per te luajtur videon pas nderveprimit
       document.body.addEventListener('click', attemptPlayAndFullscreen);
-      window.addEventListener('keydown', attemptPlayAndFullscreen);
+[span_53](end_span) window.addEventListener('keydown', attemptPlayAndFullscreen);
       document.body.addEventListener('touchstart', attemptPlayAndFullscreen);
 
   } 
@@ -597,30 +640,29 @@
   function attemptPlayAndFullscreen() {
       // Heqim listeners
       document.body.removeEventListener('click', attemptPlayAndFullscreen);
-      window.removeEventListener('keydown', attemptPlayAndFullscreen);
+[span_54](start_span) window.removeEventListener('keydown', attemptPlayAndFullscreen);
       document.body.removeEventListener('touchstart', attemptPlayAndFullscreen);
 
       // Kjo kerkohet si nderveprimi i pare.
-      videoPlayer.play().then(() => {
+[span_54](end_span) videoPlayer.play().then(() => {
         showOverlay(channels[currentChannelIndex]); // Fshijme ndoshta overlay-n "Shtyp OK per te vazhduar"
       }).catch(e => {
         console.warn("Play failed even after user interaction (might be a specific browser policy).");
       });
-
-      if (!fullscreenAttempted) {
+[span_55](start_span) if (!fullscreenAttempted) {
           enterFullscreen();
           fullscreenAttempted = true;
-      }
+[span_55](end_span) }
   }
 
   // Event listeners for Fullscreen (nese nderveprimi i pare nuk ishte klik/play)
   document.body.addEventListener('touchstart', attemptFullscreen);
-  window.addEventListener('keydown', attemptFullscreen);
+[span_56](start_span) window.addEventListener('keydown', attemptFullscreen);
 
   function attemptFullscreen() {
     if (!fullscreenAttempted) {
         enterFullscreen();
-        fullscreenAttempted = true;
+[span_56](end_span) fullscreenAttempted = true;
         document.body.removeEventListener('touchstart', attemptFullscreen);
         window.removeEventListener('keydown', attemptFullscreen);
     }
@@ -639,86 +681,86 @@
     if (isMenuOpen) {
         // Navigimi me Menu
         if (e.key === 'ArrowUp') {
-          menuSelectedIndex = (menuSelectedIndex - 1 + channels.length) % channels.length;
+ 
+[span_57](start_span)          menuSelectedIndex = (menuSelectedIndex - 1 + channels.length) % channels.length;
           updateMenuSelection();
         } else if (e.key === 'ArrowDown') {
           menuSelectedIndex = (menuSelectedIndex + 1) % channels.length;
           updateMenuSelection();
         } 
         else if (e.key === 'ArrowLeft') {
-            // NDRYSHIMI KRYESOR 1: Shko tek kategoria paraprake
+           
+[span_57](end_span)  // NDRYSHIMI KRYESOR 1: Shko tek kategoria paraprake
             const currentInfo = findCategoryAndCategoryIndex(menuSelectedIndex);
             const categoryKeys = Object.keys(categorizedChannels);
             
             if (currentInfo.categoryIndex > 0) {
                 const prevCategoryKey = categoryKeys[currentInfo.categoryIndex - 1];
-                menuSelectedIndex = categoryStartIndices[prevCategoryKey];
+[span_58](start_span) menuSelectedIndex = categoryStartIndices[prevCategoryKey];
             } else {
                 // Nese jemi te kategoria e pare, shko tek kategoria e fundit
                 const lastCategoryKey = categoryKeys[categoryKeys.length - 1];
-                menuSelectedIndex = categoryStartIndices[lastCategoryKey];
+[span_58](end_span) menuSelectedIndex = categoryStartIndices[lastCategoryKey];
             }
             updateMenuSelection();
-        }
+[span_59](start_span) }
         else if (e.key === 'ArrowRight') {
             // NDRYSHIMI KRYESOR 2: Shko tek kategoria pasardhese
             const currentInfo = findCategoryAndCategoryIndex(menuSelectedIndex);
-            const categoryKeys = Object.keys(categorizedChannels);
+[span_59](end_span) const categoryKeys = Object.keys(categorizedChannels);
 
             if (currentInfo.categoryIndex < categoryKeys.length - 1) {
                 const nextCategoryKey = categoryKeys[currentInfo.categoryIndex + 1];
-                menuSelectedIndex = categoryStartIndices[nextCategoryKey];
+[span_60](start_span) menuSelectedIndex = categoryStartIndices[nextCategoryKey];
             } else {
                 // Nese jemi te kategoria e fundit, shko tek kategoria e pare
                 const firstCategoryKey = categoryKeys[0];
-                menuSelectedIndex = categoryStartIndices[firstCategoryKey];
+[span_60](end_span) menuSelectedIndex = categoryStartIndices[firstCategoryKey];
             }
             updateMenuSelection();
-        }
+[span_61](start_span) }
         else if (e.key === 'Enter' || e.key === ' ' || e.key === 'Ok') {
-            loadChannel(menuSelectedIndex); 
-            toggleMenu(false); 
+            loadChannel(menuSelectedIndex);
+[span_61](end_span) toggleMenu(false); 
         } else if (e.key === 'Escape') {
             toggleMenu(false);
-        }
+[span_62](start_span) }
 
     } else {
         // Navigimi me Player
         if (e.key === 'Enter' || e.key === ' ' || e.key === 'Ok') {
           toggleMenu(true);
-        }
+[span_62](end_span) }
         else if (e.key === 'ArrowUp') {
           loadChannel(currentChannelIndex - 1);
-        } else if (e.key === 'ArrowDown') {
+[span_63](start_span) } else if (e.key === 'ArrowDown') {
           loadChannel(currentChannelIndex + 1);
-        }
+[span_63](end_span) }
         else if (e.key >= '0' && e.key <= '9') {
           handleNumberKey(e.key);
-        }
+[span_64](start_span) }
     }
   });
 
   // --- Swipe Gesture Detection ---
   let touchstartX = 0;
-  let touchendX = 0;
+[span_64](end_span) let touchendX = 0;
   
   function checkDirection() {
     const swipeDistance = touchendX - touchstartX;
-    
-    if (Math.abs(swipeDistance) < 50) return;
+[span_65](start_span) if (Math.abs(swipeDistance) < 50) return;
 
     if (swipeDistance > 0 && touchstartX < 50 && !isMenuOpen) {
       toggleMenu(true);
-    } else if (swipeDistance < 0 && isMenuOpen) {
+[span_65](end_span) } else if (swipeDistance < 0 && isMenuOpen) {
       toggleMenu(false);
-    }
+[span_66](start_span) }
   }
   
   window.addEventListener('touchstart', e => {
     touchstartX = e.changedTouches[0].screenX;
   });
-  
-  window.addEventListener('touchend', e => {
+[span_66](end_span) window.addEventListener('touchend', e => {
     touchendX = e.changedTouches[0].screenX;
     checkDirection();
   });
