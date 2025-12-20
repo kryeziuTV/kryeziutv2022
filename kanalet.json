@@ -23,7 +23,8 @@
     { "name": "RTSH SHQIP", "logo": "https://klaniim.al/images/kanale/rtsh-shqip.png", "url": "http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8", "channelId": "" },
     { "name": "RTSH FILM", "logo": "https://i.imgur.com/wooqMHn.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
     { "name": "KLAN MACEDONIA", "logo": "https://klaniim.al/images/kanale/klan-macedonia.png", "url": "http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", "channelId": "" },
-    { "name": "BB VIP KS 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "https://stream.syritv.al/stvfolk/index.m3u8", "channelId": "BBVipKS1.al" }
+    { "name": "BB VIP KS 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "https://stream.syritv.al/stvfolk/index.m3u8", "channelId": "BBVipKS1.al" },
+    { "name": "BB VIP KS 2", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "https://stream.syritv.al/supersonictv/index.m3u8", "channelId": "BBVipKS1.al" }
   ],
   "FEMIJE": [
     { "name": "RTSH FEMIJE", "logo": "https://i.imgur.com/Sxx47b2.png", "url": "http://188.172.107.157:15152/live/rtshfemijeott/playlist.m3u8", "channelId": "" },
@@ -76,4 +77,5 @@
     { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" }
   ]
 }
+
 
