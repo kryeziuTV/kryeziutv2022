@@ -1,0 +1,20 @@
+[
+  {
+    "name": "RTK 1",
+    "logo": "https://vimg.ipko.tv/logo/color/rtk1.png",
+    "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8",
+    "category": "KOMBETARE"
+  },
+  {
+    "name": "RTV 21",
+    "logo": "https://vimg.ipko.tv/logo/color/rtv21.png",
+    "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8",
+    "category": "KOMBETARE"
+  },
+  {
+    "name": "KTV",
+    "logo": "https://vimg.ipko.tv/logo/color/ktv.png",
+    "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8",
+    "category": "KOMBETARE"
+  }
+]
