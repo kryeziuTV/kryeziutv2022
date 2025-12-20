@@ -23,7 +23,7 @@
     { "name": "RTSH SHQIP", "logo": "https://klaniim.al/images/kanale/rtsh-shqip.png", "url": "http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8", "channelId": "" },
     { "name": "RTSH FILM", "logo": "https://i.imgur.com/wooqMHn.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
     { "name": "KLAN MACEDONIA", "logo": "https://klaniim.al/images/kanale/klan-macedonia.png", "url": "http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", "channelId": "" },
-    { "name": "BB VIP KS 2", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "http://51.15.10.229/bigBrotherAlb2/index.m3u8", "channelId": "BBVipKS2.al" }
+    { "name": "BB VIP KS 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "https://stream.syritv.al/stvfolk/index.m3u8", "channelId": "BBVipKS1.al" }
   ],
   "FEMIJE": [
     { "name": "RTSH FEMIJE", "logo": "https://i.imgur.com/Sxx47b2.png", "url": "http://188.172.107.157:15152/live/rtshfemijeott/playlist.m3u8", "channelId": "" },
@@ -44,11 +44,11 @@
     { "name": "TRAVEL CHANNEL", "logo": "https://i.imgur.com/MiWIGxs.png", "url": "https://fl31.moveonjoy.com/Travel_Channel/index.m3u8", "channelId": "" },
     { "name": "LOVE NATURE", "logo": "https://i.imgur.com/uGEmBLm.png", "url": "http://fl1.moveonjoy.com/LOVE_NATURE/index.m3u8", "channelId": "" },
     { "name": "DISCOVERY CHANNEL", "logo": "https://i.imgur.com/HdzY1vv.png", "url": "https://fl31.moveonjoy.com/Discovery_Channel/index.m3u8", "channelId": "" },
-    { "name": "DISCOVERY LIFE", "logo": "", "url": "https://fl31.moveonjoy.com/DISCOVERY_LIFE/index.m3u8", "channelId": "" },
-    { "name": "CRIME INVESTIGATION", "logo": "", "url": "https://fl31.moveonjoy.com/Crime_and_Investigation_Network/index.m3u8", "channelId": "" },
-    { "name": "WORLD FISHING NETWORK", "logo": "", "url": "https://fl31.moveonjoy.com/WORLD_FISHING_NETWORK/index.m3u8", "channelId": "" },
-    { "name": "OUTDOOR CHANNEL", "logo": "", "url": "http://fl61.moveonjoy.com/OUTDOOR_CHANNEL/index.m3u8", "channelId": "" },
-    { "name": "COOKING CHANNEL", "logo": "", "url": "https://fl61.moveonjoy.com/COOKING_CHANNEL/index.m3u8", "channelId": "" }
+    { "name": "DISCOVERY LIFE", "logo": "https://www.vhv.rs/dpng/d/510-5103243_discovery-life-channel-logo-hd-png-download.png", "url": "https://fl31.moveonjoy.com/DISCOVERY_LIFE/index.m3u8", "channelId": "" },
+    { "name": "CRIME INVESTIGATION", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Crime_%2B_Investigation_Logo_10.2019.svg/2560px-Crime_%2B_Investigation_Logo_10.2019.svg.png", "url": "https://fl31.moveonjoy.com/Crime_and_Investigation_Network/index.m3u8", "channelId": "" },
+    { "name": "WORLD FISHING NETWORK", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/WFN_2014_logo.svg/1200px-WFN_2014_logo.svg.png", "url": "https://fl31.moveonjoy.com/WORLD_FISHING_NETWORK/index.m3u8", "channelId": "" },
+    { "name": "OUTDOOR CHANNEL", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Outdoor_Channel_logo_2017.svg/250px-Outdoor_Channel_logo_2017.svg.png", "url": "http://fl61.moveonjoy.com/OUTDOOR_CHANNEL/index.m3u8", "channelId": "" },
+    { "name": "COOKING CHANNEL", "logo": "https://getvectorlogo.com/wp-content/uploads/2020/02/cooking-channel-vector-logo.png", "url": "https://fl61.moveonjoy.com/COOKING_CHANNEL/index.m3u8", "channelId": "" }
   ],
   "MUZIKE": [
     { "name": "ZICO TV", "logo": "https://vimg.ipko.tv/logo/color/zicotv.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/j3a-n14-2pf-g3s/tracks-v2a1/mono.ts.m3u8", "channelId": "Zico.TV.al" },
@@ -76,3 +76,4 @@
     { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" }
   ]
 }
+
