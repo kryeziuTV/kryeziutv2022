@@ -74,8 +74,15 @@
     { "name": "ORA NEWS", "logo": "https://klaniim.al/images/kanale/ora-news-tv.png", "url": "http://188.172.107.157:15152/live/oranewspp1/playlist.m3u8", "channelId": "" },
     { "name": "REPORT TV", "logo": "https://klaniim.al/images/kanale/report-tv.png", "url": "http://188.172.107.157:15152/live/reportmob/playlist.m3u8", "channelId": "" },
     { "name": "FSHF TV", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://188.172.107.157:15152/live/fshfott/playlist.m3u8", "channelId": "" },
-    { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" }
+    { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" },
+    { "name": "BEIN SPORT 1", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01e", "channelId": "" },
+    { "name": "BEIN SPORT 2", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01g", "channelId": "" },
+    { "name": "BEIN SPORT 3", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01h", "channelId": "" },
+    { "name": "BEIN SPORT 4", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01i", "channelId": "" },
+    { "name": "BEIN SPORT 5", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01j", "channelId": "" },
+    { "name": "BEIN SPORT 6", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01k", "channelId": "" }
   ]
 }
+
 
 
