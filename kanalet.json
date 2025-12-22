@@ -21,7 +21,7 @@
     { "name": "RTK 4", "logo": "https://vimg.ipko.tv/logo/color/rtk4.png", "url": "http://gjvideo-live-xk.gjirafa.net/gjvideo-livestream/rtk4/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK.4.al" },
     { "name": "TV NEWS", "logo": "https://i.imgur.com/qrtP0Sy.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/js0-h8f-ifx-29f/tracks-v2a1/mono.ts.m3u8", "channelId": "TV.NEWS.al" },
     { "name": "RTSH SHQIP", "logo": "https://klaniim.al/images/kanale/rtsh-shqip.png", "url": "http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8", "channelId": "" },
-    { "name": "RTSH FILM", "logo": "https://i.imgur.com/wooqMHn.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
+    { "name": "RTSH FILM", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/RTSH_Film_%282020_Logo%29.svg/2560px-RTSH_Film_%282020_Logo%29.svg.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
     { "name": "KLAN MACEDONIA", "logo": "https://klaniim.al/images/kanale/klan-macedonia.png", "url": "http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", "channelId": "" },
     { "name": "BB VIP KS 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "https://stream.syritv.al/stvfolk/index.m3u8", "channelId": "BBVipKS1.al" },
     { "name": "BB VIP KS 2", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "https://stream.syritv.al/supersonictv/index.m3u8", "channelId": "BBVipKS1.al" }
@@ -57,7 +57,7 @@
     { "name": "KLAN MUSIC", "logo": "https://vimg.ipko.tv/logo/color/klanmusic.png", "url": "http://188.172.107.157:15152/live/klanmusicott/playlist.m3u8", "channelId": "" },
     { "name": "IN TV", "logo": "https://i.imgur.com/Lngw7AF.png", "url": "http://188.172.107.157:15152/live/intvpp1/playlist.m3u8", "channelId": "" },
     { "name": "RTSH MUZIKE", "logo": "https://i.imgur.com/40xiBaO.png", "url": "http://188.172.107.157:15152/live/rtshMUZIKEott/playlist.m3u8", "channelId": "" },
-    { "name": "ZERI", "logo": "https://i.imgur.com/hbildYf.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/jo8-76n-lmx-tv0/tracks-v2a1/mono.ts.m3u8", "channelId": "ZERI.al" }
+    { "name": "ZERI", "logo": "https://i.ibb.co/7x2dyWk5/Screenshot-22-12-2025-32710-www-google-com-removebg-preview.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/jo8-76n-lmx-tv0/tracks-v2a1/mono.ts.m3u8", "channelId": "ZERI.al" }
   ],
   "LAJME": [
     { "name": "TV ARTA", "logo": "https://vimg.ipko.tv/logo/color/tvarta.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/mps-vgx-u9p-qv1/index.m3u8", "channelId": "TV.Arta.al" },
@@ -75,14 +75,11 @@
     { "name": "REPORT TV", "logo": "https://klaniim.al/images/kanale/report-tv.png", "url": "http://188.172.107.157:15152/live/reportmob/playlist.m3u8", "channelId": "" },
     { "name": "FSHF TV", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://188.172.107.157:15152/live/fshfott/playlist.m3u8", "channelId": "" },
     { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" },
-    { "name": "BEIN SPORT 1", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01e", "channelId": "" },
-    { "name": "BEIN SPORT 2", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01g", "channelId": "" },
-    { "name": "BEIN SPORT 3", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01h", "channelId": "" },
-    { "name": "BEIN SPORT 4", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01i", "channelId": "" },
-    { "name": "BEIN SPORT 5", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01j", "channelId": "" },
-    { "name": "BEIN SPORT 6", "logo": "https://i.ibb.co/Xkp42tCj/20f853787e15c584b40cb92aee225029-removebg-preview.png", "url": "http://77.137.40.221:8000/play/a01k", "channelId": "" }
+    { "name": "BEIN SPORT", "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Bein_sport_logo.png", "url": "https://fl1.moveonjoy.com/BEIN_SPORTS/tracks-v1a1/mono.m3u8", "channelId": "" },
+    { "name": "FOX SPORT 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Fox_Sports_wordmark_logo.svg/2560px-Fox_Sports_wordmark_logo.svg.png", "url": "https://fl1.moveonjoy.com/FOX_Sports_1/index.m3u8", "channelId": "" }
   ]
 }
+
 
 
 
