@@ -76,9 +76,32 @@
     { "name": "FSHF TV", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://188.172.107.157:15152/live/fshfott/playlist.m3u8", "channelId": "" },
     { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" },
     { "name": "BEIN SPORT", "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Bein_sport_logo.png", "url": "https://fl1.moveonjoy.com/BEIN_SPORTS/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "FOX SPORT 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Fox_Sports_wordmark_logo.svg/2560px-Fox_Sports_wordmark_logo.svg.png", "url": "https://fl1.moveonjoy.com/FOX_Sports_1/index.m3u8", "channelId": "" }
+    { "name": "FOX SPORT 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Fox_Sports_wordmark_logo.svg/2560px-Fox_Sports_wordmark_logo.svg.png", "url": "https://fl1.moveonjoy.com/FOX_Sports_1/index.m3u8", "channelId": "" },
+    { "name": "RTK 1", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/588997", "channelId": "" },
+    { "name": "RTK 3", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294479", "channelId": "" },
+    { "name": "RTV 21", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294482", "channelId": "" },
+    { "name": "KLANKOSOVA", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294486", "channelId": "" },
+    { "name": "KTV", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294481", "channelId": "" },
+    { "name": "TOPCHANNEL", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294490", "channelId": "" },
+    { "name": "DUKAGJINI TV", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294487", "channelId": "" },
+    { "name": "ALSAT M", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294491", "channelId": "" },
+    { "name": "T7", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294489", "channelId": "" },
+    { "name": "KANAL 10", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/294488", "channelId": "" },
+    { "name": "TEVE 1", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/518397", "channelId": "" },
+    { "name": "PRO 1", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/610841", "channelId": "" },
+    { "name": "FILM AKSION HD", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1221519", "channelId": "" },
+    { "name": "FILM GOLD HD", "logo": "https://vimg.ipko.tv/logo/color/gold.png", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1221526", "channelId": "" },
+    { "name": "FILM MAX HD", "logo": "https://vimg.ipko.tv/logo/color/max.png", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1221525", "channelId": "" },
+    { "name": "TRING ACTION HD", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1221495", "channelId": "" },
+    { "name": "TRING FANTASY HD", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1221492", "channelId": "" },
+    { "name": "TRING COLLECTION HD", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1221491", "channelId": "" },
+    { "name": "BB VIP KS 1", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1659359", "channelId": "" },
+    { "name": "BB VIP KS 2", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1689998", "channelId": "" },
+    { "name": "BB VIP AL 1", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1752038", "channelId": "" },
+    { "name": "BB VIP AL 2", "logo": "", "url": "http://metres51471.cdn-akm.me/15e6a5a93bc8/ff6b6ff40d/1752037", "channelId": "" }
   ]
 }
+
 
 
 
