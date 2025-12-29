@@ -1,8 +1,8 @@
 {
   "KOMBETARE": [
-    { "name": "RTK 1", "logo": "https://vimg.ipko.tv/logo/color/rtk1.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK.1.al" },
-    { "name": "RTK 3", "logo": "https://vimg.ipko.tv/logo/color/rtk3.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK.3.al" },
-    { "name": "RTV 21", "logo": "https://vimg.ipko.tv/logo/color/rtv21.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", "channelId": "RTV.21.al" },
+    { "name": "RTK 1", "logo": "https://vimg.ipko.tv/logo/color/rtk1.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK 1.al" },
+    { "name": "RTK 3", "logo": "https://vimg.ipko.tv/logo/color/rtk3.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK 3.al" },
+    { "name": "RTV 21", "logo": "https://vimg.ipko.tv/logo/color/rtv21.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", "channelId": "RTV 21.al" },
     { "name": "KTV", "logo": "https://vimg.ipko.tv/logo/color/ktv.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", "channelId": "KTV.al" },
     { "name": "DUKAGJINI TV", "logo": "https://vimg.ipko.tv/logo/color/tvdukagjini.png", "url": "http://amdcam.tibo.tv:8081/yWbXvr1S/dukagjini_720p/playlist.m3u8", "channelId": "Dukagjini.al" },
     { "name": "PRO 1", "logo": "https://vimg.ipko.tv/logo/color/pro1.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/nng-gki-l1j-n1z/tracks-v2a1/mono.ts.m3u8", "channelId": "PRO1.al" },
@@ -181,6 +181,7 @@
     { "name": "BB VIP AL 2", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Big_Brother_VIP_Kosova_logo.png/500px-Big_Brother_VIP_Kosova_logo.png", "url": "http://metres51471.cdn-akm.me/HABIBMARWAN/8o4p6zihpi/1752037", "channelId": "" }
   ]
 }
+
 
 
 
