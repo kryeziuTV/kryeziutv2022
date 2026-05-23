@@ -22,7 +22,7 @@
     { "name": "RTSH 2", "logo": "https://klaniim.al/images/kanale/rtsh-2.png", "url": "http://188.172.107.157:15152/live/rtsh2/playlist.m3u8", "channelId": "" },
     { "name": "TV NEWS", "logo": "https://i.imgur.com/qrtP0Sy.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live-n1/js0-h8f-ifx-29f/tracks-v2a1/mono.ts.m3u8", "channelId": "TV.NEWS.al" },
     { "name": "RTSH SHQIP", "logo": "https://klaniim.al/images/kanale/rtsh-shqip.png", "url": "http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8", "channelId": "" },
-    { "name": "RTSH FILM", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/RTSH_Film_%282020_Logo%29.svg/2560px-RTSH_Film_%282020_Logo%29.svg.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
+    { "name": "RTSH FILM", "logo": "https://plain-eeur-prod-public.komododecks.com/202605/23/XZ1oiEL30hALF9SGVaOF/image.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
     { "name": "KLAN MACEDONIA", "logo": "https://klaniim.al/images/kanale/klan-macedonia.png", "url": "http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", "channelId": "" }
   ],
   "FEMIJE": [
