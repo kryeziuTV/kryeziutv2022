@@ -53,10 +53,8 @@
     { "name": "ORA NEWS", "logo": "https://klaniim.al/images/kanale/ora-news-tv.png", "url": "http://188.172.107.157:15152/live/oranewspp1/playlist.m3u8", "channelId": "" },
     { "name": "REPORT TV", "logo": "https://klaniim.al/images/kanale/report-tv.png", "url": "http://188.172.107.157:15152/live/reportmob/playlist.m3u8", "channelId": "" },
     { "name": "FSHF TV", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://188.172.107.157:15152/live/fshfott/playlist.m3u8", "channelId": "" },
-    { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" },
-    { "name": "BEIN SPORT", "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/Bein_sport_logo.png", "url": "https://fl1.moveonjoy.com/BEIN_SPORTS/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "FOX SPORT 1", "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Fox_Sports_wordmark_logo.svg/2560px-Fox_Sports_wordmark_logo.svg.png", "url": "https://fl1.moveonjoy.com/FOX_Sports_1/index.m3u8", "channelId": "" }
-  ],
+    { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" }
+],
     "VIP 1": [],
     "VIP 2": []
 }
