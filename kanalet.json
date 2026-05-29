@@ -2,6 +2,7 @@
   "KOMBETARE": [
     { "name": "RTK 1", "logo": "https://vimg.ipko.tv/logo/color/rtk1.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/98r-d35-487-v6m/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK.1.al" },
     { "name": "RTK 3", "logo": "https://vimg.ipko.tv/logo/color/rtk3.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/rtk3/tracks-v4a1/mono.ts.m3u8", "channelId": "RTK.3.al" },
+    { "name": "KLAN KOSOVA", "logo": "https://vimg.ipko.tv/logo/color/klankosova.png", "url": "http://79.127.207.193/KlanKosova/playlist.m3u8", "channelId": "RTK.3.al" },
     { "name": "RTV 21", "logo": "https://vimg.ipko.tv/logo/color/rtv21.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-live/2cz-npl-jfn-9he/tracks-v2a1/mono.m3u8", "channelId": "RTV.21.al" },
     { "name": "KTV", "logo": "https://vimg.ipko.tv/logo/color/ktv.png", "url": "http://gjirafa-video-live.gjirafa.net/gjvideo-livestream/lj9-pxm-o53-rp0/tracks-v4a1/mono.m3u8", "channelId": "KTV.al" },
     { "name": "TOP CHANNEL", "logo": "https://i.imgur.com/YNCVGQt.png", "url": "http://217.73.139.200:5443/play/a016", "channelId": "Topchannel.al" },
@@ -25,7 +26,8 @@
     { "name": "RTSH SHQIP", "logo": "https://klaniim.al/images/kanale/rtsh-shqip.png", "url": "http://188.172.107.157:15152/live/rtshshqip/playlist.m3u8", "channelId": "" },
     { "name": "RTSH FILM", "logo": "https://plain-eeur-prod-public.komododecks.com/202605/23/XZ1oiEL30hALF9SGVaOF/image.png", "url": "http://188.172.107.157:15152/live/rtshfilmott/playlist.m3u8", "channelId": "" },
     { "name": "KLAN MACEDONIA", "logo": "https://klaniim.al/images/kanale/klan-macedonia.png", "url": "http://188.172.107.157:15152/live/klanmacedoniaott/playlist.m3u8", "channelId": "" },
-    { "name": "TV DODONA 2", "logo": "https://i.imgur.com/UQ0NA7Q.png", "url": "https://live20.bozztv.com/akamaissh101/ssh101/rtvarberia2/playlist.m3u8", "channelId": "" }
+    { "name": "TV DODONA 2", "logo": "https://i.imgur.com/UQ0NA7Q.png", "url": "https://live20.bozztv.com/akamaissh101/ssh101/rtvarberia2/playlist.m3u8", "channelId": "" },
+    { "name": "START SHKENCE", "logo": "https://i.imgur.com/UQ0NA7Q.png", "url": "https://live20.bozztv.com/giatvplayout7/giatv-208768/playlist.m3u8", "channelId": "" }
   ],
   "FEMIJE": [
     { "name": "RTSH FEMIJE", "logo": "https://i.imgur.com/Sxx47b2.png", "url": "http://188.172.107.157:15152/live/rtshfemijeott/playlist.m3u8", "channelId": "" },
@@ -60,12 +62,13 @@
     { "name": "RTSH SPORT", "logo": "https://i.imgur.com/HDmLovn.png", "url": "http://188.172.107.157:15152/live/rtshsport/playlist.m3u8", "channelId": "" }
 ],
     "VIP 1": [
-    { "name": "TRING AKSION", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://143.244.62.109:80/tringaction/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "TRING SUPER", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://143.244.62.109:80/tringsuper/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "TRING FANTASY", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://143.244.62.109:80/tringfantasy/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "TRING LIFE", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://143.244.62.109:80/tringlife/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "TRING PLANET", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://143.244.62.109:80/tringplanet/tracks-v1a1/mono.m3u8", "channelId": "" },
-    { "name": "TRING WORLD", "logo": "https://i.imgur.com/ul0aKfn.png", "url": "http://143.244.62.109:80/tringworld/tracks-v1a1/mono.m3u8", "channelId": "" }
+    { "name": "TRING AKSION", "logo": "https://i.imgur.com/u.png", "url": "http://143.244.62.109:80/tringaction/tracks-v1a1/mono.m3u8", "channelId": "" },
+    { "name": "TRING SUPER", "logo": "https://i.imgur.comn.png", "url": "http://143.244.62.109:80/tringsuper/tracks-v1a1/mono.m3u8", "channelId": "" },
+    { "name": "TRING FANTASY", "logo": "https://i.imgur.coaKfn.png", "url": "http://143.244.62.109:80/tringfantasy/tracks-v1a1/mono.m3u8", "channelId": "" },
+    { "name": "TRING LIFE", "logo": "https://i.imgur.com/un.png", "url": "http://143.244.62.109:80/tringlife/tracks-v1a1/mono.m3u8", "channelId": "" },
+    { "name": "SKY AKSION", "logo": "https://i.imgur.com/Kfn.png", "url": "http://5.206.237.251:1288/SkyAksion", "channelId": "" }
+    { "name": "TRING PLANET", "logo": "https://i.imgur.caKfn.png", "url": "http://143.244.62.109:80/tringplanet/tracks-v1a1/mono.m3u8", "channelId": "" },
+    { "name": "TRING WORLD", "logo": "https://i.imgur.aKfn.png", "url": "http://143.244.62.109:80/tringworld/tracks-v1a1/mono.m3u8", "channelId": "" }
     ],
     "VIP 2": []
 }
